@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ScrollReveal from '../components/ScrollReveal.jsx';
 import { findTrackingRecord, normalizeTrackingCode } from '../services/tracking.js';
-import { navigateTo } from '../utils/navigation.js';
 
 const stages = [
   { title: 'Enregistré', detail: 'Réception au centre logistique', icon: 'inventory_2' },
@@ -24,6 +25,7 @@ function eventValue(event, ...keys) {
 }
 
 export default function DetailsPage({ trackingNumber }) {
+  const navigate = useNavigate();
   const [record, setRecord] = useState(null);
   const [state, setState] = useState('loading');
   const [errorMessage, setErrorMessage] = useState('');
@@ -105,7 +107,7 @@ export default function DetailsPage({ trackingNumber }) {
         setState('found');
         return;
       }
-      navigateTo(`/tracking/details/${encodeURIComponent(code)}`);
+      navigate(`/tracking/details/${encodeURIComponent(code)}`);
     } catch (error) {
       if (error.name === 'AbortError') return;
       setState('error');
@@ -134,7 +136,7 @@ export default function DetailsPage({ trackingNumber }) {
   const shipmentCode = displayValue(record?.trackingNumber, trackingNumber || '—');
 
   return (
-    <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 details-page">
+    <ScrollReveal as="main" className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 details-page">
       <div className="flex flex-wrap items-center justify-between gap-4 bg-[#0a1526]/70 border border-[#1e3a66]/50 rounded-xl px-4 py-3 text-xs backdrop-blur-sm">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-slate-400 font-mono uppercase tracking-wider text-[11px] font-semibold">Mode démonstration :</span>
@@ -143,7 +145,7 @@ export default function DetailsPage({ trackingNumber }) {
           </span>
         </div>
         <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-          <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
           <span className="text-slate-300">SUIVI STATIQUE DE DÉMONSTRATION</span>
         </div>
       </div>
@@ -250,7 +252,7 @@ export default function DetailsPage({ trackingNumber }) {
               <div className="border-b sm:border-b-0 lg:border-r border-[#1e3a66]/70 pb-4 sm:pb-0 lg:pr-4">
                 <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-1.5 font-semibold">Statut actuel</span>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 text-xs font-bold font-mono uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
                   {displayValue(record.status)}
                 </div>
               </div>
@@ -489,6 +491,6 @@ export default function DetailsPage({ trackingNumber }) {
           <span className="text-xs font-mono font-medium">{toastMessage}</span>
         </div>
       )}
-    </main>
+    </ScrollReveal>
   );
 }
