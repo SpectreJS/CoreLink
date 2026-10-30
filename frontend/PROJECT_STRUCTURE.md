@@ -1,113 +1,232 @@
-# Structure du projet CoreLink
+# CoreLink — structure et contexte du projet
 
-## Vue d’ensemble
+Ce document donne à ChatGPT et aux contributeurs une vue d’ensemble du projet
+pour faciliter les futures modifications. Il décrit l’état actuel du code : les
+fonctionnalités marquées « préparatoires » ou « démo » ne doivent pas être
+présentées comme connectées à une base de données.
 
-CoreLink est une application frontend monopage construite avec React et Vite. Elle présente les services logistiques, les tarifs et le suivi de colis, et inclut un espace d’administration isolé. Le routage est géré par React Router et les animations 3D du globe utilisent Three.js. Un backend Express/MySQL préparatoire séparé se trouve dans `../backend/`.
+## Présentation
+
+CoreLink Sourcing & Logistics est un projet composé de deux parties :
+
+- `frontend/` : site public React et espace d’administration dans la même
+  application Vite.
+- `backend/` : API Express/MySQL indépendante, encore préparatoire.
+
+Le site public existant doit rester fonctionnel et visuellement inchangé lors
+des travaux sur l’administration. Les styles admin sont isolés sous des classes
+spécifiques. Ne pas déplacer ni recréer l’application React.
+
+## Arborescence
 
 ```text
 CoreLink/
-├── .vscode/
-│   └── settings.json
-├── index.html
-├── package.json
-├── package-lock.json
-├── postcss.config.mjs
-├── tailwind.config.mjs
-├── vite.config.js
-└── src/
-    ├── App.jsx
-    ├── main.jsx
-    ├── admin/
-    │   ├── components/
-    │   ├── contexts/
-    │   ├── data/
-    │   ├── pages/
-    │   ├── routes/
-    │   ├── services/
-    │   └── styles/
-    ├── assets/
-    │   └── images/
-    │       └── logo.png
-    ├── components/
-    │   ├── Advantages.jsx
-    │   ├── Contact.jsx
-    │   ├── ExchangeRate.jsx
-    │   ├── Globe.jsx
-    │   ├── Hero.jsx
-    │   ├── ScrollReveal.jsx
-    │   ├── ShippingRates.jsx
-    │   └── TransportSolutions.jsx
-    ├── data/
-    │   └── trackingRecords.js
-    ├── layout/
-    │   ├── Footer.jsx
-    │   └── Header.jsx
-    ├── pages/
-    │   └── DetailsPage.jsx
-    ├── services/
-    │   └── tracking.js
-    └── styles/
-        └── main.scss
+├── backend/
+│   ├── .env.example
+│   ├── package.json
+│   ├── README.md
+│   └── src/
+│       ├── app.js
+│       ├── server.js
+│       ├── config/
+│       │   ├── database.js
+│       │   └── env.js
+│       ├── database/
+│       │   └── schema.sql
+│       ├── middlewares/
+│       │   ├── asyncHandler.js
+│       │   ├── authenticate.js
+│       │   ├── browserOrigin.js
+│       │   └── httpError.js
+│       ├── modules/
+│       │   ├── README.md
+│       │   └── auth/
+│       │       └── auth.routes.js
+│       └── routes/
+│           ├── admin.routes.js
+│           └── index.js
+└── frontend/
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    ├── postcss.config.mjs
+    ├── tailwind.config.mjs
+    ├── vite.config.js
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── admin/
+        │   ├── components/
+        │   │   ├── common/AdminUI.jsx
+        │   │   └── layout/
+        │   ├── contexts/AdminAuthContext.jsx
+        │   ├── data/demoData.js
+        │   ├── pages/
+        │   │   ├── AdminLoginPage.jsx
+        │   │   └── AdminModulePages.jsx
+        │   ├── routes/
+        │   │   ├── AdminProtectedRoute.jsx
+        │   │   ├── AdminRoutes.jsx
+        │   │   └── permissions.js
+        │   ├── services/
+        │   │   ├── adminApi.js
+        │   │   ├── authService.js
+        │   │   ├── customerService.js
+        │   │   ├── parcelService.js
+        │   │   └── trackingService.js
+        │   └── styles/
+        │       ├── admin-global.scss
+        │       ├── admin-main.scss
+        │       └── admin-variables.scss
+        ├── assets/images/logo.png
+        ├── components/
+        │   ├── Advantages.jsx
+        │   ├── Contact.jsx
+        │   ├── ExchangeRate.jsx
+        │   ├── Globe.jsx
+        │   ├── Hero.jsx
+        │   ├── ScrollReveal.jsx
+        │   ├── ShippingRates.jsx
+        │   └── TransportSolutions.jsx
+        ├── data/trackingRecords.js
+        ├── layout/
+        │   ├── Footer.jsx
+        │   └── Header.jsx
+        ├── pages/DetailsPage.jsx
+        ├── services/tracking.js
+        └── styles/main.scss
 ```
 
-## Rôle des fichiers principaux
+## Technologies
 
-### Démarrage et navigation
+### Frontend
 
-- `index.html` fournit le document HTML et le point de montage React.
-- `src/main.jsx` démarre React, charge les styles globaux et entoure l’application avec `BrowserRouter`.
-- `src/App.jsx` définit les routes, les pages et le layout commun avec l’en-tête et le pied de page.
+- React 19 et React DOM.
+- Vite pour le serveur de développement et le build.
+- React Router DOM pour les routes publiques et admin.
+- Sass/SCSS et Tailwind CSS.
+- Three.js pour le globe animé.
 
-Routes principales :
+Les scripts frontend sont définis dans `frontend/package.json` :
 
-- `/` : page d’accueil et sections de présentation.
-- `/tracking/details/:trackingNumber` : page de détails d’un colis.
-- `/details` et `/details.html` : anciennes routes de suivi conservées pour compatibilité.
-- `/admin/login` : connexion administrateur.
-- `/admin/dashboard`, `/admin/parcels`, `/admin/customers`, `/admin/tracking`, `/admin/shipments`, `/admin/invoices`, `/admin/payments`, `/admin/reports`, `/admin/users` et `/admin/settings` : espace d’administration protégé.
+```bash
+npm --prefix frontend run dev
+npm --prefix frontend run build
+npm --prefix frontend run preview
+```
 
-### Composants d’interface
+### Backend
 
-- `src/components/` contient les sections de la page d’accueil : introduction, globe, taux de change, tarifs, solutions de transport, avantages et contact.
-- `src/components/ScrollReveal.jsx` applique les apparitions progressives au défilement et respecte la préférence système de réduction des animations.
-- `src/layout/Header.jsx` et `src/layout/Footer.jsx` contiennent les éléments communs aux pages, dont le logo.
-- `src/pages/DetailsPage.jsx` présente la recherche, le résumé, les étapes et l’historique de suivi.
+- Node.js 20 ou plus récent, Express 5, MySQL via `mysql2`.
+- Validation de configuration et d’entrées avec Zod.
+- Authentification préparatoire par JWT dans un cookie HTTP-only.
 
-### Données et suivi
+Consulter `backend/README.md` pour configurer `.env`, MySQL et les commandes
+backend. Ne jamais enregistrer les secrets dans le dépôt.
 
-- `src/data/trackingRecords.js` contient les colis statiques utilisés pour la démonstration.
-- `src/services/tracking.js` normalise les codes de suivi et recherche les colis dans ces données.
+## Frontend : points d’entrée et routes
 
-Le suivi actuel fonctionne en mode démonstration, sans backend ni base de données. Les colis et événements d’exemple ne sont pas des données réelles.
+- `src/main.jsx` démarre React et place l’application dans `BrowserRouter`.
+- `src/App.jsx` définit les routes, les layouts publics et le point de montage
+  `/admin/*`.
+- `src/styles/main.scss` regroupe les styles du site public et les directives
+  Tailwind.
+- `src/components/` contient les sections de la page d’accueil.
+- `src/layout/` contient le header et le footer communs au site public.
+- `src/pages/DetailsPage.jsx` présente la recherche et le détail du suivi.
+
+Routes publiques existantes :
+
+| Route | Usage |
+|---|---|
+| `/` | Page d’accueil |
+| `/tracking/details/:trackingNumber` | Détail du code de suivi |
+| `/details` | Route historique, code lu depuis `?tracking=` |
+| `/details.html` | Alias historique de la page de détail |
+
+Ne pas changer ces URL ni leur comportement sans demande explicite.
+
+### Suivi public
+
+- `src/data/trackingRecords.js` contient des données de suivi de démonstration.
+- `src/services/tracking.js` normalise les codes, recherche les données locales
+  et ne renvoie que les colis déclarés publics.
+- Le suivi public n’est actuellement pas connecté à l’API ni à MySQL. Les
+  données présentes dans le dépôt ne sont pas des données réelles.
 
 ### Espace d’administration
 
-- `src/admin/routes/` déclare les routes admin, protège les pages et applique les permissions d’interface.
-- `src/admin/components/` contient le layout, la navigation et les composants d’interface réutilisables.
-- `src/admin/contexts/` gère l’état de session de l’interface.
-- `src/admin/services/` regroupe le client HTTP et les appels d’authentification, colis, clients et suivi.
-- `src/admin/pages/` contient le tableau de bord, les écrans de gestion et les pages de modules.
-- `src/admin/styles/` isole les styles administratifs des pages publiques.
+Les routes admin sont déclarées dans `src/admin/routes/AdminRoutes.jsx` :
 
-Les données visibles dans le tableau de bord et les pages de démonstration sont des exemples explicitement non connectés à une base. La connexion de démonstration est limitée au mode de développement; l’interface ne remplace jamais l’autorisation côté serveur.
+| Route | Usage |
+|---|---|
+| `/admin/login` | Connexion |
+| `/admin/dashboard` | Tableau de bord |
+| `/admin/parcels`, `/admin/parcels/new`, `/admin/parcels/:id`, `/admin/parcels/:id/edit` | Gestion des colis |
+| `/admin/customers`, `/admin/customers/new`, `/admin/customers/:id` | Gestion des clients |
+| `/admin/tracking` | Gestion du suivi |
+| `/admin/shipments`, `/admin/shipments/:id` | Expéditions |
+| `/admin/invoices` | Factures |
+| `/admin/payments` | Paiements |
+| `/admin/reports` | Rapports |
+| `/admin/users` | Utilisateurs |
+| `/admin/settings` | Paramètres |
 
-### Backend préparatoire
+`AdminProtectedRoute.jsx` protège l’accès selon la session; `permissions.js`
+filtre la navigation admin selon le rôle. Ce contrôle frontend sert à l’UX et ne
+remplace pas les autorisations obligatoires de l’API.
 
-`../backend/` contient l’API Express, la configuration MySQL, le schéma initial des utilisateurs et les points d’entrée de session. Seule l’authentification initiale est préparée; les routes des modules métier répondent `501` tant qu’elles ne sont pas implémentées. Consulter `../backend/README.md` pour la configuration et les tâches restantes.
+`AdminAuthContext.jsx` gère l’état de session. `authService.js` appelle
+`adminApi.js`, dont la base d’API par défaut est `/api`; elle peut être remplacée
+par `VITE_ADMIN_API_URL`. Les pages et données de démonstration sont sous
+`pages/` et `data/demoData.js`.
 
-### Styles et configuration
+La connexion `demo@corelink.local` / `demo-only` est réservée au mode
+développement frontend (`import.meta.env.DEV`). Ce n’est pas un compte backend.
+Les styles d’administration sont définis dans `src/admin/styles/` et doivent
+rester isolés du site public.
 
-- `src/styles/main.scss` regroupe les styles globaux, les styles spécifiques et les directives Tailwind CSS.
-- `tailwind.config.mjs` configure les fichiers analysés, la palette, les polices et les plugins Tailwind.
-- `postcss.config.mjs` connecte Tailwind CSS et Autoprefixer au traitement des styles.
-- `vite.config.js` configure Vite et son plugin React.
-- `.vscode/settings.json` définit les préférences d’indentation de l’espace de travail.
-- `package.json` décrit les scripts et dépendances; `package-lock.json` verrouille leurs versions.
+## Backend : état actuel
 
-## Commandes utiles
+Le backend est un squelette fonctionnel d’infrastructure, pas encore un système
+métier complet :
 
-```bash
-npm run dev
-npm run build
-npm run preview
-```
+- `src/app.js` configure Express, Helmet, CORS, cookies, JSON et routes API.
+- `src/server.js` vérifie la connexion MySQL avant de démarrer le serveur.
+- `src/config/env.js` valide les variables d’environnement.
+- `src/config/database.js` configure le pool MySQL.
+- `src/middlewares/` contient la gestion d’erreur, l’origine navigateur et les
+  gardes de session/rôle.
+- `src/modules/auth/auth.routes.js` contient les premières routes de connexion,
+  profil et déconnexion.
+- `src/database/schema.sql` crée seulement la table `admin_users`.
+- Les routes `/api/admin/*` répondent `501` tant que les modules métier ne sont
+  pas implémentés.
+
+Endpoints actuellement prévus :
+
+- `GET /api/health`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
+- `/api/admin/*` : protégé, mais non implémenté (`501`)
+
+Aucun compte admin initial, endpoint métier colis/client, migration métier ni
+connexion frontend-backend déployée n’est fourni pour le moment. Les accès et
+données affichés dans les écrans de démonstration ne doivent pas être considérés
+comme persistés.
+
+## Consignes utiles pour les futures modifications
+
+1. Examiner les fichiers existants avant de changer l’architecture ou les
+   dépendances.
+2. Préserver le site public et ses routes; limiter les changements admin à
+   `src/admin/` et aux points d’intégration strictement nécessaires.
+3. Garder les styles admin sous `.admin-shell` / `.admin-login-screen`; éviter
+   les styles globaux génériques susceptibles d’affecter le public.
+4. Réutiliser React Router, les services existants et les conventions déjà
+   présentes au lieu d’ajouter une seconde application.
+5. Ne pas prétendre qu’une page démo utilise la base de données.
+6. Vérifier les changements frontend avec `npm --prefix frontend run build`.
+7. Ne jamais exposer les détails privés d’un colis; toute autorisation réelle
+   doit également être vérifiée côté serveur.

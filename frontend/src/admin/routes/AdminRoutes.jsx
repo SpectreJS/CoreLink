@@ -3,11 +3,11 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import AdminLayout from '../components/layout/AdminLayout.jsx';
 import AdminProtectedRoute from './AdminProtectedRoute.jsx';
 import AdminLoginPage from '../pages/AdminLoginPage.jsx';
+import Dashboard from '../pages/Dashboard.jsx';
 import {
   AdminCustomerDetailsPage,
   AdminCustomerFormPage,
   AdminCustomersPage,
-  AdminDashboardPage,
   AdminModulePage,
   AdminParcelDetailsPage,
   AdminParcelFormPage,
@@ -21,7 +21,7 @@ export default function AdminRoutes() {
       <Route element={<AdminProtectedRoute />}>
         <Route element={<AdminLayout />}>
           <Route index element={<Navigate replace to="dashboard" />} />
-          <Route path="dashboard" element={<AdminDashboardPage />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="parcels" element={<AdminParcelsPage />} />
           <Route path="parcels/new" element={<AdminParcelFormPage />} />
           <Route path="parcels/:id/edit" element={<AdminParcelFormPage edit />} />

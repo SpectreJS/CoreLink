@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/common/AdminUI.jsx';
-import { DEMO_PARCELS, DEMO_DASHBOARD_STATS } from '../data/demoData.js';
+import { DEMO_PARCELS } from '../data/demoData.js';
 import { createParcel, getParcel, listParcels, updateParcel } from '../services/parcelService.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 
@@ -11,62 +11,6 @@ function PageHeading({ title, description, action }) {
       <div><h1>{title}</h1><p>{description}</p></div>
       {action}
     </div>
-  );
-}
-
-function statusTone(value) {
-  if (/livr|pay|actif|termin/i.test(value)) return 'success';
-  if (/transit|cours|attente/i.test(value)) return 'info';
-  if (/retard|annul|vérifier/i.test(value)) return 'warning';
-  return '';
-}
-
-export function AdminDashboardPage() {
-  return (
-    <>
-      <PageHeading title="Dashboard" description="Vue d’ensemble des opérations CoreLink." />
-      <p className="admin-demo-notice" style={{ marginBottom: 18 }}>Chiffres et activités ci-dessous : exemples fictifs, non reliés à une base de données.</p>
-      <div className="admin-grid">
-        {DEMO_DASHBOARD_STATS.map((stat) => (
-          <article className="admin-card admin-stat-card" key={stat.label}>
-            <div className="admin-stat-top"><span>{stat.label}</span><span className="admin-stat-icon material-symbols-outlined">{stat.icon}</span></div>
-            <strong>{stat.value}</strong><small>{stat.change}</small>
-          </article>
-        ))}
-        <section className="admin-card" style={{ gridColumn: 'span 8' }}>
-          <div className="admin-card-header"><h2>Activité récente</h2><AdminBadge tone="warning">Exemple</AdminBadge></div>
-          <div className="admin-card-body">
-            <div aria-label="Graphique d’activité de démonstration" style={{ display: 'flex', height: 180, alignItems: 'end', gap: 12 }}>
-              {[34, 52, 41, 70, 56, 88, 63, 76, 48, 94, 68, 82].map((height, index) => (
-                <div key={index} style={{ flex: 1, height: `${height}%`, minWidth: 8, borderRadius: '6px 6px 0 0', background: index > 8 ? '#2322F0' : '#00C3F2', opacity: 0.75 }} title={`Période ${index + 1}`} />
-              ))}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, color: '#7a8495', fontSize: 10 }}><span>Début période</span><span>Fin période</span></div>
-          </div>
-        </section>
-        <section className="admin-card" style={{ gridColumn: 'span 4' }}>
-          <div className="admin-card-header"><h2>À traiter</h2></div>
-          <div className="admin-card-body" style={{ display: 'grid', gap: 16, color: '#586477', fontSize: 12 }}>
-            <span>4 colis à préparer <AdminBadge tone="info">Démo</AdminBadge></span>
-            <span>3 paiements à vérifier <AdminBadge tone="warning">Démo</AdminBadge></span>
-            <span>2 factures en attente <AdminBadge>Démo</AdminBadge></span>
-          </div>
-        </section>
-        <section className="admin-card" style={{ gridColumn: 'span 12' }}>
-          <div className="admin-card-header"><h2>Colis récents</h2><AdminButton className="is-secondary" to="/admin/parcels">Voir les colis</AdminButton></div>
-          <AdminTable
-            columns={[
-              { key: 'tracking', label: 'Référence' },
-              { key: 'customer', label: 'Client' },
-              { key: 'destination', label: 'Destination' },
-              { key: 'status', label: 'Statut', render: (row) => <AdminBadge tone={statusTone(row.status)}>{row.status}</AdminBadge> },
-              { key: 'updated', label: 'Mise à jour' },
-            ]}
-            rows={DEMO_PARCELS.map((parcel, index) => ({ ...parcel, id: String(index) }))}
-          />
-        </section>
-      </div>
-    </>
   );
 }
 

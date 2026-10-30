@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+@config "../../../admin-tailwind.config.cjs";
+@tailwind utilities;
+
+.corelink-admin {
+  min-height: 100vh;
+  color: #0b1c30;
+  background: #f8f9ff;
+  color-scheme: light;
+  font-family: Inter, sans-serif;
+  isolation: isolate;
+}
+
+.corelink-admin *,
+.corelink-admin *::before,
+.corelink-admin *::after {
+  box-sizing: border-box;
+}
+
+.corelink-admin button,
+.corelink-admin input,
+.corelink-admin select {
+  font: inherit;
+}
+
+.corelink-admin a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.corelink-admin button {
+  cursor: pointer;
+}
+
+.corelink-admin .material-symbols-outlined {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.corelink-admin .custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.corelink-admin .custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.corelink-admin .custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.corelink-admin .custom-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: #cbd5e1;
+}
+
+.corelink-admin-sidebar {
+  transition: transform 180ms ease;
+}
+
+.corelink-admin-menu-overlay {
+  display: none;
+}
+
+.corelink-admin-popover {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(320px, calc(100vw - 32px));
+  border: 1px solid #c6c6cd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 14px 36px rgb(11 28 48 / 14%);
+}
+
+.corelink-admin-toast {
+  position: fixed;
+  z-index: 60;
+  right: 24px;
+  bottom: 24px;
+  max-width: min(420px, calc(100vw - 32px));
+  border: 1px solid #c6c6cd;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #0b1c30;
+  background: #fff;
+  box-shadow: 0 8px 26px rgb(11 28 48 / 16%);
+}
+
+.corelink-admin-modal-backdrop {
+  position: fixed;
+  z-index: 70;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(11 28 48 / 42%);
+}
+
+.corelink-admin-modal {
+  width: min(480px, 100%);
+  border: 1px solid #c6c6cd;
+  border-radius: 14px;
+  padding: 22px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgb(11 28 48 / 20%);
+}
+
+@media (max-width: 767px) {
+  .corelink-admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .corelink-admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .corelink-admin-menu-overlay.is-visible {
+    position: fixed;
+    z-index: 25;
+    inset: 0;
+    display: block;
+    border: 0;
+    background: rgb(11 28 48 / 42%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corelink-admin *,
+  .corelink-admin *::before,
+  .corelink-admin *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
