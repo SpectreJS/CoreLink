@@ -1,32 +1,54 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Globe from './Globe.jsx';
+import { findTrackingRecord, normalizeTrackingCode } from '../services/tracking.js';
+import { navigateTo } from '../utils/navigation.js';
 
 export default function Hero() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingState, setTrackingState] = useState('idle');
-  const timeoutRef = useRef(null);
+  const [trackingError, setTrackingError] = useState('');
+  const requestRef = useRef(null);
 
-  useEffect(() => () => window.clearTimeout(timeoutRef.current), []);
+  useEffect(() => () => requestRef.current?.abort(), []);
 
-  const searchTracking = (value = trackingNumber) => {
-    const normalized = value.trim().toUpperCase();
-    window.clearTimeout(timeoutRef.current);
-    setTrackingNumber(normalized);
+  const searchTracking = async (value = trackingNumber) => {
+    const normalized = normalizeTrackingCode(value);
+    requestRef.current?.abort();
 
     if (!normalized) {
+      setTrackingError(value.trim()
+        ? 'Le code de suivi contient des caractères invalides.'
+        : 'Veuillez saisir un numéro de suivi.');
       setTrackingState('error');
       return;
     }
 
+    setTrackingNumber(normalized);
+    setTrackingError('');
     setTrackingState('loading');
-    timeoutRef.current = window.setTimeout(() => {
-      setTrackingState(normalized.startsWith('CL') || normalized.length >= 5 ? 'results' : 'error');
-    }, 600);
+    const request = new AbortController();
+    requestRef.current = request;
+
+    try {
+      const record = await findTrackingRecord(normalized, request.signal);
+      if (!record) {
+        setTrackingError('Aucun colis ne correspond à ce numéro de suivi.');
+        setTrackingState('error');
+        return;
+      }
+
+      navigateTo(`/tracking/details/${encodeURIComponent(normalized)}`);
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+      setTrackingError(error.message || 'Impossible de vérifier ce numéro de suivi.');
+      setTrackingState('error');
+    }
   };
 
   const clearTracking = () => {
-    window.clearTimeout(timeoutRef.current);
+    requestRef.current?.abort();
     setTrackingNumber('');
+    setTrackingError('');
     setTrackingState('idle');
   };
 
@@ -53,7 +75,7 @@ export default function Hero() {
 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-glow to-electric">votre envoi ?</span>
 </h1>
 <p className="text-slate-gray text-base sm:text-lg max-w-xl font-normal leading-relaxed">
-            Entrez votre numéro de suivi pour connaître la position exacte et le statut de votre colis, où qu'il se trouve dans le monde.
+            Testez la recherche avec un code de démonstration. Ces données sont fictives et ne correspondent pas à des colis réels.
           </p>
 </div>
 
@@ -61,9 +83,8 @@ export default function Hero() {
 <div className="flex items-center justify-between text-[11px] font-mono text-slate-gray mb-3">
 <span className="flex items-center gap-1.5">
 <span className="w-1.5 h-1.5 rounded-full bg-delivered"></span>
-              SYSTÈME DE TRAÇABILITÉ EN DIRECT
+              SUIVI DE COLIS · MODE DÉMONSTRATION
             </span>
-<button className="text-cyan-glow cursor-pointer hover:underline border-0 bg-transparent p-0 font-mono" onClick={() => searchTracking('CL123456789')} type="button">Test démo: CL123456789</button>
 </div>
 <form className="space-y-3" id="tracking-form" onSubmit={(event) => { event.preventDefault(); searchTracking(); }}>
 <div className="relative flex flex-col sm:flex-row gap-2.5">
@@ -71,7 +92,7 @@ export default function Hero() {
 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-gray">
 <span className="material-symbols-outlined text-[20px]">search</span>
 </span>
-<input autoComplete="off" className="w-full pl-10 pr-9 py-3.5 rounded-xl bg-night/80 border border-white/10 text-white font-mono text-sm placeholder:text-slate-gray/60 focus:outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow transition-all uppercase tracking-wider" id="tracking-input" onChange={(event) => { setTrackingNumber(event.target.value); setTrackingState('idle'); }} placeholder="Exemple : CL123456789" spellCheck="false" type="text" value={trackingNumber} />
+<input autoComplete="off" className="w-full pl-10 pr-9 py-3.5 rounded-xl bg-night/80 border border-white/10 text-white font-mono text-sm placeholder:text-slate-gray/60 focus:outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow transition-all uppercase tracking-wider" id="tracking-input" onChange={(event) => { requestRef.current?.abort(); setTrackingNumber(event.target.value); setTrackingState('idle'); setTrackingError(''); }} placeholder="Exemple : CL-2026-00125" spellCheck="false" type="text" value={trackingNumber} />
 <button className={`${trackingNumber ? '' : 'hidden'} absolute inset-y-0 right-0 pr-3 flex items-center text-slate-gray hover:text-white`} id="clear-input-btn" onClick={clearTracking} type="button">
 <span className="material-symbols-outlined text-[18px]">cancel</span>
 </button>
@@ -83,7 +104,7 @@ export default function Hero() {
 </div>
 <p className="text-[12px] text-slate-gray font-sans flex items-center gap-1.5">
 <span className="material-symbols-outlined text-[14px] text-cyan-glow/80">info</span>
-              Le numéro de suivi figure sur votre reçu d'expédition.
+              Codes disponibles : CL-2026-00125 et CL123456789.
             </p>
 </form>
 
@@ -92,79 +113,9 @@ export default function Hero() {
 <p className="text-xs font-mono text-cyan-glow tracking-wider animate-pulse">INTERROGATION DES HUBS GUANGZHOU &amp; ANTANANARIVO...</p>
 </div>}
 
-{trackingState === 'results' && <div className="mt-5 pt-5 border-t border-white/10 space-y-4" id="tracking-results">
-<div className="p-3.5 rounded-xl bg-night/70 border border-white/10 flex flex-wrap items-center justify-between gap-3">
-<div>
-<span className="text-[10px] font-mono uppercase text-slate-gray block">Bordereau</span>
-<span className="text-sm font-mono font-bold text-white tracking-wider" id="res-tracking-id">{trackingNumber}</span>
-</div>
-<div>
-<span className="text-[10px] font-mono uppercase text-slate-gray block">Trajet</span>
-<span className="text-xs font-semibold text-cyan-glow">CAN (Guangzhou) ➔ TNR (Ivato)</span>
-</div>
-<div className="flex items-center gap-2">
-<span className="px-2.5 py-1 rounded-full bg-cyan-glow/10 text-cyan-glow border border-cyan-glow/30 text-[11px] font-mono flex items-center gap-1.5">
-<span className="w-1.5 h-1.5 rounded-full bg-cyan-glow animate-ping"></span>
-                  En transit maritime / aérien
-                </span>
-</div>
-</div>
-
-<div className="relative pl-6 space-y-5 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[2px] before:bg-white/10">
-
-<div className="relative">
-<div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-cyan-glow ring-4 ring-cyan-glow/20"></div>
-<div className="space-y-0.5">
-<div className="flex items-center justify-between text-xs">
-<span className="font-bold text-white">Toamasina / Antananarivo Distribution</span>
-<span className="text-[10px] font-mono text-cyan-glow font-medium">Étape en cours</span>
-</div>
-<p className="text-[12px] text-slate-gray">Vérification douanière en cours et préparation au bureau central de Behintsy.</p>
-<span className="text-[10px] font-mono text-slate-gray/70 block">Aujourd'hui · 09:30 UTC+3 — Antananarivo</span>
-</div>
-</div>
-
-<div className="relative">
-<div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-delivered"></div>
-<div className="space-y-0.5">
-<div className="flex items-center justify-between text-xs">
-<span className="font-bold text-white">Air / Maritime Cargo in Transit</span>
-<span className="text-[10px] font-mono text-delivered">Validé</span>
-</div>
-<p className="text-[12px] text-slate-gray">Traversée internationale Océan Indien confirmée par manifeste de vol.</p>
-<span className="text-[10px] font-mono text-slate-gray/70 block">23 Octobre · 21:15 — Corridor Cargo</span>
-</div>
-</div>
-
-<div className="relative">
-<div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-delivered"></div>
-<div className="space-y-0.5">
-<div className="flex items-center justify-between text-xs">
-<span className="font-bold text-white">Export Customs Cleared (Chine)</span>
-<span className="text-[10px] font-mono text-delivered">Validé</span>
-</div>
-<p className="text-[12px] text-slate-gray">Contrôle de conformité et scellage douanier certifié.</p>
-<span className="text-[10px] font-mono text-slate-gray/70 block">21 Octobre · 17:40 — Port / Aéroport CAN</span>
-</div>
-</div>
-
-<div className="relative">
-<div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-delivered"></div>
-<div className="space-y-0.5">
-<div className="flex items-center justify-between text-xs">
-<span className="font-bold text-white">Guangzhou Hub Reception</span>
-<span className="text-[10px] font-mono text-delivered">Validé</span>
-</div>
-<p className="text-[12px] text-slate-gray">Réception fournisseur (1688/Taobao), pesée volumétrique et étiquetage.</p>
-<span className="text-[10px] font-mono text-slate-gray/70 block">19 Octobre · 11:20 — Baiyun Logistics Hub</span>
-</div>
-</div>
-</div>
-</div>}
-
-{trackingState === 'error' && <div className="mt-4 p-3.5 rounded-xl bg-red-950/40 border border-red-500/30 text-red-200 text-xs flex items-center gap-3" id="tracking-error">
+{trackingState === 'error' && <div className="mt-4 p-3.5 rounded-xl bg-red-950/40 border border-red-500/30 text-red-200 text-xs flex items-center gap-3" id="tracking-error" role="alert">
 <span className="material-symbols-outlined text-[20px] text-red-400">error</span>
-<div className="">Numéro introuvable. Utilisez le numéro démo <button className="font-mono underline cursor-pointer border-0 bg-transparent p-0 text-red-200" onClick={() => searchTracking('CL123456789')} type="button">CL123456789</button> pour tester la visualisation.</div>
+<div className="">{trackingError}</div>
 </div>}
 </div>
 </div>

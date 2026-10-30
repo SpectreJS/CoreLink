@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './layout/Header.jsx';
 import Hero from './components/Hero.jsx';
 import ExchangeRate from './components/ExchangeRate.jsx';
@@ -10,14 +10,34 @@ import Footer from './layout/Footer.jsx';
 import DetailsPage from './pages/DetailsPage.jsx';
 
 export default function App() {
-  const path = window.location.pathname.replace(/\/+$/, '');
-  const isDetailsPage = path === '/details' || path === '/details.html';
+  const [path, setPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleNavigation = () => setPath(window.location.pathname);
+    window.addEventListener('popstate', handleNavigation);
+    return () => window.removeEventListener('popstate', handleNavigation);
+  }, []);
+
+  let trackingNumber = null;
+  let isDetailsPage = false;
+  const detailsMatch = path.match(/^\/tracking\/details\/([^/]+)\/?$/);
+  if (detailsMatch) {
+    isDetailsPage = true;
+    try {
+      trackingNumber = decodeURIComponent(detailsMatch[1]);
+    } catch {
+      trackingNumber = '';
+    }
+  } else if (path === '/details' || path === '/details.html') {
+    isDetailsPage = true;
+    trackingNumber = new URLSearchParams(window.location.search).get('tracking') || '';
+  }
 
   return (
     <div className={isDetailsPage ? 'details-layout' : undefined}>
       <Header />
       {isDetailsPage ? (
-        <DetailsPage />
+        <DetailsPage trackingNumber={trackingNumber} />
       ) : (
         <main>
           <Hero />
