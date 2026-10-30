@@ -36,7 +36,7 @@ export default function ExchangeRate() {
 <div className="w-full lg:w-auto bg-navy/80 rounded-xl p-5 sm:p-6 border border-white/10 flex flex-col sm:flex-row items-center gap-6">
 <div className="text-center sm:text-left">
 <span className="text-[11px] font-mono uppercase text-slate-gray tracking-wider block">COURS DU JOUR OFFICIEL</span>
-<div className="text-3xl sm:text-4xl font-mono font-bold text-cyan-glow tracking-tight mt-1">
+<div className="text-3xl sm:text-2xl font-mono font-bold text-cyan-glow tracking-tight mt-1">
               1 RMB = 660 Ar
             </div>
 <span className="inline-block mt-2 px-2.5 py-0.5 rounded bg-delivered/10 border border-delivered/20 text-delivered text-[11px] font-mono">

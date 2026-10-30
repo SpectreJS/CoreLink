@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Globe from './Globe.jsx';
 import { findTrackingRecord, normalizeTrackingCode } from '../services/tracking.js';
-import { navigateTo } from '../utils/navigation.js';
 
 export default function Hero() {
+  const navigate = useNavigate();
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingState, setTrackingState] = useState('idle');
   const [trackingError, setTrackingError] = useState('');
@@ -37,7 +38,7 @@ export default function Hero() {
         return;
       }
 
-      navigateTo(`/tracking/details/${encodeURIComponent(normalized)}`);
+      navigate(`/tracking/details/${encodeURIComponent(normalized)}`);
     } catch (error) {
       if (error.name === 'AbortError') return;
       setTrackingError(error.message || 'Impossible de vérifier ce numéro de suivi.');
