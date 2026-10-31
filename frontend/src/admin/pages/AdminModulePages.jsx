@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/common/AdminUI.jsx';
 import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
+import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
 import { DEMO_PARCEL_RECORDS } from '../data/parcelManagementData.js';
 import '../styles/admin-parcels.scss';
 import { createParcel, getParcel, listParcels, updateParcel } from '../services/parcelService.js';
@@ -212,6 +213,8 @@ export function AdminParcelFormPage({ edit = false }) {
       setSaving(false);
     }
   };
+
+  if (!edit) return <AdminParcelCreatePage />;
 
   return (
     <>
