@@ -22,33 +22,19 @@ const parcelTheme = createTheme({
   shape: { borderRadius: 8 },
 });
 
-const statusOptions = [
-  ['reception_chine', 'Réception Chine (Guangzhou/Yiwu)'],
-  ['transit_aerien', 'En transit aérien'],
-  ['transit_maritime', 'En transit maritime'],
-  ['dedouanement', 'Dédouanement Ivato TNR'],
-  ['pret_retrait', 'Prêt au retrait (Behintsy)'],
-  ['livre', 'Livré au client'],
-];
-
-const transportOptions = [
-  ['air_express', 'Fret Aérien Express (3-5j)'],
-  ['air_regulier', 'Fret Aérien Régulier (7-10j)'],
-  ['sea_lcl', 'Fret Maritime Groupage (LCL 35j)'],
-];
-
 const statusTone = {
-  dedouanement: 'customs',
-  transit_maritime: 'transit',
-  pret_retrait: 'ready',
-  reception_chine: 'reception',
-  transit_aerien: 'air',
-  livre: 'delivered',
+  customs_clearance: 'customs',
+  air_transit: 'transit',
+  sea_transit: 'transit',
+  ready_for_pickup: 'ready',
+  received: 'reception',
+  delivered: 'delivered',
+  delayed: 'customs',
 };
 
 function formatRegisteredAt(value) {
   if (!value) return '—';
-  const date = new Date(`${value}T00:00:00Z`);
+  const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit',
@@ -60,7 +46,7 @@ function formatRegisteredAt(value) {
 
 function matchesDateRange(dateValue, dateRange) {
   if (dateRange === 'all') return true;
-  const date = new Date(`${dateValue}T00:00:00`);
+  const date = new Date(dateValue);
   if (Number.isNaN(date.getTime())) return false;
   const now = new Date();
   if (dateRange === 'month') {
@@ -82,7 +68,17 @@ function ParcelStatus({ parcel }) {
   );
 }
 
-export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onEdit }) {
+export default function ParcelDataTable({
+  rows,
+  statuses,
+  transportModes,
+  isLoading,
+  canMutate,
+  onDelete,
+  onDeleteMany,
+  onView,
+  onEdit,
+}) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [transportFilter, setTransportFilter] = useState('');
@@ -142,16 +138,16 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
       size: 118,
       Cell: ({ row }) => (
         <div className="parcel-table-weight-cell">
-          <strong>{row.original.weight}</strong>
-          <span>{row.original.volume} (Vol.)</span>
+          <strong>{Number(row.original.weight).toLocaleString('fr-FR')} kg</strong>
+          <span>{Number(row.original.volume).toLocaleString('fr-FR')} m³ (Vol.)</span>
         </div>
       ),
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'statusLabel',
       header: 'Statut Opérationnel',
       size: 180,
-      Cell: ({ row }) => <ParcelStatus parcel={row.original} />,
+      Cell: ({ row }) => <ParcelStatus parcel={{ ...row.original, status: row.original.statusLabel }} />,
     },
     {
       accessorKey: 'registeredAt',
@@ -229,24 +225,28 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
         >
           <span className="material-symbols-outlined">visibility</span>
         </button>
-        <button
-          aria-label={`Modifier le colis ${row.original.trackingNumber}`}
-          className="parcel-row-action"
-          onClick={() => onEdit(row.original)}
-          title="Modifier"
-          type="button"
-        >
-          <span className="material-symbols-outlined">edit</span>
-        </button>
-        <button
-          aria-label={`Supprimer le colis ${row.original.trackingNumber}`}
-          className="parcel-row-action is-danger"
-          onClick={() => onDelete(row.original)}
-          title="Supprimer"
-          type="button"
-        >
-          <span className="material-symbols-outlined">delete</span>
-        </button>
+        {canMutate && (
+          <>
+            <button
+              aria-label={`Modifier le colis ${row.original.trackingNumber}`}
+              className="parcel-row-action"
+              onClick={() => onEdit(row.original)}
+              title="Modifier"
+              type="button"
+            >
+              <span className="material-symbols-outlined">edit</span>
+            </button>
+            <button
+              aria-label={`Supprimer le colis ${row.original.trackingNumber}`}
+              className="parcel-row-action is-danger"
+              onClick={() => onDelete(row.original)}
+              title="Supprimer"
+              type="button"
+            >
+              <span className="material-symbols-outlined">delete</span>
+            </button>
+          </>
+        )}
       </div>
     ),
   });
@@ -258,6 +258,8 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
     setDateFilter('all');
     table.resetColumnFilters();
   };
+
+  const selectedIds = table.getSelectedRowModel().rows.map(({ original }) => original.id);
 
   return (
     <>
@@ -282,7 +284,7 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
             <span className="sr-only">Filtrer par statut</span>
             <select onChange={(event) => setStatusFilter(event.target.value)} value={statusFilter}>
               <option value="">Statut : Tous les statuts</option>
-              {statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              {statuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
             </select>
             <span aria-hidden="true" className="material-symbols-outlined">expand_more</span>
           </label>
@@ -290,7 +292,7 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
             <span className="sr-only">Filtrer par mode de transport</span>
             <select onChange={(event) => setTransportFilter(event.target.value)} value={transportFilter}>
               <option value="">Fret : Tous les modes</option>
-              {transportOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              {transportModes.map((mode) => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
             </select>
             <span aria-hidden="true" className="material-symbols-outlined">expand_more</span>
           </label>
@@ -306,6 +308,12 @@ export default function ParcelDataTable({ rows, isLoading, onDelete, onView, onE
           </label>
         </div>
         <div className="parcel-filter-actions">
+          {canMutate && selectedIds.length > 0 && (
+            <button className="parcel-reset-button" onClick={() => onDeleteMany(selectedIds)} type="button">
+              <span aria-hidden="true" className="material-symbols-outlined">delete</span>
+              Supprimer ({selectedIds.length})
+            </button>
+          )}
           <button className="parcel-reset-button" onClick={resetFilters} type="button">
             <span aria-hidden="true" className="material-symbols-outlined">filter_alt_off</span>
             Réinitialiser

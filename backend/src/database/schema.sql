@@ -10,3 +10,38 @@ CREATE TABLE IF NOT EXISTS admin_users (
   PRIMARY KEY (id),
   UNIQUE KEY uq_admin_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS parcels (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  tracking_number VARCHAR(32) NULL,
+  description VARCHAR(500) NOT NULL,
+  category VARCHAR(120) NOT NULL,
+  package_count INT UNSIGNED NOT NULL DEFAULT 1,
+  seal_number VARCHAR(120) NULL,
+  weight DECIMAL(12,2) NOT NULL,
+  length DECIMAL(12,2) NOT NULL DEFAULT 0,
+  width DECIMAL(12,2) NOT NULL DEFAULT 0,
+  height DECIMAL(12,2) NOT NULL DEFAULT 0,
+  volume_cbm DECIMAL(12,3) NOT NULL DEFAULT 0,
+  volumetric_weight DECIMAL(12,2) NOT NULL DEFAULT 0,
+  customer_name VARCHAR(200) NOT NULL,
+  recipient_name VARCHAR(200) NULL,
+  phone VARCHAR(40) NOT NULL,
+  email VARCHAR(254) NULL,
+  tax_id VARCHAR(120) NULL,
+  origin VARCHAR(200) NOT NULL,
+  destination VARCHAR(200) NOT NULL,
+  transport_mode ENUM('air_regular', 'air_express', 'sea_lcl') NOT NULL,
+  status ENUM('received', 'air_transit', 'sea_transit', 'customs_clearance', 'ready_for_pickup', 'delivered', 'delayed') NOT NULL DEFAULT 'received',
+  notes TEXT NULL,
+  created_by BIGINT UNSIGNED NOT NULL,
+  updated_by BIGINT UNSIGNED NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_parcels_tracking_number (tracking_number),
+  KEY idx_parcels_status_created (status, created_at),
+  KEY idx_parcels_customer_name (customer_name),
+  CONSTRAINT fk_parcels_created_by FOREIGN KEY (created_by) REFERENCES admin_users (id),
+  CONSTRAINT fk_parcels_updated_by FOREIGN KEY (updated_by) REFERENCES admin_users (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/common/AdminUI.jsx';
 import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
 import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
-import { DEMO_PARCEL_RECORDS } from '../data/parcelManagementData.js';
 import '../styles/admin-parcels.scss';
-import { createParcel, getParcel, listParcels, updateParcel } from '../services/parcelService.js';
+import { deleteParcel, deleteParcels, listParcelStatuses, listParcelTransportModes, listParcels } from '../services/parcelService.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
+import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
+import { useAdminAuth } from '../contexts/AdminAuthContext.jsx';
 
 function PageHeading({ title, description, action }) {
   return (
@@ -18,75 +19,82 @@ function PageHeading({ title, description, action }) {
 }
 
 export function AdminParcelsPage() {
-  const [rows, setRows] = useState(DEMO_PARCEL_RECORDS);
+  const [rows, setRows] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [transportModes, setTransportModes] = useState([]);
   const [error, setError] = useState('');
-  const [usingDemoData, setUsingDemoData] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [actionNotice, setActionNotice] = useState('');
+  const { user } = useAdminAuth();
+  const location = useLocation();
+  const canMutate = ['admin', 'manager', 'operator'].includes(user?.role);
 
-  useEffect(() => {
-    listParcels()
-      .then((result) => {
-        if (!Array.isArray(result?.data)) {
-          throw new Error('La réponse de l’API colis est invalide.');
-        }
-        setRows(result.data.map((parcel) => {
-          const customer = parcel.customer && typeof parcel.customer === 'object' ? parcel.customer : {};
-          const trackingNumber = parcel.trackingNumber || parcel.tracking || '';
-          const status = parcel.status || 'Statut inconnu';
-          const transportMode = parcel.transportMode || parcel.mode || '';
-          const normalizedStatus = {
-            'Dédouanement Ivato': 'dedouanement',
-            'En transit maritime': 'transit_maritime',
-            'Prêt au retrait': 'pret_retrait',
-            'Réception Chine': 'reception_chine',
-            'En transit aérien': 'transit_aerien',
-            'Livré au client': 'livre',
-          }[status] || parcel.statusKey || 'other';
-          const normalizedTransport = transportMode.toLowerCase().includes('maritime')
-            ? 'sea_lcl'
-            : transportMode.toLowerCase().includes('régulier')
-              ? 'air_regulier'
-              : transportMode.toLowerCase().includes('aérien')
-                ? 'air_express'
-                : parcel.transportKey || '';
-
-          return {
-            ...parcel,
-            id: String(parcel.id ?? trackingNumber),
-            trackingNumber,
-            customerName: parcel.customerName || customer.name || parcel.customer || '—',
-            customerPhone: parcel.customerPhone || customer.phone || parcel.phone || '—',
-            contents: parcel.contents || parcel.description || parcel.content || '—',
-            category: parcel.category || parcel.contentType || '',
-            origin: parcel.origin || '—',
-            destination: parcel.destination || '—',
-            transportMode,
-            transportKey: parcel.transportKey || normalizedTransport,
-            weight: parcel.weight ? `${parcel.weight}${typeof parcel.weight === 'number' ? ' kg' : ''}` : '—',
-            volume: parcel.volume ? `${parcel.volume}${typeof parcel.volume === 'number' ? ' m³' : ''}` : '—',
-            status,
-            statusKey: normalizedStatus,
-            registeredAt: parcel.registeredAt || parcel.createdAt || '',
-          };
-        }));
-        setUsingDemoData(false);
-        setError('');
-      })
-      .catch((loadError) => {
-        setRows(DEMO_PARCEL_RECORDS);
-        setUsingDemoData(true);
-        setError(`API indisponible : ${loadError.message} Les données fictives du template sont affichées.`);
-      })
-      .finally(() => setIsLoading(false));
+  const loadParcels = useCallback(async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const [parcelResult, statusResult, transportResult] = await Promise.all([
+        listParcels(),
+        listParcelStatuses(),
+        listParcelTransportModes(),
+      ]);
+      if (!Array.isArray(parcelResult?.data) || !Array.isArray(statusResult?.data) || !Array.isArray(transportResult?.data)) {
+        throw new Error('Réponse API invalide lors du chargement des colis.');
+      }
+      const statusLabels = new Map(statusResult.data.map((status) => [status.value, status.label]));
+      const transportLabels = new Map(transportResult.data.map((mode) => [mode.value, mode.label]));
+      setStatuses(statusResult.data);
+      setTransportModes(transportResult.data);
+      setRows(parcelResult.data.map((parcel) => ({
+        ...parcel,
+        id: String(parcel.id),
+        trackingNumber: parcel.trackingNumber,
+        customerPhone: parcel.phone,
+        contents: parcel.description,
+        transportKey: parcel.transportMode,
+        transportMode: transportLabels.get(parcel.transportMode) || parcel.transportMode,
+        weight: Number(parcel.weight),
+        volume: Number(parcel.volume),
+        statusKey: parcel.status,
+        statusLabel: parcel.statusLabel || statusLabels.get(parcel.status) || parcel.status,
+      })));
+    } catch (loadError) {
+      setRows([]);
+      setStatuses([]);
+      setTransportModes([]);
+      setError(loadError.message || 'Impossible de charger les colis.');
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const deleteParcelLocally = (parcel) => {
-    if (!window.confirm(`Retirer le colis ${parcel.trackingNumber} de la liste affichée ? Cette action ne sera pas enregistrée dans le backend.`)) {
-      return;
+  useEffect(() => { loadParcels(); }, [loadParcels]);
+  useEffect(() => {
+    if (location.state?.notice) setActionNotice(location.state.notice);
+  }, [location.state]);
+
+  const removeParcel = async (parcel) => {
+    if (!window.confirm(`Supprimer définitivement le colis ${parcel.trackingNumber} ?`)) return;
+    setActionNotice('');
+    try {
+      await deleteParcel(parcel.id);
+      setActionNotice(`Le colis ${parcel.trackingNumber} a été supprimé.`);
+      await loadParcels();
+    } catch (deleteError) {
+      setError(deleteError.message || 'La suppression du colis a échoué.');
     }
-    setRows((currentRows) => currentRows.filter((row) => row.id !== parcel.id));
-    setActionNotice('Colis retiré de la liste affichée. La suppression n’est pas encore prise en charge par le backend.');
+  };
+
+  const removeParcels = async (ids) => {
+    if (!window.confirm(`Supprimer définitivement les ${ids.length} colis sélectionnés ?`)) return;
+    setActionNotice('');
+    try {
+      const result = await deleteParcels(ids);
+      setActionNotice(`${result?.deletedCount ?? ids.length} colis supprimé(s).`);
+      await loadParcels();
+    } catch (deleteError) {
+      setError(deleteError.message || 'La suppression des colis a échoué.');
+    }
   };
 
   const exportParcels = () => {
@@ -100,7 +108,7 @@ export function AdminParcelsPage() {
       ['destination', 'Destination'],
       ['weight', 'Poids'],
       ['volume', 'Volume'],
-      ['status', 'Statut'],
+      ['statusLabel', 'Statut'],
       ['registeredAt', 'Date enregistrée'],
     ];
     const escapeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
@@ -117,6 +125,10 @@ export function AdminParcelsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const inTransitCount = rows.filter((row) => ['air_transit', 'sea_transit'].includes(row.statusKey)).length;
+  const customsCount = rows.filter((row) => row.statusKey === 'customs_clearance').length;
+  const readyCount = rows.filter((row) => row.statusKey === 'ready_for_pickup').length;
+
   return (
     <div className="parcel-management-page">
       <section className="parcel-management-heading">
@@ -130,13 +142,17 @@ export function AdminParcelsPage() {
           <p>Surveillez, filtrez et mettez à jour l’ensemble des colis enregistrés sur le corridor Chine – Madagascar.</p>
         </div>
         <div className="parcel-management-heading-actions">
+          <button aria-label="Actualiser la liste des colis" className="parcel-management-button" disabled={isLoading} onClick={loadParcels} type="button">
+            <span aria-hidden="true" className={`material-symbols-outlined ${isLoading ? 'animate-spin' : ''}`}>refresh</span>
+            Actualiser
+          </button>
           <button className="parcel-management-button" onClick={exportParcels} type="button">
             <span aria-hidden="true" className="material-symbols-outlined">download</span>
             Exporter CSV / Excel
           </button>
           <Link className="parcel-management-button is-primary" to="/admin/parcels/new">
             <span aria-hidden="true" className="material-symbols-outlined">add</span>
-            + Enregistrer un colis
+            Enregistrer un colis
           </Link>
         </div>
       </section>
@@ -145,119 +161,57 @@ export function AdminParcelsPage() {
         <div className="parcel-kpi-card">
           <div>
             <span className="parcel-kpi-label">Total corridor actif</span>
-            <div className="parcel-kpi-values"><strong>1 428</strong><span className="is-positive">+18% ce mois</span></div>
+            <div className="parcel-kpi-values"><strong>{isLoading ? '…' : rows.length}</strong><span className="is-positive">colis enregistrés</span></div>
           </div>
           <div className="parcel-kpi-icon"><span aria-hidden="true" className="material-symbols-outlined">inventory_2</span></div>
         </div>
         <div className="parcel-kpi-card">
           <div>
             <span className="parcel-kpi-label">En Vol / Transit Mer</span>
-            <div className="parcel-kpi-values"><strong>542</strong><span className="is-blue">3 vols / 2 navires</span></div>
+            <div className="parcel-kpi-values"><strong>{isLoading ? '…' : inTransitCount}</strong><span className="is-blue">selon le statut actuel</span></div>
           </div>
           <div className="parcel-kpi-icon is-muted"><span aria-hidden="true" className="material-symbols-outlined">flight_takeoff</span></div>
         </div>
         <div className="parcel-kpi-card">
           <div>
             <span className="parcel-kpi-label">Dédouanement Ivato</span>
-            <div className="parcel-kpi-values"><strong>116</strong><span>T1 / DAU en cours</span></div>
+            <div className="parcel-kpi-values"><strong>{isLoading ? '…' : customsCount}</strong><span>statut actuel</span></div>
           </div>
           <div className="parcel-kpi-icon is-customs"><span aria-hidden="true" className="material-symbols-outlined">gavel</span></div>
         </div>
         <div className="parcel-kpi-card">
           <div>
             <span className="parcel-kpi-label">Prêt au retrait TNR</span>
-            <div className="parcel-kpi-values"><strong>89</strong><span className="is-positive">Entrepôt Behintsy</span></div>
+            <div className="parcel-kpi-values"><strong>{isLoading ? '…' : readyCount}</strong><span className="is-positive">statut actuel</span></div>
           </div>
           <div className="parcel-kpi-icon is-ready"><span aria-hidden="true" className="material-symbols-outlined">check_circle</span></div>
         </div>
       </section>
 
-      {usingDemoData && !error && <div className="parcel-data-notice">Données de démonstration fictives — elles ne sont pas enregistrées dans le backend.</div>}
       {error && <div className="parcel-data-error" role="alert">{error}</div>}
       {actionNotice && <div className="parcel-data-notice" role="status">{actionNotice}</div>}
 
       <ParcelDataTable
+        canMutate={canMutate}
         isLoading={isLoading}
-        onDelete={deleteParcelLocally}
+        onDelete={removeParcel}
+        onDeleteMany={removeParcels}
         onEdit={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}/edit`)}
         onView={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}`)}
         rows={rows}
+        statuses={statuses}
+        transportModes={transportModes}
       />
     </div>
   );
 }
 
 export function AdminParcelFormPage({ edit = false }) {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ trackingNumber: '', customerId: '', destination: '', status: 'En préparation' });
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (!edit || !id) return;
-    getParcel(id).then((result) => setForm((current) => ({ ...current, ...(result?.data || {}) }))).catch((loadError) => setError(loadError.message));
-  }, [edit, id]);
-
-  const setField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
-  const submit = async (event) => {
-    event.preventDefault();
-    setError('');
-    setSaving(true);
-    try {
-      const result = edit ? await updateParcel(id, form) : await createParcel(form);
-      navigate(`/admin/parcels/${encodeURIComponent(result?.data?.id || id || form.trackingNumber)}`);
-    } catch (saveError) {
-      setError(saveError.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (!edit) return <AdminParcelCreatePage />;
-
-  return (
-    <>
-      <PageHeading title={edit ? 'Modifier le colis' : 'Nouveau colis'} description="Les modifications nécessitent un backend API configuré." />
-      <div className="admin-demo-notice" style={{ marginBottom: 18 }}>Aucune donnée n’est enregistrée localement. Le formulaire attend le service API sécurisé.</div>
-      <section className="admin-card admin-card-body">
-        {error && <p className="admin-alert" role="alert">{error}</p>}
-        <form className="admin-form" onSubmit={submit}>
-          <div className="admin-form-grid">
-            <AdminField label="Numéro de suivi" onChange={setField('trackingNumber')} required value={form.trackingNumber} />
-            <AdminField label="ID client" onChange={setField('customerId')} required value={form.customerId} />
-            <AdminField label="Destination" onChange={setField('destination')} required value={form.destination} />
-            <AdminField as="select" label="Statut" onChange={setField('status')} value={form.status}>
-              {['En préparation', 'En transit', 'Arrivé', 'Livré', 'Retardé'].map((status) => <option key={status}>{status}</option>)}
-            </AdminField>
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <AdminButton disabled={saving} type="submit">{saving ? 'Enregistrement…' : 'Enregistrer'}</AdminButton>
-            <AdminButton className="is-secondary" onClick={() => navigate('/admin/parcels')}>Annuler</AdminButton>
-          </div>
-        </form>
-      </section>
-    </>
-  );
+  return <AdminParcelCreatePage edit={edit} />;
 }
 
 export function AdminParcelDetailsPage() {
-  const { id } = useParams();
-  const [parcel, setParcel] = useState(null);
-  const [error, setError] = useState('');
-  useEffect(() => { getParcel(id).then((result) => setParcel(result?.data)).catch((loadError) => setError(loadError.message)); }, [id]);
-
-  return (
-    <>
-      <PageHeading title="Détail du colis" description={`Référence : ${id}`} action={<AdminButton to={`/admin/parcels/${encodeURIComponent(id)}/edit`}>Modifier</AdminButton>} />
-      <section className="admin-card admin-card-body">
-        <div className="admin-demo-notice">Détails non chargés depuis un backend. Aucun colis réel n’est exposé.</div>
-        {error && <p className="admin-alert" style={{ marginTop: 16 }}>{error}</p>}
-        {parcel && <pre style={{ overflow: 'auto', color: '#344054' }}>{JSON.stringify(parcel, null, 2)}</pre>}
-        {!parcel && !error && <p className="admin-empty-state">Chargement du détail…</p>}
-      </section>
-    </>
-  );
+  return <ParcelDetailsPage />;
 }
 
 export function AdminCustomersPage() {

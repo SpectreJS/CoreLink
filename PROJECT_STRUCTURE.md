@@ -230,3 +230,6 @@ comme persistés.
 6. Vérifier les changements frontend avec `npm --prefix frontend run build`.
 7. Ne jamais exposer les détails privés d’un colis; toute autorisation réelle
    doit également être vérifiée côté serveur.
+
+
+accès admin ==> http://localhost:5173/admin/

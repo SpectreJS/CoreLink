@@ -14,8 +14,8 @@ volontairement `501` tant que leur modèle métier et leurs endpoints n’existe
 4. Installer les dépendances dans ce dossier avec `npm install`.
 5. Lancer `npm run dev`.
 
-Le schéma ne crée qu’une table d’utilisateurs. Aucun utilisateur par défaut,
-mot de passe de démonstration ou jeu de données métier n’est créé.
+Le schéma crée les tables d’utilisateurs et de colis. Aucun utilisateur par
+défaut, mot de passe de démonstration ou jeu de données métier n’est créé.
 
 ## Endpoints disponibles
 
@@ -23,8 +23,16 @@ mot de passe de démonstration ou jeu de données métier n’est créé.
 - `POST /api/auth/login` : ouverture de session avec un compte présent en base.
 - `GET /api/auth/me` : profil de l’utilisateur authentifié.
 - `POST /api/auth/logout` : fermeture de session.
-- `/api/admin/*` : nécessite une session et un rôle autorisé, puis répond `501`
-  jusqu’à l’implémentation des endpoints métier.
+- `GET /api/admin/parcels` : liste des colis.
+- `GET /api/admin/parcels/:id` : détail d’un colis.
+- `POST /api/admin/parcels` : création (admin, manager, operator).
+- `PATCH /api/admin/parcels/:id` : modification (admin, manager, operator).
+- `DELETE /api/admin/parcels/:id` et `DELETE /api/admin/parcels/bulk` :
+  suppressions (admin, manager, operator).
+- `GET /api/admin/parcels/statuses` et `/transport-modes` : valeurs métier
+  centralisées.
+- Les autres routes `/api/admin/*` répondent `501` tant que leurs modules
+  métier ne sont pas implémentés.
 
 Les mutations vérifient l’origine web configurée; les réponses utilisent des
 cookies de session HTTP-only, CORS limité à `WEB_ORIGIN`, Helmet, validation des

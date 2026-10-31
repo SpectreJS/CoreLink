@@ -55,7 +55,7 @@ router.post('/login', loginLimiter, asyncHandler(async (request, response) => {
     httpOnly: true,
     secure: isProduction || env.COOKIE_SECURE,
     sameSite: 'lax',
-    path: '/api/auth',
+    path: '/api',
     maxAge: 15 * 60 * 1000,
   });
   response.json({ user: publicUser(user) });
@@ -76,7 +76,7 @@ router.post('/logout', authenticate, (request, response) => {
     httpOnly: true,
     secure: isProduction || env.COOKIE_SECURE,
     sameSite: 'lax',
-    path: '/api/auth',
+    path: '/api',
   });
   response.status(204).end();
 });

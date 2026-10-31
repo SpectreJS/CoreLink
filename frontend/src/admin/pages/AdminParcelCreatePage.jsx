@@ -1,39 +1,35 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { createParcel } from '../services/parcelService.js';
-import { listCustomers } from '../services/customerService.js';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { createParcel, getParcel, listParcelStatuses, listParcelTransportModes, updateParcel } from '../services/parcelService.js';
 import '../styles/admin-parcel-create.scss';
 
 const initialForm = {
-  trackingNumber: `CL-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+  trackingNumber: '',
   description: '',
-  category: 'dg',
+  category: '',
   packageCount: '1',
   sealNumber: '',
   weight: '',
   length: '',
   width: '',
   height: '',
-  customerId: '',
   customerName: '',
   recipientName: '',
   phone: '',
   email: '',
   taxId: '',
-  origin: 'Guangzhou Hub Baiyun (CAN) — Entrepôt Principal',
-  destination: 'Antananarivo — Dépôt Central Behintsy (TNR)',
-  transportMode: 'air_regular',
-  status: 'En préparation',
+  origin: '',
+  destination: '',
+  transportMode: '',
+  status: '',
   notes: '',
 };
 
-const transportChoices = [
-  { value: 'air_regular', label: 'Fret Aérien Régulier', detail: 'Délai estimé: 7 - 10 jours', icon: 'flight_takeoff' },
-  { value: 'air_express', label: 'Aérien Express VIP', detail: 'Délai: 4 - 6 jours', icon: 'rocket_launch' },
-  { value: 'sea_lcl', label: 'Maritime Groupage LCL', detail: 'Délai: 35 - 45 jours', icon: 'directions_boat' },
-];
-
-const getCustomerName = (customer) => customer.name || customer.fullName || customer.companyName || customer.email || '';
+const transportIcons = {
+  air_regular: 'flight_takeoff',
+  air_express: 'rocket_launch',
+  sea_lcl: 'directions_boat',
+};
 
 function ParcelSectionHeading({ icon, children, trailing }) {
   return (
@@ -71,16 +67,15 @@ function ParcelInput({ field, form, setField, className, ...props }) {
   );
 }
 
-export default function AdminParcelCreatePage() {
+export default function AdminParcelCreatePage({ edit = false }) {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
-  const [customers, setCustomers] = useState([]);
-  const [customerError, setCustomerError] = useState('');
+  const [statuses, setStatuses] = useState([]);
+  const [transportModes, setTransportModes] = useState([]);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
-  const [photo, setPhoto] = useState(null);
-  const [documents, setDocuments] = useState([]);
-  const [photoPreview, setPhotoPreview] = useState('');
+  const [isLoading, setIsLoading] = useState(edit);
 
   const length = Number(form.length) || 0;
   const width = Number(form.width) || 0;
@@ -90,109 +85,80 @@ export default function AdminParcelCreatePage() {
   const volumetricWeight = volumeCm / 5000;
   const volumeCbm = volumeCm / 1000000;
   const chargeableWeight = Math.max(actualWeight, volumetricWeight);
-  const eta = useMemo(() => {
-    const estimatedDate = new Date();
-    const estimatedDays = form.transportMode === 'sea_lcl' ? 40 : form.transportMode === 'air_express' ? 5 : 8;
-    estimatedDate.setDate(estimatedDate.getDate() + estimatedDays);
-    return new Intl.DateTimeFormat('fr-FR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    }).format(estimatedDate);
-  }, [form.transportMode]);
-
   useEffect(() => {
     let active = true;
-    listCustomers()
-      .then((result) => {
-        if (!Array.isArray(result?.data)) {
-          throw new Error('La réponse de la liste des clients est invalide.');
+    setIsLoading(true);
+    Promise.all([
+      listParcelStatuses(),
+      listParcelTransportModes(),
+      edit ? getParcel(id) : Promise.resolve(null),
+    ])
+      .then(([statusResult, transportResult, parcelResult]) => {
+        if (!Array.isArray(statusResult?.data) || !Array.isArray(transportResult?.data)) {
+          throw new Error('Les options de gestion des colis reçues de l’API sont invalides.');
         }
-        if (active) setCustomers(result.data.filter((customer) => customer?.id != null && getCustomerName(customer)));
+        if (active) {
+          setStatuses(statusResult.data);
+          setTransportModes(transportResult.data);
+          if (edit) {
+            if (!parcelResult?.data) throw new Error('Colis introuvable.');
+            const parcel = parcelResult.data;
+            setForm(Object.fromEntries(Object.keys(initialForm).map((field) => [
+              field,
+              parcel[field] == null ? '' : String(parcel[field]),
+            ])));
+          }
+        }
       })
       .catch((loadError) => {
-        if (active) setCustomerError(`Liste des clients indisponible : ${loadError.message}`);
+        if (active) setError(loadError.message || 'Impossible de charger le formulaire colis.');
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
       });
     return () => { active = false; };
-  }, []);
-
-  useEffect(() => {
-    if (!photo) {
-      setPhotoPreview('');
-      return undefined;
-    }
-    const previewUrl = URL.createObjectURL(photo);
-    setPhotoPreview(previewUrl);
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [photo]);
+  }, [edit, id]);
 
   const setField = (field) => (event) => {
     const value = event.target.value;
     setForm((current) => ({ ...current, [field]: value }));
   };
 
-  const selectCustomer = (event) => {
-    const customerName = event.target.value;
-    const selectedCustomer = customers.find((customer) => getCustomerName(customer) === customerName);
-    setForm((current) => ({
-      ...current,
-      customerName,
-      customerId: selectedCustomer ? String(selectedCustomer.id) : '',
-      phone: selectedCustomer?.phone || current.phone,
-      email: selectedCustomer?.email || current.email,
-      recipientName: selectedCustomer?.contactName || current.recipientName,
-    }));
-  };
-
   const submit = async (event) => {
     event.preventDefault();
     setError('');
-    if (!form.customerId) {
-      setError('Sélectionnez un client enregistré dans la liste pour associer le colis à son compte.');
-      return;
-    }
-    if (!photo) {
-      setError('Ajoutez une photo de réception et de contrôle de pesée.');
-      return;
-    }
 
     setSaving(true);
     try {
       const payload = {
-        ...form,
+        description: form.description.trim(),
+        category: form.category,
         packageCount: Number(form.packageCount),
+        sealNumber: form.sealNumber || null,
         weight: Number(form.weight),
         length: Number(form.length) || 0,
         width: Number(form.width) || 0,
         height: Number(form.height) || 0,
-        volumetricWeight: Number(volumetricWeight.toFixed(2)),
-        volume: Number(volumeCbm.toFixed(3)),
-        chargeableWeight: Number(chargeableWeight.toFixed(2)),
-        inspectionPhotoName: photo.name,
-        documentNames: documents.map((document) => document.name),
-        eta,
+        customerName: form.customerName.trim(),
+        recipientName: form.recipientName || null,
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        taxId: form.taxId || null,
+        origin: form.origin,
+        destination: form.destination,
+        transportMode: form.transportMode,
+        notes: form.notes || null,
       };
-      const result = await createParcel(payload);
-      const parcelId = result?.data?.id || result?.data?.trackingNumber || form.trackingNumber;
-      navigate(`/admin/parcels/${encodeURIComponent(parcelId)}`);
+      if (edit) payload.status = form.status;
+      const result = edit ? await updateParcel(id, payload) : await createParcel(payload);
+      navigate('/admin/parcels', {
+        state: { notice: edit ? `Le colis ${result?.data?.trackingNumber || form.trackingNumber} a été modifié.` : `Le colis ${result?.data?.trackingNumber} a été créé.` },
+      });
     } catch (saveError) {
       setError(saveError.message || 'Enregistrement du colis impossible.');
     } finally {
       setSaving(false);
     }
-  };
-
-  const addDocuments = (event) => {
-    const selected = Array.from(event.target.files || []);
-    setDocuments((current) => [
-      ...current,
-      ...selected.filter((file) => !current.some((existing) => existing.name === file.name && existing.size === file.size)),
-    ]);
-    event.target.value = '';
-  };
-
-  const removeDocument = (indexToRemove) => {
-    setDocuments((current) => current.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -205,11 +171,11 @@ export default function AdminParcelCreatePage() {
               Colis
             </Link>
             <span aria-hidden="true" className="text-outline">/</span>
-            <span aria-current="page" className="text-secondary font-semibold">Nouvel enregistrement</span>
+            <span aria-current="page" className="text-secondary font-semibold">{edit ? 'Modifier le colis' : 'Nouvel enregistrement'}</span>
           </nav>
           <div className="parcel-create-heading">
             <div>
-              <h1 className="text-headline-lg font-headline-lg text-on-surface tracking-tight">Enregistrer un nouveau colis</h1>
+              <h1 className="text-headline-lg font-headline-lg text-on-surface tracking-tight">{edit ? `Modifier le colis ${form.trackingNumber}` : 'Enregistrer un nouveau colis'}</h1>
               <p className="text-body-md font-body-md text-on-surface-variant mt-1">
                 Saisissez les informations techniques, douanières et logistiques du fret réceptionné.
               </p>
@@ -222,6 +188,7 @@ export default function AdminParcelCreatePage() {
         </div>
 
         {error && <p className="admin-alert mb-5" role="alert">{error}</p>}
+        {isLoading && <p aria-live="polite" className="mb-5 text-on-surface-variant">Chargement des données du colis…</p>}
 
         <form className="space-y-6" id="parcel-form" onSubmit={submit}>
           <section className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm">
@@ -233,14 +200,7 @@ export default function AdminParcelCreatePage() {
                   <span aria-hidden="true" className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant">
                     <span className="material-symbols-outlined text-[18px]">lock</span>
                   </span>
-                  <ParcelInput
-                    className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-code-tracking font-code-tracking text-secondary font-bold cursor-not-allowed"
-                    field="trackingNumber"
-                    form={form}
-                    readOnly
-                    setField={setField}
-                  />
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-label-sm font-label-sm text-outline">Généré auto</span>
+                  <input className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-code-tracking font-code-tracking text-secondary font-bold cursor-not-allowed" id="trackingNumber" readOnly value={form.trackingNumber || 'Généré après enregistrement'} />
                 </span>
               </ParcelField>
               <ParcelField className="md:col-span-8" htmlFor="description">
@@ -251,6 +211,7 @@ export default function AdminParcelCreatePage() {
                 Catégorie marchande douanière <span className="text-error">*</span>
                 <span className="relative block">
                   <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15 appearance-none" id="category" onChange={setField('category')} required value={form.category}>
+                    <option value="">Sélectionner une catégorie</option>
                     <option value="dg">Électronique sensible (PCB, Microcontrôleurs)</option>
                     <option value="gen">Marchandises Générales (Textile, Articles ménagers)</option>
                     <option value="battery">Produits avec Batterie / DG (Dangerous Goods UN3481)</option>
@@ -268,6 +229,14 @@ export default function AdminParcelCreatePage() {
                 N° Ruban de sécurité scellé
                 <ParcelInput field="sealNumber" form={form} setField={setField} type="text" />
               </ParcelField>
+              {edit && (
+                <ParcelField className="md:col-span-6" htmlFor="status">
+                  Statut du colis
+                  <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface" id="status" onChange={setField('status')} required value={form.status}>
+                    {statuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
+                  </select>
+                </ParcelField>
+              )}
             </div>
           </section>
 
@@ -328,27 +297,16 @@ export default function AdminParcelCreatePage() {
           </section>
 
           <section className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm">
-            <ParcelSectionHeading
-              icon="person_pin"
-              trailing={(
-                <Link className="text-label-md font-label-md text-secondary hover:underline flex items-center gap-1" to="/admin/customers/new">
-                  <span aria-hidden="true" className="material-symbols-outlined text-[16px]">person_add</span>
-                  Créer un nouveau client
-                </Link>
-              )}
-            >
+            <ParcelSectionHeading icon="person_pin">
               3. Informations Client &amp; Expéditeur
             </ParcelSectionHeading>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <ParcelField className="md:col-span-6" htmlFor="customerName">
-                Client destinataire (Recherche autocomplétée) <span className="text-error">*</span>
+                Nom du client <span className="text-error">*</span>
                 <span className="relative block">
                   <span aria-hidden="true" className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">badge</span></span>
-                  <input autoComplete="off" className="w-full pl-9 pr-8 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15" id="customerName" list="parcel-customers" onChange={selectCustomer} required value={form.customerName} />
-                  <datalist id="parcel-customers">{customers.map((customer) => <option key={customer.id} value={getCustomerName(customer)} />)}</datalist>
-                  <span aria-hidden="true" className={`absolute inset-y-0 right-0 flex items-center pr-3 ${form.customerId ? 'text-secondary' : 'text-outline'}`}><span className="material-symbols-outlined text-[18px]">{form.customerId ? 'verified' : 'search'}</span></span>
+                  <ParcelInput className="w-full pl-9 pr-8 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15" field="customerName" form={form} required setField={setField} />
                 </span>
-                {customerError && <span className="mt-1 block text-label-sm text-error">{customerError}</span>}
               </ParcelField>
               <ParcelField className="md:col-span-6" htmlFor="recipientName">
                 Nom complet du contact réceptionnaire
@@ -379,16 +337,18 @@ export default function AdminParcelCreatePage() {
             <ParcelSectionHeading icon="alt_route">4. Acheminement &amp; Mode de Transport</ParcelSectionHeading>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <ParcelField className="md:col-span-6" htmlFor="origin">
-                Hub d'origine (Point de collecte Chine)
-                <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary" id="origin" onChange={setField('origin')} value={form.origin}>
-                  <option>Guangzhou Hub Baiyun (CAN) — Entrepôt Principal</option>
+                Hub d'origine (Point de collecte Chine) <span className="text-error">*</span>
+                <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary" id="origin" onChange={setField('origin')} required value={form.origin}>
+                  <option value="">Sélectionner un hub</option>
                   <option>Yiwu Consolidation Center (YIW)</option>
                   <option>Shenzhen Bao'an Cross-dock (SZX)</option>
+                  <option>Guangzhou Hub Baiyun (CAN) — Entrepôt Principal</option>
                 </select>
               </ParcelField>
               <ParcelField className="md:col-span-6" htmlFor="destination">
-                Destination finale (Dépôt Madagascar)
-                <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary" id="destination" onChange={setField('destination')} value={form.destination}>
+                Destination finale (Dépôt Madagascar) <span className="text-error">*</span>
+                <select className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary" id="destination" onChange={setField('destination')} required value={form.destination}>
+                  <option value="">Sélectionner une destination</option>
                   <option>Antananarivo — Dépôt Central Behintsy (TNR)</option>
                   <option>Toamasina — Dépôt Maritime Port (TMM)</option>
                   <option>Majunga — Agence Régionale Ouest (MJN)</option>
@@ -397,14 +357,14 @@ export default function AdminParcelCreatePage() {
               <div className="md:col-span-8">
                 <span className="block text-label-md font-label-md text-on-surface mb-2">Mode d'expédition préconisé</span>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {transportChoices.map((choice) => (
+                  {transportModes.map((choice) => (
                     <label className={`parcel-transport-choice ${form.transportMode === choice.value ? 'is-selected' : ''}`} key={choice.value}>
                       <span className="flex items-center justify-between mb-1">
-                        <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[22px]">{choice.icon}</span>
-                        <input checked={form.transportMode === choice.value} className="text-secondary focus:ring-secondary h-4 w-4" name="shipping-mode" onChange={setField('transportMode')} type="radio" value={choice.value} />
+                        <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[22px]">{transportIcons[choice.value] || 'local_shipping'}</span>
+                        <input checked={form.transportMode === choice.value} className="text-secondary focus:ring-secondary h-4 w-4" name="shipping-mode" onChange={setField('transportMode')} required type="radio" value={choice.value} />
                       </span>
                       <span className="text-title-sm font-title-sm text-on-surface font-semibold">{choice.label}</span>
-                      <span className="text-label-sm font-label-sm text-on-surface-variant">{choice.detail}</span>
+                      <span className="text-label-sm font-label-sm text-on-surface-variant">{choice.value.replaceAll('_', ' ')}</span>
                     </label>
                   ))}
                 </div>
@@ -413,9 +373,9 @@ export default function AdminParcelCreatePage() {
                 Date estimée d'arrivée (ETA Ivato TNR)
                 <span className="relative block">
                   <span aria-hidden="true" className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">calendar_today</span></span>
-                  <input className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface font-semibold" id="eta" readOnly value={`${eta} (Estimée)`} />
+                  <input className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-md font-body-md text-on-surface font-semibold" id="eta" readOnly value="Non renseignée par le backend" />
                 </span>
-                <span className="text-label-sm font-label-sm text-on-surface-variant mt-1.5">Estimée selon le mode de transport sélectionné</span>
+                <span className="text-label-sm font-label-sm text-on-surface-variant mt-1.5">Aucune estimation réelle n'est disponible.</span>
               </ParcelField>
             </div>
           </section>
@@ -425,31 +385,14 @@ export default function AdminParcelCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <div className="md:col-span-6 flex flex-col gap-3">
                 <label className="block text-label-md font-label-md text-on-surface">
-                  Photo de réception &amp; contrôle de pesée effectuée <span className="text-error">*</span>
+                  Photo de réception &amp; contrôle de pesée
                 </label>
                 <div className="border-2 border-dashed border-outline-variant rounded-xl p-4 bg-surface-container-low flex flex-col items-center justify-center text-center">
                   <div className="relative w-full h-52 rounded-lg overflow-hidden bg-surface-container border border-outline-variant flex items-center justify-center">
-                    {photoPreview
-                      ? <img alt={`Aperçu de ${photo.name}`} className="w-full h-full object-cover" src={photoPreview} />
-                      : (
-                        <div className="flex flex-col items-center gap-2 text-on-surface-variant">
-                          <span aria-hidden="true" className="material-symbols-outlined text-4xl">add_a_photo</span>
-                          <span className="text-label-sm">Sélectionnez une photo du colis pesé</span>
-                        </div>
-                      )}
-                    {photo && (
-                      <div className="absolute bottom-2 left-2 right-2 bg-on-background/80 backdrop-blur-sm px-3 py-1.5 rounded text-left flex items-center justify-between">
-                        <span className="text-on-secondary text-label-sm font-label-sm truncate">{photo.name}</span>
-                        <span className="text-tertiary-fixed text-label-sm font-label-sm font-bold">Sélectionnée</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <label className="px-3 py-1 bg-surface-container-lowest border border-outline-variant text-label-md font-label-md rounded text-on-surface hover:bg-surface-container cursor-pointer">
-                      {photo ? 'Remplacer l’image' : 'Ajouter une photo'}
-                      <input accept="image/*" className="sr-only" onChange={(event) => setPhoto(event.target.files?.[0] || null)} type="file" />
-                    </label>
-                    {photo && <button className="px-3 py-1 text-label-md font-label-md text-error hover:bg-error-container rounded" onClick={() => setPhoto(null)} type="button">Supprimer</button>}
+                    <div className="flex flex-col items-center gap-2 px-4 text-on-surface-variant">
+                      <span aria-hidden="true" className="material-symbols-outlined text-4xl">add_a_photo</span>
+                      <span className="text-label-sm">Le backend ne prend pas encore en charge le stockage des photos.</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -457,26 +400,11 @@ export default function AdminParcelCreatePage() {
                 <div>
                   <span className="block text-label-md font-label-md text-on-surface mb-1.5">Pièces jointes douanières (Facture 1688 / Taobao, Packing List)</span>
                   <div className="border border-outline-variant rounded-lg p-3 bg-surface-container-lowest space-y-2">
-                    {documents.map((document, index) => (
-                      <div className="flex items-center justify-between gap-2 p-2 rounded bg-surface-container-low border border-outline-variant" key={`${document.name}-${document.size}-${index}`}>
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-secondary">{document.type === 'application/pdf' ? 'picture_as_pdf' : 'draft'}</span>
-                          <div className="flex min-w-0 flex-col">
-                            <span className="text-label-md font-label-md text-on-surface truncate">{document.name}</span>
-                            <span className="text-label-sm font-label-sm text-on-surface-variant">{Math.max(1, Math.round(document.size / 1024))} KB</span>
-                          </div>
-                        </div>
-                        <button aria-label={`Retirer ${document.name}`} className="text-outline hover:text-error" onClick={() => removeDocument(index)} type="button">
-                          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">close</span>
-                        </button>
-                      </div>
-                    ))}
-                    <label className="w-full py-2 border-2 border-dashed border-outline-variant rounded-lg text-label-md font-label-md text-on-surface-variant hover:text-secondary hover:border-secondary flex items-center justify-center gap-2 cursor-pointer">
+                    <div className="w-full py-2 border-2 border-dashed border-outline-variant rounded-lg text-label-md text-on-surface-variant flex items-center justify-center gap-2">
                       <span aria-hidden="true" className="material-symbols-outlined text-[18px]">upload_file</span>
-                      Téléverser une facture ou bordereau
-                      <input accept=".pdf,.png,.jpg,.jpeg,.webp" className="sr-only" multiple onChange={addDocuments} type="file" />
-                    </label>
-                    <p className="text-label-sm text-on-surface-variant">Les fichiers sont sélectionnés localement ; le service API actuel ne transmet pas leur contenu.</p>
+                      Téléversement non disponible
+                    </div>
+                    <p className="text-label-sm text-on-surface-variant">Aucun endpoint backend ne permet actuellement d'enregistrer ces fichiers.</p>
                   </div>
                 </div>
                 <ParcelField htmlFor="notes">
@@ -489,9 +417,9 @@ export default function AdminParcelCreatePage() {
 
           <div className="parcel-create-actions">
             <button className="parcel-create-secondary" disabled={saving} onClick={() => navigate('/admin/parcels')} type="button">Annuler</button>
-            <button className="parcel-create-primary" disabled={saving} type="submit">
+            <button className="parcel-create-primary" disabled={saving || isLoading || transportModes.length === 0} type="submit">
               <span aria-hidden="true" className="material-symbols-outlined text-[18px]">save</span>
-              {saving ? 'Enregistrement…' : 'Enregistrer le colis'}
+              {saving ? 'Enregistrement…' : edit ? 'Enregistrer les modifications' : 'Enregistrer le colis'}
             </button>
           </div>
         </form>
