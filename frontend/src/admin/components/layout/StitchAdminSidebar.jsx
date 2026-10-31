@@ -7,8 +7,8 @@ const navigationGroups = [
   {
     label: 'Opérations Logistiques',
     links: [
-      { to: '/admin/dashboard', label: 'Tous les colis', icon: 'inventory_2', count: '1 428', exact: true },
-      { to: '/admin/parcels', label: 'Réception Guangzhou', icon: 'warehouse', count: '84' },
+      { to: '/admin/dashboard', label: 'Dashboard', icon: 'inventory_2', count: '1 428', exact: true },
+      { to: '/admin/parcels', label: 'Gestion des colis', icon: 'warehouse', count: '84' },
       { to: '/admin/shipments', label: 'Expéditions Fret', icon: 'flight_takeoff', count: '342' },
       { to: '/admin/tracking', label: 'Dédouanement Ivato TNR', icon: 'gavel', count: '56', warning: true },
       { to: '/admin/parcels', label: 'Livraisons Behintsy', icon: 'local_shipping' },

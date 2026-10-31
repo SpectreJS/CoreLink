@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/common/AdminUI.jsx';
-import { DEMO_PARCELS } from '../data/demoData.js';
+import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
+import { DEMO_PARCEL_RECORDS } from '../data/parcelManagementData.js';
+import '../styles/admin-parcels.scss';
 import { createParcel, getParcel, listParcels, updateParcel } from '../services/parcelService.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 
@@ -15,22 +17,172 @@ function PageHeading({ title, description, action }) {
 }
 
 export function AdminParcelsPage() {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(DEMO_PARCEL_RECORDS);
   const [error, setError] = useState('');
+  const [usingDemoData, setUsingDemoData] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [actionNotice, setActionNotice] = useState('');
+
   useEffect(() => {
-    listParcels().then((result) => setRows(result?.data || [])).catch((loadError) => setError(loadError.message));
+    listParcels()
+      .then((result) => {
+        if (!Array.isArray(result?.data)) {
+          throw new Error('La réponse de l’API colis est invalide.');
+        }
+        setRows(result.data.map((parcel) => {
+          const customer = parcel.customer && typeof parcel.customer === 'object' ? parcel.customer : {};
+          const trackingNumber = parcel.trackingNumber || parcel.tracking || '';
+          const status = parcel.status || 'Statut inconnu';
+          const transportMode = parcel.transportMode || parcel.mode || '';
+          const normalizedStatus = {
+            'Dédouanement Ivato': 'dedouanement',
+            'En transit maritime': 'transit_maritime',
+            'Prêt au retrait': 'pret_retrait',
+            'Réception Chine': 'reception_chine',
+            'En transit aérien': 'transit_aerien',
+            'Livré au client': 'livre',
+          }[status] || parcel.statusKey || 'other';
+          const normalizedTransport = transportMode.toLowerCase().includes('maritime')
+            ? 'sea_lcl'
+            : transportMode.toLowerCase().includes('régulier')
+              ? 'air_regulier'
+              : transportMode.toLowerCase().includes('aérien')
+                ? 'air_express'
+                : parcel.transportKey || '';
+
+          return {
+            ...parcel,
+            id: String(parcel.id ?? trackingNumber),
+            trackingNumber,
+            customerName: parcel.customerName || customer.name || parcel.customer || '—',
+            customerPhone: parcel.customerPhone || customer.phone || parcel.phone || '—',
+            contents: parcel.contents || parcel.description || parcel.content || '—',
+            category: parcel.category || parcel.contentType || '',
+            origin: parcel.origin || '—',
+            destination: parcel.destination || '—',
+            transportMode,
+            transportKey: parcel.transportKey || normalizedTransport,
+            weight: parcel.weight ? `${parcel.weight}${typeof parcel.weight === 'number' ? ' kg' : ''}` : '—',
+            volume: parcel.volume ? `${parcel.volume}${typeof parcel.volume === 'number' ? ' m³' : ''}` : '—',
+            status,
+            statusKey: normalizedStatus,
+            registeredAt: parcel.registeredAt || parcel.createdAt || '',
+          };
+        }));
+        setUsingDemoData(false);
+        setError('');
+      })
+      .catch((loadError) => {
+        setRows(DEMO_PARCEL_RECORDS);
+        setUsingDemoData(true);
+        setError(`API indisponible : ${loadError.message} Les données fictives du template sont affichées.`);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
+  const deleteParcelLocally = (parcel) => {
+    if (!window.confirm(`Retirer le colis ${parcel.trackingNumber} de la liste affichée ? Cette action ne sera pas enregistrée dans le backend.`)) {
+      return;
+    }
+    setRows((currentRows) => currentRows.filter((row) => row.id !== parcel.id));
+    setActionNotice('Colis retiré de la liste affichée. La suppression n’est pas encore prise en charge par le backend.');
+  };
+
+  const exportParcels = () => {
+    const columns = [
+      ['trackingNumber', 'N° de suivi'],
+      ['customerName', 'Client'],
+      ['customerPhone', 'Téléphone'],
+      ['contents', 'Nature & contenu'],
+      ['transportMode', 'Mode de transport'],
+      ['origin', 'Origine'],
+      ['destination', 'Destination'],
+      ['weight', 'Poids'],
+      ['volume', 'Volume'],
+      ['status', 'Statut'],
+      ['registeredAt', 'Date enregistrée'],
+    ];
+    const escapeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+    const csv = [
+      columns.map(([, label]) => escapeCell(label)).join(';'),
+      ...rows.map((row) => columns.map(([key]) => escapeCell(row[key])).join(';')),
+    ].join('\r\n');
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'corelink-colis.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <>
-      <PageHeading title="Gestion des colis" description="Enregistrez, affectez et mettez à jour les colis." action={<AdminButton to="/admin/parcels/new"><span className="material-symbols-outlined">add</span>Nouveau colis</AdminButton>} />
-      <div className="admin-demo-notice">La liste API n’est pas encore disponible. Les exemples montrés sur le dashboard sont fictifs.</div>
-      <section className="admin-card" style={{ marginTop: 18 }}>
-        <div className="admin-card-header"><h2>Colis</h2><AdminBadge>{rows.length} résultat(s)</AdminBadge></div>
-        {error && <p className="admin-alert" style={{ margin: 16 }}>{error}</p>}
-        <AdminTable columns={[{ key: 'trackingNumber', label: 'Numéro' }, { key: 'status', label: 'Statut' }, { key: 'destination', label: 'Destination' }]} rows={rows.map((row) => ({ ...row, id: row.id || row.trackingNumber }))} emptyMessage="Aucune donnée serveur; le service backend n’est pas encore connecté." />
+    <div className="parcel-management-page">
+      <section className="parcel-management-heading">
+        <div>
+          <nav aria-label="Fil d’Ariane" className="parcel-management-breadcrumb">
+            <span>Opérations</span>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Gestion des colis</span>
+          </nav>
+          <h1>Gestion des Colis &amp; Expéditions</h1>
+          <p>Surveillez, filtrez et mettez à jour l’ensemble des colis enregistrés sur le corridor Chine – Madagascar.</p>
+        </div>
+        <div className="parcel-management-heading-actions">
+          <button className="parcel-management-button" onClick={exportParcels} type="button">
+            <span aria-hidden="true" className="material-symbols-outlined">download</span>
+            Exporter CSV / Excel
+          </button>
+          <Link className="parcel-management-button is-primary" to="/admin/parcels/new">
+            <span aria-hidden="true" className="material-symbols-outlined">add</span>
+            + Enregistrer un colis
+          </Link>
+        </div>
       </section>
-    </>
+
+      <section aria-label="Indicateurs colis" className="parcel-kpi-grid">
+        <div className="parcel-kpi-card">
+          <div>
+            <span className="parcel-kpi-label">Total corridor actif</span>
+            <div className="parcel-kpi-values"><strong>1 428</strong><span className="is-positive">+18% ce mois</span></div>
+          </div>
+          <div className="parcel-kpi-icon"><span aria-hidden="true" className="material-symbols-outlined">inventory_2</span></div>
+        </div>
+        <div className="parcel-kpi-card">
+          <div>
+            <span className="parcel-kpi-label">En Vol / Transit Mer</span>
+            <div className="parcel-kpi-values"><strong>542</strong><span className="is-blue">3 vols / 2 navires</span></div>
+          </div>
+          <div className="parcel-kpi-icon is-muted"><span aria-hidden="true" className="material-symbols-outlined">flight_takeoff</span></div>
+        </div>
+        <div className="parcel-kpi-card">
+          <div>
+            <span className="parcel-kpi-label">Dédouanement Ivato</span>
+            <div className="parcel-kpi-values"><strong>116</strong><span>T1 / DAU en cours</span></div>
+          </div>
+          <div className="parcel-kpi-icon is-customs"><span aria-hidden="true" className="material-symbols-outlined">gavel</span></div>
+        </div>
+        <div className="parcel-kpi-card">
+          <div>
+            <span className="parcel-kpi-label">Prêt au retrait TNR</span>
+            <div className="parcel-kpi-values"><strong>89</strong><span className="is-positive">Entrepôt Behintsy</span></div>
+          </div>
+          <div className="parcel-kpi-icon is-ready"><span aria-hidden="true" className="material-symbols-outlined">check_circle</span></div>
+        </div>
+      </section>
+
+      {usingDemoData && !error && <div className="parcel-data-notice">Données de démonstration fictives — elles ne sont pas enregistrées dans le backend.</div>}
+      {error && <div className="parcel-data-error" role="alert">{error}</div>}
+      {actionNotice && <div className="parcel-data-notice" role="status">{actionNotice}</div>}
+
+      <ParcelDataTable
+        isLoading={isLoading}
+        onDelete={deleteParcelLocally}
+        onEdit={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}/edit`)}
+        onView={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}`)}
+        rows={rows}
+      />
+    </div>
   );
 }
 

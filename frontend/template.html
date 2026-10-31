@@ -1,0 +1,1675 @@
+<!doctype html>
+<html class="h-full bg-background" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>CoreLink Sourcing &amp; Logistics — Gestion des Colis</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Material Symbols -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed-variant": "#3f465c",
+              "primary-fixed": "#dae2fd",
+              "surface-container-lowest": "#ffffff",
+              outline: "#76777d",
+              "surface-container-highest": "#d3e4fe",
+              "on-primary-fixed": "#131b2e",
+              "on-background": "#0b1c30",
+              tertiary: "#000000",
+              "on-secondary-fixed-variant": "#003ea8",
+              background: "#f8f9ff",
+              "surface-tint": "#565e74",
+              "on-error-container": "#93000a",
+              "inverse-on-surface": "#eaf1ff",
+              "on-surface-variant": "#45464d",
+              "on-surface": "#0b1c30",
+              "tertiary-fixed": "#7ffc97",
+              "surface-dim": "#cbdbf5",
+              "secondary-fixed": "#dbe1ff",
+              "surface-container": "#e5eeff",
+              "tertiary-container": "#002109",
+              "on-primary": "#ffffff",
+              "surface-container-high": "#dce9ff",
+              surface: "#f8f9ff",
+              "on-tertiary": "#ffffff",
+              "primary-container": "#131b2e",
+              "outline-variant": "#c6c6cd",
+              "on-error": "#ffffff",
+              "on-secondary-fixed": "#00174b",
+              "on-tertiary-container": "#009842",
+              "surface-bright": "#f8f9ff",
+              "on-primary-container": "#7c839b",
+              "inverse-primary": "#bec6e0",
+              "on-secondary-container": "#fefcff",
+              error: "#ba1a1a",
+              "secondary-container": "#316bf3",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#b4c5ff",
+              "inverse-surface": "#213145",
+              "on-tertiary-fixed-variant": "#005320",
+              "on-tertiary-fixed": "#002109",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#d3e4fe",
+              secondary: "#0051d5",
+              "primary-fixed-dim": "#bec6e0",
+              "surface-container-low": "#eff4ff",
+              primary: "#000000",
+              "tertiary-fixed-dim": "#62df7d",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            spacing: {
+              "space-md": "1rem",
+              gutter: "1.5rem",
+              "space-lg": "1.5rem",
+              "margin-mobile": "1rem",
+              margin: "2rem",
+              "gutter-mobile": "1rem",
+              "space-xl": "2.5rem",
+              "space-sm": "0.5rem",
+              "space-xs": "0.25rem",
+            },
+            fontFamily: {
+              "body-md": ["Inter"],
+              "code-tracking": ["Inter"],
+              "title-sm": ["Inter"],
+              "title-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "headline-lg": ["Manrope"],
+              "body-sm": ["Inter"],
+              "label-sm": ["Inter"],
+              "headline-sm": ["Manrope"],
+              "headline-lg-mobile": ["Manrope"],
+              "headline-xl": ["Manrope"],
+              "headline-xl-mobile": ["Manrope"],
+              "label-md": ["Inter"],
+              "headline-md": ["Manrope"],
+            },
+            fontSize: {
+              "body-md": [
+                "14px",
+                { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" },
+              ],
+              "code-tracking": [
+                "13px",
+                {
+                  lineHeight: "18px",
+                  letterSpacing: "0.06em",
+                  fontWeight: "600",
+                },
+              ],
+              "title-sm": [
+                "14px",
+                { lineHeight: "20px", letterSpacing: "0em", fontWeight: "600" },
+              ],
+              "title-md": [
+                "16px",
+                {
+                  lineHeight: "24px",
+                  letterSpacing: "-0.005em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": [
+                "16px",
+                { lineHeight: "24px", letterSpacing: "0em", fontWeight: "400" },
+              ],
+              "headline-lg": [
+                "32px",
+                {
+                  lineHeight: "40px",
+                  letterSpacing: "-0.015em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-sm": [
+                "13px",
+                { lineHeight: "18px", letterSpacing: "0em", fontWeight: "400" },
+              ],
+              "label-sm": [
+                "11px",
+                {
+                  lineHeight: "14px",
+                  letterSpacing: "0.03em",
+                  fontWeight: "500",
+                },
+              ],
+              "headline-sm": [
+                "20px",
+                { lineHeight: "28px", letterSpacing: "0em", fontWeight: "600" },
+              ],
+              "headline-lg-mobile": [
+                "24px",
+                {
+                  lineHeight: "32px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-xl": [
+                "40px",
+                {
+                  lineHeight: "48px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "headline-xl-mobile": [
+                "30px",
+                {
+                  lineHeight: "38px",
+                  letterSpacing: "-0.015em",
+                  fontWeight: "700",
+                },
+              ],
+              "label-md": [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  letterSpacing: "0.04em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                {
+                  lineHeight: "32px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "600",
+                },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="h-full font-body-md text-body-md text-on-surface bg-background flex overflow-hidden antialiased"
+  >
+    <!-- ================= SIDE NAVIGATION BAR (SHARED COMPONENT) ================= -->
+    <aside
+      class="w-64 h-full flex flex-col justify-between p-4 border-r border-outline-variant shrink-0 bg-surface-container-lowest z-30 select-none"
+    >
+      <!-- Top Brand & Actions -->
+      <div class="flex flex-col gap-4">
+        <!-- Logo Brand Header -->
+        <div class="flex items-center gap-3 px-2 py-1.5">
+          <img
+            alt="Logo CoreLink Administration"
+            class="h-10 w-auto object-contain"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfy9YGHRV4MaqaC_tPPk92vs5enbBPepX-_FFNFM6aPN6wr77plQYN52GjEL3KL7iQ-pj_FDigFPXRoSwP1hco5UmhmRGdgeI4rFBa1mjsB1hGsjDha1XRwpzKvaHylbei4qPH1tLE0puqEXkanxyylG2Uqa1coYm-V736FJYO1loZPmkmjK4kB_-Pb4ChRXjKFGTxBBsIznimO9RvgA7Vh1mHZz96VdUSabYWkm3mCQKFSh81-uZT"
+          />
+          <div class="flex flex-col">
+            <span
+              class="font-title-md text-title-md font-bold text-on-surface tracking-tight leading-none"
+              >CoreLink BO</span
+            >
+            <span
+              class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 font-medium"
+              >Transit GZ-TNR Hub</span
+            >
+          </div>
+        </div>
+        <!-- Quick Action / CTA -->
+        <button
+          class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-secondary hover:bg-secondary-container text-on-secondary font-title-sm text-title-sm shadow-sm transition-all duration-150"
+          type="button"
+        >
+          <span class="material-symbols-outlined text-[18px]"
+            >barcode_scanner</span
+          >
+          <span class="">Scanner Réception</span>
+        </button>
+        <!-- Navigation Tabs -->
+        <nav class="flex flex-col gap-1 mt-1">
+          <!-- 1. Tous les colis (ACTIVE STATE - EXACT MATCH TO INVENTORY & PARCEL MGMT) -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-secondary font-semibold transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >inventory_2</span
+            >
+            <span class="font-label-md text-label-md">Tous les colis</span>
+          </a>
+          <!-- 2. Réception Guangzhou -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]">warehouse</span>
+            <span class="font-label-md text-label-md">Réception Guangzhou</span>
+          </a>
+          <!-- 3. Expéditions Fret -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >flight_takeoff</span
+            >
+            <span class="font-label-md text-label-md">Expéditions Fret</span>
+          </a>
+          <!-- 4. Dédouanement Ivato TNR -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]">gavel</span>
+            <span class="font-label-md text-label-md"
+              >Dédouanement Ivato TNR</span
+            >
+          </a>
+          <!-- 5. Livraisons Behintsy -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >local_shipping</span
+            >
+            <span class="font-label-md text-label-md">Livraisons Behintsy</span>
+          </a>
+          <!-- 6. Clients & Comptes -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]">group</span>
+            <span class="font-label-md text-label-md"
+              >Clients &amp; Comptes</span
+            >
+          </a>
+          <!-- 7. Tarifs & Devis -->
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+            href="#"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            <span class="font-label-md text-label-md">Tarifs &amp; Devis</span>
+          </a>
+        </nav>
+      </div>
+      <!-- Bottom Footer Profile & Hub Settings -->
+      <div class="border-t border-outline-variant pt-3 flex flex-col gap-1">
+        <a
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150"
+          href="#"
+        >
+          <span class="material-symbols-outlined text-[20px]">tune</span>
+          <span class="font-label-md text-label-md">Paramètres Hub</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/40 transition-all duration-150"
+          href="#"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span class="font-label-md text-label-md">Déconnexion</span>
+        </a>
+        <!-- Operator profile chip -->
+        <div
+          class="mt-2 p-2 bg-surface-container-low rounded-lg flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div
+              class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-title-sm text-title-sm font-semibold shrink-0"
+            >
+              RH
+            </div>
+            <div class="flex flex-col truncate">
+              <span class="font-title-sm text-title-sm text-on-surface truncate"
+                >Rivo H.</span
+              >
+              <span class="font-label-sm text-label-sm text-on-surface-variant"
+                >Agent Opérations TNR</span
+              >
+            </div>
+          </div>
+          <span
+            class="w-2.5 h-2.5 rounded-full bg-on-tertiary-container ring-2 ring-surface-container-lowest"
+          ></span>
+        </div>
+      </div>
+    </aside>
+    <!-- ================= MAIN CONTENT WORKSPACE ================= -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden bg-background">
+      <!-- TOP APP BAR (SHARED COMPONENT IMPLEMENTATION) -->
+      <header
+        class="h-16 flex items-center justify-between px-6 w-full border-b border-outline-variant bg-surface shadow-sm shrink-0 z-20"
+      >
+        <!-- Left: Breadcrumbs & Quick Global Search -->
+        <div class="flex items-center flex-1 max-w-md">
+          <div class="relative w-full">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]"
+              >search</span
+            ><input
+              class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline text-body-sm font-body-sm pl-9 pr-4 py-1.5 rounded-lg border border-outline-variant focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15 transition-all"
+              placeholder="Rechercher code suivi (CL-...), conteneur, LTA..."
+              type="text"
+            />
+          </div>
+        </div>
+        <!-- Right: Trailing Actions, Icon Buttons & Avatar -->
+        <div class="flex items-center gap-3">
+          <!-- Secondary Action -->
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-title-sm text-title-sm transition-colors shadow-sm"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">file_open</span>
+            <span class="">Rapports Douane</span>
+          </button>
+          <!-- Primary Action -->
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary-container text-on-secondary font-title-sm text-title-sm transition-colors shadow-sm"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">add_box</span>
+            <span class="">Nouveau Colis</span>
+          </button>
+          <div class="h-6 w-[1px] bg-outline-variant mx-1"></div>
+          <!-- Trailing Icon Action Buttons -->
+          <button
+            class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors relative"
+            title="Notifications"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >notifications</span
+            >
+            <span
+              class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"
+            ></span>
+          </button>
+          <button
+            class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors"
+            title="Centre d'aide"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[20px]">help</span>
+          </button>
+          <button
+            class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors"
+            title="Paramètres d'affichage"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[20px]">settings</span>
+          </button>
+          <!-- Operator Avatar -->
+          <div
+            class="w-8 h-8 rounded-full border border-outline-variant overflow-hidden bg-primary-container text-on-primary flex items-center justify-center font-bold text-label-md"
+          >
+            CL
+          </div>
+        </div>
+      </header>
+      <!-- MAIN SCROLLABLE VIEW CANVAS -->
+      <main class="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
+        <!-- PAGE HEADER SECTION -->
+        <section
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div>
+            <div
+              class="flex items-center gap-2 text-xs text-slate-500 mb-2 font-medium"
+            >
+              <span class="">Opérations</span
+              ><span class="text-slate-400">/</span
+              ><span class="text-slate-800 font-semibold"
+                >Gestion des colis</span
+              >
+            </div>
+            <h1
+              class="font-headline-md text-headline-md text-on-surface tracking-tight"
+            >
+              Gestion des Colis &amp; Expéditions
+            </h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+              Surveillez, filtrez et mettez à jour l’ensemble des colis
+              enregistrés sur le corridor Chine – Madagascar.
+            </p>
+          </div>
+          <div class="flex items-center gap-2.5 shrink-0">
+            <button
+              class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-title-sm text-title-sm transition shadow-sm"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >download</span
+              >
+              <span class="">Exporter CSV / Excel</span>
+            </button>
+            <button
+              class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-secondary hover:bg-secondary-container text-on-secondary font-title-sm text-title-sm shadow-sm transition"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              <span class="">+ Enregistrer un colis</span>
+            </button>
+          </div>
+        </section>
+        <!-- KPI METRIC STRIP -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between shadow-sm"
+          >
+            <div>
+              <span
+                class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider"
+                >Total corridor actif</span
+              >
+              <div class="flex items-baseline gap-2 mt-1">
+                <span
+                  class="font-headline-sm text-headline-sm text-on-surface font-bold"
+                  >1 428</span
+                >
+                <span
+                  class="font-label-sm text-label-sm text-on-tertiary-container font-semibold"
+                  >+18% ce mois</span
+                >
+              </div>
+            </div>
+            <div
+              class="w-10 h-10 rounded-lg bg-surface-container-low text-secondary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-[22px]"
+                >inventory_2</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between shadow-sm"
+          >
+            <div>
+              <span
+                class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider"
+                >En Vol / Transit Mer</span
+              >
+              <div class="flex items-baseline gap-2 mt-1">
+                <span
+                  class="font-headline-sm text-headline-sm text-on-surface font-bold"
+                  >542</span
+                >
+                <span
+                  class="font-label-sm text-label-sm text-secondary font-semibold"
+                  >3 vols / 2 navires</span
+                >
+              </div>
+            </div>
+            <div
+              class="w-10 h-10 rounded-lg bg-surface-container-low text-secondary-container flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-[22px]"
+                >flight_takeoff</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between shadow-sm"
+          >
+            <div>
+              <span
+                class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider"
+                >Dédouanement Ivato</span
+              >
+              <div class="flex items-baseline gap-2 mt-1">
+                <span
+                  class="font-headline-sm text-headline-sm text-on-surface font-bold"
+                  >116</span
+                >
+                <span
+                  class="font-label-sm text-label-sm text-on-secondary-fixed-variant font-semibold"
+                  >T1 / DAU en cours</span
+                >
+              </div>
+            </div>
+            <div
+              class="w-10 h-10 rounded-lg bg-surface-container-low text-on-secondary-fixed-variant flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-[22px]">gavel</span>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between shadow-sm"
+          >
+            <div>
+              <span
+                class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider"
+                >Prêt au retrait TNR</span
+              >
+              <div class="flex items-baseline gap-2 mt-1">
+                <span
+                  class="font-headline-sm text-headline-sm text-on-surface font-bold"
+                  >89</span
+                >
+                <span
+                  class="font-label-sm text-label-sm text-on-tertiary-container font-semibold"
+                  >Entrepôt Behintsy</span
+                >
+              </div>
+            </div>
+            <div
+              class="w-10 h-10 rounded-lg bg-surface-container-low text-on-tertiary-container flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-[22px]"
+                >check_circle</span
+              >
+            </div>
+          </div>
+        </section>
+        <!-- MULTI-CRITERIA FILTER BAR -->
+        <section
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl p-3.5 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3"
+        >
+          <div class="flex flex-wrap items-center gap-2.5 flex-1">
+            <!-- Autocomplete Search -->
+            <div class="relative min-w-[260px] flex-1">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]"
+                >search</span
+              >
+              <input
+                class="w-full bg-surface-container-low border border-outline-variant rounded-lg text-body-sm font-body-sm pl-9 pr-8 py-2 text-on-surface placeholder:text-outline focus:outline-none focus:border-secondary focus:bg-surface-container-lowest transition-all"
+                placeholder="Numéro de suivi (CL-2025-...) ou nom du client..."
+                type="text"
+              />
+              <span
+                class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px] cursor-pointer hover:text-on-surface"
+                >cancel</span
+              >
+            </div>
+            <!-- Status Filter -->
+            <div class="relative">
+              <select
+                class="appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm pl-3 pr-8 py-2 text-on-surface focus:outline-none focus:border-secondary cursor-pointer hover:bg-surface-container-low transition"
+              >
+                <option value="">Statut : Tous les statuts</option>
+                <option value="reception_chine">
+                  Réception Chine (Guangzhou/Yiwu)
+                </option>
+                <option value="transit_aerien">En transit aérien</option>
+                <option value="transit_maritime">En transit maritime</option>
+                <option value="dedouanement">Dédouanement Ivato TNR</option>
+                <option value="pret_retrait">Prêt au retrait (Behintsy)</option>
+                <option value="livre">Livré au client</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]"
+                >expand_more</span
+              >
+            </div>
+            <!-- Transport Mode Filter -->
+            <div class="relative">
+              <select
+                class="appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm pl-3 pr-8 py-2 text-on-surface focus:outline-none focus:border-secondary cursor-pointer hover:bg-surface-container-low transition"
+              >
+                <option value="">Fret : Tous les modes</option>
+                <option value="air_express">Fret Aérien Express (3-5j)</option>
+                <option value="air_regulier">
+                  Fret Aérien Régulier (7-10j)
+                </option>
+                <option value="sea_lcl">
+                  Fret Maritime Groupage (LCL 35j)
+                </option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]"
+                >expand_more</span
+              >
+            </div>
+            <!-- Date Filter -->
+            <div class="relative">
+              <select
+                class="appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm pl-3 pr-8 py-2 text-on-surface focus:outline-none focus:border-secondary cursor-pointer hover:bg-surface-container-low transition"
+              >
+                <option value="7d">Période : 7 derniers jours</option>
+                <option selected="" value="month">Période : Ce mois</option>
+                <option value="custom">Période personnalisée...</option>
+              </select>
+              <span
+                class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]"
+                >calendar_today</span
+              >
+            </div>
+          </div>
+          <!-- Quick filter resets & view options -->
+          <div
+            class="flex items-center gap-2 justify-end pt-2 lg:pt-0 border-t lg:border-t-0 border-outline-variant"
+          >
+            <button
+              class="text-on-surface-variant hover:text-error text-body-sm font-body-sm flex items-center gap-1 px-2.5 py-1.5 rounded hover:bg-surface-container-low transition"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[16px]"
+                >filter_alt_off</span
+              >
+              <span class="">Réinitialiser</span>
+            </button>
+            <div class="h-4 w-[1px] bg-outline-variant"></div>
+            <button
+              class="p-2 rounded-lg border border-outline-variant hover:bg-surface-container-low text-on-surface-variant"
+              title="Colonnes visibles"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >view_column</span
+              >
+            </button>
+          </div>
+        </section>
+        <!-- DATA TABLE CONTAINER -->
+        <section
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm flex flex-col overflow-hidden"
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <!-- Table Header -->
+              <thead>
+                <tr
+                  class="bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-md text-label-md"
+                >
+                  <th class="py-3 px-4 w-10 text-center" scope="col">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </th>
+                  <th class="py-3 px-4" scope="col">N° de suivi</th>
+                  <th class="py-3 px-4" scope="col">Client &amp; Téléphone</th>
+                  <th class="py-3 px-4" scope="col">Nature &amp; Contenu</th>
+                  <th class="py-3 px-4" scope="col">Mode / Trajet</th>
+                  <th class="py-3 px-4" scope="col">Poids &amp; Vol.</th>
+                  <th class="py-3 px-4" scope="col">Statut Opérationnel</th>
+                  <th class="py-3 px-4" scope="col">Date Enreg.</th>
+                  <th class="py-3 px-4 text-right" scope="col">
+                    Actions rapides
+                  </th>
+                </tr>
+              </thead>
+              <!-- Table Body: 8 Realistic Corridor China -> Madagascar Rows -->
+              <tbody
+                class="divide-y divide-outline-variant/60 font-body-sm text-body-sm text-on-surface"
+              >
+                <!-- ROW 1 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9041
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Miora Rakotoniaina
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 34 12 890 12
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >devices</span
+                      >
+                      <span class="">Smartphones Xiaomi &amp; Écrans</span>
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >High-tech / Valeur déclarée</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">CAN (Guangzhou)</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TNR (Ivato)</span>
+                    </div>
+                    <span class="text-secondary font-label-sm text-label-sm"
+                      >Fret Aérien Express</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">18.5 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      0.08 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Customs clearance status -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#fefce8] text-[#a16207] border border-[#fef08a]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#a16207]"
+                      ></span>
+                      Dédouanement Ivato
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    03 Mars 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 2 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9040
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      SOCIETE MADAGASCOM SARL
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 32 07 451 90
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >build</span
+                      >
+                      <span class=""
+                        >Pièces Détachées Toyota &amp; Filtres</span
+                      >
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Mécanique industrielle</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">YIWU Hub</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TMM (Toamasina)</span>
+                    </div>
+                    <span
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                      >Fret Maritime LCL</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">342.0 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      1.85 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Maritime transit -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse"
+                      ></span>
+                      En transit maritime
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    02 Mars 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 3 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9039
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Fanja Razafindratsita
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 33 14 620 44
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >styler</span
+                      >
+                      <span class="">Vêtements &amp; Chaussures mode</span>
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Textile prêt-à-porter</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">CAN (Guangzhou)</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TNR (Ivato)</span>
+                    </div>
+                    <span class="text-secondary font-label-sm text-label-sm"
+                      >Fret Aérien Régulier</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">45.0 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      0.24 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Ready for pickup -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#f0fdf4] text-[#15803d] border border-[#bbf7d0]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#15803d]"
+                      ></span>
+                      Prêt au retrait
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    01 Mars 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 4 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9038
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Andry Tsiriniavo (Boutique Tana)
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 34 88 102 33
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >solar_power</span
+                      >
+                      <span class="">Panneaux Solaires &amp; Onduleurs</span>
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Énergie renouvelable</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">FOSHAN Hub</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TMM (Toamasina)</span>
+                    </div>
+                    <span
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                      >Fret Maritime LCL</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">680.0 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      4.20 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- China reception -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-surface-container-high text-on-surface-variant border border-outline-variant"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                      Réception Chine
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    28 Fév. 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 5 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9037
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Dr. Henintsoa Randria
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 32 40 918 05
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >medical_services</span
+                      >
+                      <span class=""
+                        >Consommables Dentaires &amp; Stérilisateurs</span
+                      >
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Équipement Médical</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">CAN (Guangzhou)</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TNR (Ivato)</span>
+                    </div>
+                    <span class="text-secondary font-label-sm text-label-sm"
+                      >Fret Aérien Express</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">22.4 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      0.11 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Air transit -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse"
+                      ></span>
+                      En transit aérien
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    28 Fév. 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 6 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9036
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Hasina Rajaonah
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 34 01 773 22
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >computer</span
+                      >
+                      <span class="">Laptops Lenovo ThinkPad x5</span>
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Informatique Pro</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">CAN (Guangzhou)</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TNR (Ivato)</span>
+                    </div>
+                    <span class="text-secondary font-label-sm text-label-sm"
+                      >Fret Aérien Express</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">14.0 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      0.05 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Delivered -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#f0fdf4] text-[#15803d] border border-[#bbf7d0]"
+                    >
+                      <span class="material-symbols-outlined text-[14px]"
+                        >done_all</span
+                      >
+                      Livré au client
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    27 Fév. 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 7 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9035
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      IMPRIMERIE CENTRALE TANA
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 33 22 554 10
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >palette</span
+                      >
+                      <span class="">Rouleaux Vinyle &amp; Encres UV</span>
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Matières d'impression</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">YIWU Hub</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TMM (Toamasina)</span>
+                    </div>
+                    <span
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                      >Fret Maritime LCL</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">510.0 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      2.40 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Maritime transit -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#1d4ed8]"
+                      ></span>
+                      En transit maritime
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    25 Fév. 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- ROW 8 -->
+                <tr class="hover:bg-surface-container-low/70 transition-colors">
+                  <td class="py-3.5 px-4 text-center">
+                    <input
+                      class="rounded border-outline-variant text-secondary focus:ring-secondary/20 h-4 w-4"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td class="py-3.5 px-4 font-code-tracking text-code-tracking">
+                    <a
+                      class="inline-flex items-center gap-1.5 text-secondary hover:underline font-bold bg-surface-container-high px-2 py-0.5 rounded"
+                      href="#"
+                    >
+                      CL-2025-9034
+                    </a>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-title-sm text-title-sm text-on-surface">
+                      Nirina Ravelojaona
+                    </div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      +261 34 50 491 88
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-1.5 font-medium">
+                      <span
+                        class="material-symbols-outlined text-[16px] text-outline"
+                        >kitchen</span
+                      >
+                      <span class=""
+                        >Appareils Électroménagers &amp; Mixeurs</span
+                      >
+                    </div>
+                    <span class="text-on-surface-variant text-label-sm"
+                      >Articles maison</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div
+                      class="flex items-center gap-1 text-on-surface font-medium"
+                    >
+                      <span class="">CAN (Guangzhou)</span>
+                      <span
+                        class="material-symbols-outlined text-[14px] text-secondary"
+                        >arrow_forward</span
+                      >
+                      <span class="">TNR (Ivato)</span>
+                    </div>
+                    <span class="text-secondary font-label-sm text-label-sm"
+                      >Fret Aérien Régulier</span
+                    >
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="font-semibold">31.5 kg</div>
+                    <div
+                      class="text-on-surface-variant font-label-sm text-label-sm"
+                    >
+                      0.18 m³ (Vol.)
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <!-- Ready for pickup -->
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-semibold bg-[#f0fdf4] text-[#15803d] border border-[#bbf7d0]"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-[#15803d]"
+                      ></span>
+                      Prêt au retrait
+                    </span>
+                  </td>
+                  <td
+                    class="py-3.5 px-4 text-on-surface-variant font-label-md text-label-md"
+                  >
+                    24 Fév. 2025
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="inline-flex items-center gap-1">
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-secondary"
+                        title="Voir fiche complète"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >visibility</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Imprimer étiquette barcode"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >print</span
+                        >
+                      </button>
+                      <button
+                        class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface"
+                        title="Modifier"
+                        type="button"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >edit</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- PAGINATION BAR -->
+          <div
+            class="p-4 border-t border-outline-variant bg-surface flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
+            <div
+              class="flex items-center gap-4 text-on-surface-variant font-body-sm text-body-sm"
+            >
+              <span class=""
+                >Affichage de <strong>1</strong> à <strong>8</strong> sur
+                <strong>1 428</strong> colis</span
+              >
+              <div class="flex items-center gap-1.5">
+                <span class="">Afficher par page :</span>
+                <select
+                  class="bg-surface-container-lowest border border-outline-variant rounded px-2 py-1 text-on-surface font-medium focus:ring-1 focus:ring-secondary"
+                >
+                  <option value="8">8</option>
+                  <option selected="" value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+            <!-- Page Switcher -->
+            <nav aria-label="Pagination" class="flex items-center gap-1">
+              <button
+                class="p-1.5 rounded border border-outline-variant bg-surface-container-lowest text-outline cursor-not-allowed"
+                disabled=""
+                type="button"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >chevron_left</span
+                >
+              </button>
+              <button
+                class="w-8 h-8 rounded border border-secondary bg-secondary text-on-secondary font-semibold font-label-md text-label-md flex items-center justify-center shadow-xs"
+                type="button"
+              >
+                1
+              </button>
+              <button
+                class="w-8 h-8 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-medium font-label-md text-label-md flex items-center justify-center transition"
+                type="button"
+              >
+                2
+              </button>
+              <button
+                class="w-8 h-8 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-medium font-label-md text-label-md flex items-center justify-center transition"
+                type="button"
+              >
+                3
+              </button>
+              <span class="px-1 text-outline">...</span>
+              <button
+                class="w-8 h-8 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-medium font-label-md text-label-md flex items-center justify-center transition"
+                type="button"
+              >
+                58
+              </button>
+              <button
+                class="p-1.5 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface transition"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >chevron_right</span
+                >
+              </button>
+            </nav>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </body>
+</html>
