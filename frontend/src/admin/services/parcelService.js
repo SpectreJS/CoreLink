@@ -2,6 +2,7 @@ import { adminApi } from './adminApi.js';
 
 export const listParcels = () => adminApi('/admin/parcels');
 export const getParcel = (id) => adminApi(`/admin/parcels/${encodeURIComponent(id)}`);
+export const getParcelStatusHistory = (id) => adminApi(`/admin/parcels/${encodeURIComponent(id)}/status-history`);
 export const listParcelStatuses = () => adminApi('/admin/parcels/statuses');
 export const listParcelTransportModes = () => adminApi('/admin/parcels/transport-modes');
 export const createParcel = (parcel) => adminApi('/admin/parcels', {

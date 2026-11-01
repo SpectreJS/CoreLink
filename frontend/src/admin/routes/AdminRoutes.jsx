@@ -34,7 +34,6 @@ export default function AdminRoutes() {
           <Route path="tracking" element={<AdminModulePage module="tracking" />} />
           <Route path="shipments" element={<AdminModulePage module="shipments" />} />
           <Route path="shipments/:id" element={<AdminModulePage module="shipments" />} />
-          <Route path="invoices" element={<AdminModulePage module="invoices" />} />
           <Route path="payments" element={<AdminModulePage module="payments" />} />
           <Route path="reports" element={<AdminModulePage module="reports" />} />
           <Route path="users" element={<AdminProfilesPage />} />

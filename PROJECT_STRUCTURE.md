@@ -166,7 +166,6 @@ Les routes admin sont déclarées dans `src/admin/routes/AdminRoutes.jsx` :
 | `/admin/customers`, `/admin/customers/new`, `/admin/customers/:id` | Gestion des clients |
 | `/admin/tracking` | Gestion du suivi |
 | `/admin/shipments`, `/admin/shipments/:id` | Expéditions |
-| `/admin/invoices` | Factures |
 | `/admin/payments` | Paiements |
 | `/admin/reports` | Rapports |
 | `/admin/users` | Utilisateurs |

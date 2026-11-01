@@ -10,7 +10,6 @@ const links = [
   ['customers', 'Clients', 'groups'],
   ['tracking', 'Événements de suivi', 'route'],
   ['shipments', 'Expéditions', 'flight_takeoff'],
-  ['invoices', 'Factures', 'receipt_long'],
   ['payments', 'Paiements', 'payments'],
   ['reports', 'Rapports & analyses', 'monitoring'],
   ['users', 'Utilisateurs & rôles', 'manage_accounts'],

@@ -16,6 +16,7 @@ const selectParcelSql = `
   SELECT
     id,
     tracking_number AS trackingNumber,
+    serial_number AS serialNumber,
     description,
     category,
     package_count AS packageCount,
@@ -71,6 +72,17 @@ async function findParcel(id, executor = database) {
   return rows[0] || null;
 }
 
+async function allocateSerialNumber(connection) {
+  const [rows] = await connection.execute(
+    'SELECT next_value AS nextValue FROM parcel_serial_counter WHERE id = 1 FOR UPDATE',
+  );
+  if (!rows.length) throw new HttpError(500, 'Compteur de numéros de série non initialisé.');
+  const nextValue = Number(rows[0].nextValue);
+  const serialNumber = `CL-${String(nextValue).padStart(4, '0')}`;
+  await connection.execute('UPDATE parcel_serial_counter SET next_value = ? WHERE id = 1', [nextValue + 1]);
+  return serialNumber;
+}
+
 function calculateDimensions(fields) {
   const volume = (fields.length * fields.width * fields.height) / 1000000;
   const volumetricWeight = (fields.length * fields.width * fields.height) / 5000;
@@ -104,6 +116,25 @@ router.get('/', asyncHandler(async (request, response) => {
   response.json({ data: rows.map(parcelResponse), meta: { total: rows.length } });
 }));
 
+router.get('/:id/status-history', asyncHandler(async (request, response) => {
+  const id = requireParcelId(request.params.id);
+  const [rows] = await database.execute(
+    `SELECT h.id, h.previous_status AS previousStatus, h.new_status AS newStatus,
+      h.comment, h.created_at AS createdAt, u.name AS changedBy
+     FROM parcel_status_history h
+     JOIN admin_users u ON u.id = h.changed_by
+     WHERE h.parcel_id = ? ORDER BY h.created_at ASC, h.id ASC`,
+    [id],
+  );
+  response.json({
+    data: rows.map((row) => ({
+      ...row,
+      previousLabel: parcelStatuses.find((status) => status.value === row.previousStatus)?.label || row.previousStatus,
+      newLabel: parcelStatuses.find((status) => status.value === row.newStatus)?.label || row.newStatus,
+    })),
+  });
+}));
+
 router.get('/:id', asyncHandler(async (request, response) => {
   const id = requireParcelId(request.params.id);
   const parcel = await findParcel(id);
@@ -116,18 +147,21 @@ router.post('/', requireRole(...editableRoles), asyncHandler(async (request, res
   const dimensions = calculateDimensions(fields);
   const connection = await database.getConnection();
   let newId;
+  let serialNumber;
   try {
     await connection.beginTransaction();
+    serialNumber = await allocateSerialNumber(connection);
     const [result] = await connection.execute(
       `INSERT INTO parcels (
-        tracking_number, description, category, package_count, seal_number,
+        tracking_number, serial_number, description, category, package_count, seal_number,
         weight, length, width, height, volume_cbm, volumetric_weight,
         customer_name, recipient_name, phone, email, tax_id, origin, destination,
         transport_mode, status, notes, created_by, updated_by
       ) VALUES (
-        NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', ?, ?, ?
+        NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', ?, ?, ?
       )`,
       [
+        serialNumber,
         fields.description,
         fields.category,
         fields.packageCount,
@@ -152,8 +186,6 @@ router.post('/', requireRole(...editableRoles), asyncHandler(async (request, res
       ],
     );
     newId = String(result.insertId);
-    const trackingNumber = `CL-${new Date().getFullYear()}-${newId.padStart(6, '0')}`;
-    await connection.execute('UPDATE parcels SET tracking_number = ? WHERE id = ?', [trackingNumber, newId]);
     await connection.commit();
   } catch (error) {
     await connection.rollback();
@@ -194,7 +226,10 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
   };
   const dimensions = calculateDimensions(merged);
 
-  await database.execute(
+  const connection = await database.getConnection();
+  try {
+    await connection.beginTransaction();
+    await connection.execute(
     `UPDATE parcels SET
       description = ?, category = ?, package_count = ?, seal_number = ?,
       weight = ?, length = ?, width = ?, height = ?, volume_cbm = ?,
@@ -225,8 +260,22 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
       merged.notes,
       request.admin.id,
       id,
-    ],
-  );
+      ],
+    );
+    if (merged.status !== current.status) {
+      await connection.execute(
+        `INSERT INTO parcel_status_history (parcel_id, previous_status, new_status, changed_by)
+         VALUES (?, ?, ?, ?)`,
+        [id, current.status, merged.status, request.admin.id],
+      );
+    }
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
   const updated = await findParcel(id);
   response.json({ data: parcelResponse(updated) });
 }));

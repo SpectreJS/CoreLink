@@ -1,169 +1,82 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
   DashboardStatCards,
-  demoActivities,
-  OperationalHubs,
   RecentActivityTable,
   ShipmentTrendChart,
   StatusDistribution,
+  TransportDistribution,
 } from '../components/dashboard/DashboardWidgets.jsx';
+import { getDashboard } from '../services/dashboardService.js';
 
-const periods = ["Aujourd'hui", 'Cette semaine', 'Ce mois'];
-const agencyFilters = ['', 'Guangzhou', 'Toamasina', 'Antananarivo'];
+const periods = [
+  { value: '7d', label: '7 jours' },
+  { value: '30d', label: '30 jours' },
+  { value: '3m', label: '3 mois' },
+  { value: '12m', label: '12 mois' },
+];
+const emptyData = {
+  stats: { total: 0, pending: 0, inTransit: 0, delivered: 0, delayed: 0, changePercent: null },
+  trend: [], byStatus: [], byTransport: [], latest: [], statusLabels: {}, transportLabels: {},
+};
 
-function downloadDemoReport(rows) {
-  const columns = ['Données de démonstration - non issues de la base', 'Code tracking', 'Client', 'Destination', 'Mode', 'Statut'];
-  const lines = rows.map((row) => [row.code, row.client, row.destination, row.mode, row.status]);
-  const csv = [columns, ...lines]
-    .map((line) => line.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
-    .join('\n');
-  const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
-  const href = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = href;
-  anchor.download = 'corelink-rapport-demo.csv';
-  anchor.click();
-  URL.revokeObjectURL(href);
-}
-
-function ActionDialog({ activity, action, onClose }) {
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
-
-  if (!activity) return null;
-
-  return (
-    <div className="corelink-admin-modal-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
-    }}>
-      <section aria-labelledby="admin-demo-dialog-title" aria-modal="true" className="corelink-admin-modal" role="dialog">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-label-sm font-label-sm font-semibold uppercase tracking-wide text-outline">Données de démonstration</p>
-            <h2 className="mt-1 text-title-md font-title-md font-bold text-on-surface" id="admin-demo-dialog-title">{action}</h2>
-          </div>
-          <button aria-label="Fermer" className="rounded-lg p-1 text-outline hover:bg-surface-container-low hover:text-on-surface" onClick={onClose} type="button">
-            <span aria-hidden="true" className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        <dl className="mt-5 grid gap-3 text-body-sm">
-          <div><dt className="font-semibold text-on-surface">Référence</dt><dd className="text-on-surface-variant">{activity.code}</dd></div>
-          <div><dt className="font-semibold text-on-surface">Client</dt><dd className="text-on-surface-variant">{activity.client}</dd></div>
-          <div><dt className="font-semibold text-on-surface">Statut</dt><dd className="text-on-surface-variant">{activity.status}</dd></div>
-        </dl>
-        <p className="mt-5 rounded-lg bg-surface-container-low p-3 text-body-sm text-on-surface-variant">
-          Aucune opération réelle n’a été effectuée : le backend métier n’est pas encore connecté.
-        </p>
-        <div className="mt-5 flex justify-end">
-          <button className="rounded-lg bg-secondary px-4 py-2 text-label-md font-label-md font-semibold text-on-secondary hover:bg-secondary-container" onClick={onClose} type="button">Fermer</button>
-        </div>
-      </section>
-    </div>
-  );
+function downloadReport(rows) {
+  const headers = ['N° de série', 'N° de suivi', 'Description', 'Client', 'Origine', 'Destination', 'Transport', 'Statut'];
+  const lines = rows.map((row) => [row.serialNumber, row.trackingNumber, row.description, row.customerName, row.origin, row.destination, row.transportMode, row.status]);
+  const csv = [headers, ...lines].map((line) => line.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(';')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'corelink-dashboard.csv';
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 export default function Dashboard() {
-  const { searchTerm, onNotice } = useOutletContext();
+  const { onNotice } = useOutletContext();
   const navigate = useNavigate();
-  const [period, setPeriod] = useState(periods[0]);
-  const [agencyIndex, setAgencyIndex] = useState(0);
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const agency = agencyFilters[agencyIndex];
+  const [period, setPeriod] = useState('7d');
+  const [dashboard, setDashboard] = useState(emptyData);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const exportRows = useMemo(() => demoActivities.filter((row) => (
-    `${row.code} ${row.client} ${row.destination} ${row.status}`.toLocaleLowerCase('fr')
-      .includes(searchTerm.toLocaleLowerCase('fr'))
-  )), [searchTerm]);
-
-  const handleAgencyFilter = () => {
-    const nextIndex = (agencyIndex + 1) % agencyFilters.length;
-    setAgencyIndex(nextIndex);
-    onNotice(nextIndex ? `Filtre d’agence appliqué : ${agencyFilters[nextIndex]}. Données d’exemple uniquement.` : 'Filtre d’agence réinitialisé.');
-  };
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await getDashboard(period);
+      if (!result?.data) throw new Error('Réponse Dashboard invalide.');
+      setDashboard(result.data);
+    } catch (loadError) {
+      setDashboard(emptyData);
+      setError(loadError.message || 'Impossible de charger le Dashboard.');
+    } finally {
+      setLoading(false);
+    }
+  }, [period]);
+  useEffect(() => { loadDashboard(); }, [loadDashboard]);
 
   return (
-    <>
+    <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h2 className="text-headline-md font-headline-md tracking-tight text-on-surface">Supervision &amp; Transit International</h2>
-          <p className="mt-0.5 text-body-sm font-body-sm text-on-surface-variant">
-            Corridor Chine (Guangzhou / Yiwu) ➔ Madagascar (Antananarivo / Toamasina). Données d’exemple, non reliées à une base.
-          </p>
-        </div>
+        <div><h2 className="text-headline-md tracking-tight text-on-surface">Supervision &amp; Transit International</h2><p className="mt-0.5 text-body-sm text-on-surface-variant">Activité logistique réelle des colis enregistrés dans CoreLink.</p></div>
         <div className="flex flex-wrap items-center gap-2">
-          <div aria-label="Période du tableau de bord" className="inline-flex rounded-xl border border-outline-variant bg-surface-container-lowest p-0.5 text-label-md font-label-md shadow-xs" role="group">
-            {periods.map((option) => (
-              <button
-                aria-pressed={period === option}
-                className={`rounded-lg px-3 py-1.5 ${period === option ? 'bg-secondary font-semibold text-on-secondary shadow-xs' : 'text-on-surface-variant hover:text-on-surface'}`}
-                key={option}
-                onClick={() => setPeriod(option)}
-                type="button"
-              >
-                {option}
-              </button>
-            ))}
+          <div aria-label="Période du tableau de bord" className="inline-flex rounded-xl border border-outline-variant bg-surface-container-lowest p-0.5 text-label-md shadow-xs" role="group">
+            {periods.map((option) => <button aria-pressed={period === option.value} className={`rounded-lg px-3 py-1.5 ${period === option.value ? 'bg-secondary font-semibold text-on-secondary shadow-xs' : 'text-on-surface-variant hover:text-on-surface'}`} key={option.value} onClick={() => setPeriod(option.value)} type="button">{option.label}</button>)}
           </div>
-          <button
-            className="flex items-center gap-1.5 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 py-1.5 text-label-md font-label-md text-on-surface shadow-xs transition-colors hover:bg-surface-container-low"
-            onClick={() => {
-              downloadDemoReport(exportRows);
-              onNotice('Rapport CSV de démonstration téléchargé. Il contient uniquement les exemples affichés.');
-            }}
-            type="button"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-base">file_download</span>
-            Exporter Rapport
-          </button>
-          <button
-            className="flex items-center gap-1.5 rounded-xl bg-secondary px-3 py-1.5 text-label-md font-label-md font-semibold text-on-secondary shadow-sm transition-colors hover:bg-secondary-container"
-            onClick={() => navigate('/admin/shipments')}
-            type="button"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-base">local_shipping</span>
-            Créer Expédition
-          </button>
+          <button className="flex items-center gap-1.5 rounded-xl border border-outline-variant bg-surface-container-lowest px-3 py-1.5 text-label-md text-on-surface shadow-xs" onClick={() => downloadReport(dashboard.latest)} type="button"><span className="material-symbols-outlined text-base">file_download</span>Exporter Rapport</button>
+          <button className="flex items-center gap-1.5 rounded-xl bg-secondary px-3 py-1.5 text-label-md font-semibold text-on-secondary shadow-sm" onClick={() => navigate('/admin/parcels')} type="button"><span className="material-symbols-outlined text-base">local_shipping</span>Voir les colis</button>
         </div>
       </div>
-
-      <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-label-sm font-label-sm text-amber-800" role="status">
-        Tableau de bord en mode démonstration : les indicateurs, activités et statuts sont des exemples temporaires.
-        {agency && <span className="ml-1 font-semibold">Agence filtrée : {agency}.</span>}
-        <span className="ml-1">Période sélectionnée : {period}.</span>
-      </div>
-
-      <DashboardStatCards />
-
-      <section aria-label="Analyses des expéditions" className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <ShipmentTrendChart />
-        <StatusDistribution onFilter={handleAgencyFilter} />
+      {error && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-label-sm text-red-800" role="alert">{error}</div>}
+      <DashboardStatCards loading={loading} stats={dashboard.stats} />
+      <section aria-label="Analyses des colis" className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <ShipmentTrendChart data={dashboard.trend} loading={loading} />
+        <StatusDistribution data={dashboard.byStatus} labels={dashboard.statusLabels} loading={loading} />
       </section>
-
-      <RecentActivityTable
-        agencyFilter={agency}
-        onExport={() => {
-          downloadDemoReport(exportRows);
-          onNotice('Rapport CSV de démonstration téléchargé. Il contient uniquement les exemples affichés.');
-        }}
-        onRowAction={(activity, action) => setSelectedActivity({ activity, action })}
-        searchQuery={searchTerm}
-      />
-
-      <OperationalHubs />
-
-      {selectedActivity && (
-        <ActionDialog
-          action={selectedActivity.action}
-          activity={selectedActivity.activity}
-          onClose={() => setSelectedActivity(null)}
-        />
-      )}
-    </>
+      <TransportDistribution data={dashboard.byTransport} labels={dashboard.transportLabels} loading={loading} />
+      <RecentActivityTable onView={(row) => navigate(`/admin/parcels/${row.id}`)} rows={dashboard.latest} statusLabels={dashboard.statusLabels} transportLabels={dashboard.transportLabels} />
+      <div className="flex justify-end"><button className="rounded-lg border border-outline-variant px-4 py-2 text-label-md font-semibold text-secondary" onClick={() => { onNotice('Liste des colis ouverte.'); navigate('/admin/parcels'); }} type="button">Voir tous les colis</button></div>
+    </div>
   );
 }

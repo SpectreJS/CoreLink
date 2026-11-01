@@ -6,6 +6,8 @@ import {
   MRT_ToggleFiltersButton,
   useMaterialReactTable,
 } from 'material-react-table';
+import { Package, Plane, PlaneTakeoff, Ship } from 'lucide-react';
+import { getShipmentStatusConfig } from './shipmentStatusConfig.js';
 
 const parcelTheme = createTheme({
   palette: {
@@ -60,10 +62,29 @@ function matchesDateRange(dateValue, dateRange) {
 }
 
 function ParcelStatus({ parcel }) {
+  const config = getShipmentStatusConfig(parcel.statusKey);
   return (
     <span className={`parcel-status is-${statusTone[parcel.statusKey] || 'reception'}`}>
+      <span aria-hidden="true" className="material-symbols-outlined text-sm">{config.icon}</span>
       <span aria-hidden="true" className="parcel-status-dot" />
       {parcel.status}
+    </span>
+  );
+}
+
+const transportBadgeConfig = {
+  air_express: { icon: PlaneTakeoff, className: 'border-violet-200 bg-violet-50 text-violet-700' },
+  air_regular: { icon: Plane, className: 'border-blue-200 bg-blue-50 text-blue-700' },
+  sea_lcl: { icon: Ship, className: 'border-cyan-200 bg-cyan-50 text-cyan-700' },
+};
+
+function TransportBadge({ value, label }) {
+  const config = transportBadgeConfig[value] || { icon: Package, className: 'border-slate-200 bg-slate-50 text-slate-600' };
+  const Icon = config.icon;
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-label-sm font-semibold transition-colors hover:shadow-sm ${config.className}`}>
+      <Icon aria-hidden="true" size={16} strokeWidth={2} />
+      {label || value || 'Mode inconnu'}
     </span>
   );
 }
@@ -92,10 +113,10 @@ export default function ParcelDataTable({
 
   const columns = useMemo(() => [
     {
-      accessorKey: 'trackingNumber',
+      accessorKey: 'serialNumber',
       header: 'N° de suivi',
       size: 130,
-      Cell: ({ cell }) => <span className="parcel-tracking-number">{cell.getValue()}</span>,
+      Cell: ({ cell }) => <span className="parcel-tracking-number">{cell.getValue() || '—'}</span>,
     },
     {
       accessorKey: 'customerName',
@@ -128,7 +149,10 @@ export default function ParcelDataTable({
           <span>{row.original.origin}</span>
           <span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span>
           <span>{row.original.destination}</span>
-          <small>{row.original.transportMode}</small>
+          <TransportBadge
+            label={transportModes.find((mode) => mode.value === row.original.transportMode)?.label}
+            value={row.original.transportMode}
+          />
         </div>
       ),
     },
