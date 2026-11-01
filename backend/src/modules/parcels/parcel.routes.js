@@ -16,6 +16,7 @@ const selectParcelSql = `
   SELECT
     id,
     tracking_number AS trackingNumber,
+    serial_number AS serialNumber,
     description,
     category,
     package_count AS packageCount,
@@ -71,6 +72,17 @@ async function findParcel(id, executor = database) {
   return rows[0] || null;
 }
 
+async function allocateSerialNumber(connection) {
+  const [rows] = await connection.execute(
+    'SELECT next_value AS nextValue FROM parcel_serial_counter WHERE id = 1 FOR UPDATE',
+  );
+  if (!rows.length) throw new HttpError(500, 'Compteur de numéros de série non initialisé.');
+  const nextValue = Number(rows[0].nextValue);
+  const serialNumber = `CL-${String(nextValue).padStart(4, '0')}`;
+  await connection.execute('UPDATE parcel_serial_counter SET next_value = ? WHERE id = 1', [nextValue + 1]);
+  return serialNumber;
+}
+
 function calculateDimensions(fields) {
   const volume = (fields.length * fields.width * fields.height) / 1000000;
   const volumetricWeight = (fields.length * fields.width * fields.height) / 5000;
@@ -78,6 +90,40 @@ function calculateDimensions(fields) {
     volume: Number(volume.toFixed(3)),
     volumetricWeight: Number(volumetricWeight.toFixed(2)),
   };
+}
+
+function relationalStatusCode(status) {
+  if (['air_transit', 'sea_transit', 'customs_clearance', 'delayed'].includes(status)) return 'in_transit';
+  if (status === 'ready_for_pickup') return 'arrived';
+  return status;
+}
+
+async function ensureParcelRelations(connection, fields, status) {
+  const [clients] = await connection.execute(
+    `SELECT id FROM clients
+     WHERE nom = ? AND COALESCE(email, '') = COALESCE(?, '')
+       AND COALESCE(telephone, '') = COALESCE(?, '')
+     LIMIT 1`,
+    [fields.customerName, fields.email || null, fields.phone],
+  );
+  const clientId = clients.length
+    ? clients[0].id
+    : (await connection.execute(
+      'INSERT INTO clients (nom, email, telephone) VALUES (?, ?, ?)',
+      [fields.customerName, fields.email || null, fields.phone],
+    ))[0].insertId;
+  const [transportModes] = await connection.execute(
+    'SELECT id FROM modes_transport WHERE code = ? LIMIT 1',
+    [fields.transportMode],
+  );
+  const [statuses] = await connection.execute(
+    'SELECT id FROM statuts_colis WHERE code = ? LIMIT 1',
+    [relationalStatusCode(status)],
+  );
+  if (!transportModes.length || !statuses.length) {
+    throw new HttpError(500, 'Les référentiels de transport et de statut ne sont pas initialisés.');
+  }
+  return { clientId, transportId: transportModes[0].id, statutId: statuses[0].id };
 }
 
 function validatedFields(schema, body) {
@@ -104,6 +150,34 @@ router.get('/', asyncHandler(async (request, response) => {
   response.json({ data: rows.map(parcelResponse), meta: { total: rows.length } });
 }));
 
+router.get('/:id/status-history', asyncHandler(async (request, response) => {
+  const id = requireParcelId(request.params.id);
+  const [rows] = await database.execute(
+    `SELECT CONCAT('legacy-', h.id) AS id, h.previous_status AS previousStatus,
+      h.new_status AS newStatus, h.comment, h.created_at AS createdAt, u.name AS changedBy
+     FROM parcel_status_history h
+     JOIN admin_users u ON u.id = h.changed_by
+     WHERE h.parcel_id = ?
+     UNION ALL
+     SELECT CONCAT('relational-', h.id) AS id, oldStatus.code AS previousStatus,
+      newStatus.code AS newStatus, h.commentaire AS comment, h.date_evenement AS createdAt,
+      'Système' AS changedBy
+     FROM historique_colis h
+     LEFT JOIN statuts_colis oldStatus ON oldStatus.id = h.ancien_statut_id
+     JOIN statuts_colis newStatus ON newStatus.id = h.nouveau_statut_id
+     WHERE h.colis_id = ?
+     ORDER BY createdAt ASC, id ASC`,
+    [id, id],
+  );
+  response.json({
+    data: rows.map((row) => ({
+      ...row,
+      previousLabel: parcelStatuses.find((status) => status.value === row.previousStatus)?.label || row.previousStatus,
+      newLabel: parcelStatuses.find((status) => status.value === row.newStatus)?.label || row.newStatus,
+    })),
+  });
+}));
+
 router.get('/:id', asyncHandler(async (request, response) => {
   const id = requireParcelId(request.params.id);
   const parcel = await findParcel(id);
@@ -116,18 +190,31 @@ router.post('/', requireRole(...editableRoles), asyncHandler(async (request, res
   const dimensions = calculateDimensions(fields);
   const connection = await database.getConnection();
   let newId;
+  let serialNumber;
   try {
     await connection.beginTransaction();
+    serialNumber = await allocateSerialNumber(connection);
+    const relations = await ensureParcelRelations(connection, fields, 'received');
     const [result] = await connection.execute(
       `INSERT INTO parcels (
-        tracking_number, description, category, package_count, seal_number,
+        tracking_number, serial_number, numero_serie, client_id, transport_id, statut_id,
+        date_enregistrement, description, category, package_count, seal_number,
         weight, length, width, height, volume_cbm, volumetric_weight,
         customer_name, recipient_name, phone, email, tax_id, origin, destination,
         transport_mode, status, notes, created_by, updated_by
       ) VALUES (
-        NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', ?, ?, ?
+        ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, 'received', ?, ?, ?
       )`,
       [
+        fields.trackingNumber,
+        serialNumber,
+        serialNumber,
+        relations.clientId,
+        relations.transportId,
+        relations.statutId,
         fields.description,
         fields.category,
         fields.packageCount,
@@ -152,11 +239,10 @@ router.post('/', requireRole(...editableRoles), asyncHandler(async (request, res
       ],
     );
     newId = String(result.insertId);
-    const trackingNumber = `CL-${new Date().getFullYear()}-${newId.padStart(6, '0')}`;
-    await connection.execute('UPDATE parcels SET tracking_number = ? WHERE id = ?', [trackingNumber, newId]);
     await connection.commit();
   } catch (error) {
     await connection.rollback();
+    if (error.code === 'ER_DUP_ENTRY') throw new HttpError(409, 'Un numéro de suivi déjà utilisé a été détecté. Réessayez.');
     throw error;
   } finally {
     connection.release();
@@ -173,6 +259,7 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
   if (!current) throw new HttpError(404, 'Colis introuvable.');
 
   const merged = {
+    trackingNumber: fields.trackingNumber ?? current.trackingNumber,
     description: fields.description ?? current.description,
     category: fields.category ?? current.category,
     packageCount: fields.packageCount ?? current.packageCount,
@@ -194,8 +281,13 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
   };
   const dimensions = calculateDimensions(merged);
 
-  await database.execute(
+  const connection = await database.getConnection();
+  try {
+    await connection.beginTransaction();
+    const relations = await ensureParcelRelations(connection, merged, merged.status);
+    await connection.execute(
     `UPDATE parcels SET
+      tracking_number = ?, client_id = ?, transport_id = ?, statut_id = ?,
       description = ?, category = ?, package_count = ?, seal_number = ?,
       weight = ?, length = ?, width = ?, height = ?, volume_cbm = ?,
       volumetric_weight = ?, customer_name = ?, recipient_name = ?, phone = ?,
@@ -203,6 +295,10 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
       status = ?, notes = ?, updated_by = ?
     WHERE id = ?`,
     [
+      merged.trackingNumber,
+      relations.clientId,
+      relations.transportId,
+      relations.statutId,
       merged.description,
       merged.category,
       merged.packageCount,
@@ -225,8 +321,25 @@ router.patch('/:id', requireRole(...editableRoles), asyncHandler(async (request,
       merged.notes,
       request.admin.id,
       id,
-    ],
-  );
+      ],
+    );
+    if (merged.status !== current.status) {
+      await connection.execute(
+        `INSERT INTO parcel_status_history (parcel_id, previous_status, new_status, changed_by)
+         VALUES (?, ?, ?, ?)`,
+        [id, current.status, merged.status, request.admin.id],
+      );
+    }
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    if (error.code === 'ER_DUP_ENTRY') {
+      throw new HttpError(409, 'Ce numéro de suivi est déjà utilisé.');
+    }
+    throw error;
+  } finally {
+    connection.release();
+  }
   const updated = await findParcel(id);
   response.json({ data: parcelResponse(updated) });
 }));

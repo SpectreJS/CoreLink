@@ -27,7 +27,6 @@ export const adminRouteConfig = [
         handle: { label: 'Expéditions', to: '/admin/shipments' },
         children: [{ path: ':id', handle: { label: 'Détails de l’expédition' } }],
       },
-      { path: 'invoices', handle: { label: 'Facturation & douanes', to: '/admin/invoices' } },
       { path: 'payments', handle: { label: 'Paiements', to: '/admin/payments' } },
       { path: 'reports', handle: { label: 'Rapports', to: '/admin/reports' } },
       { path: 'users', handle: { label: 'Utilisateurs', to: '/admin/users' } },

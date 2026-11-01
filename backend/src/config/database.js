@@ -12,6 +12,7 @@ export const database = mysql.createPool({
   queueLimit: 0,
   enableKeepAlive: true,
   charset: 'utf8mb4',
+  timezone: 'Z',
 });
 
 export async function verifyDatabaseConnection() {

@@ -13,10 +13,12 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.5.0",
     "@mui/material": "^9.5.0",
+    "lucide-react": "^1.66.0",
     "material-react-table": "^3.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.18.5",
+    "recharts": "^3.10.1",
     "three": "^0.179.1"
   },
   "devDependencies": {

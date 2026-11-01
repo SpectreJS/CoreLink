@@ -3,13 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { deleteParcel, getParcel, listParcelTransportModes } from '../services/parcelService.js';
 import { useAdminAuth } from '../contexts/AdminAuthContext.jsx';
 import '../styles/admin-parcel-details.scss';
-
-function formatDate(value, options = { dateStyle: 'medium' }) {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return new Intl.DateTimeFormat('fr-FR', options).format(date);
-}
+import { formatDateTime } from '../../utils/dateUtils.js';
 
 function formatWeight(value) {
   if (value === undefined || value === null || value === '') return '—';
@@ -64,7 +58,7 @@ function ParcelTimeline({ parcel }) {
                 <span className={`parcel-timeline-state ${current ? 'is-current' : 'is-complete'}`}>{current ? 'En cours' : 'Effectué'}</span>
               </div>
               <div className="parcel-timeline-meta">
-                {event.date && <span><span aria-hidden="true" className="material-symbols-outlined">schedule</span>{formatDate(event.date, { dateStyle: 'medium', timeStyle: 'short' })}</span>}
+                {event.date && <span><span aria-hidden="true" className="material-symbols-outlined">schedule</span>{formatDateTime(event.date)}</span>}
                 {event.location && <span><span aria-hidden="true" className="material-symbols-outlined">pin_drop</span>{event.location}</span>}
               </div>
               {event.description && <p>{event.description}</p>}
@@ -114,7 +108,7 @@ function ParcelDetailContent({ parcel, id, canMutate, transportLabel, onDelete }
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant flex flex-wrap items-center gap-2">
               <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
-              Enregistré le {formatDate(parcel.registeredAt)} • Hub d'origine : {parcel.origin || '—'} • Destination : {parcel.destination || '—'}
+              Enregistré le {formatDateTime(parcel.registeredAt)} • Hub d'origine : {parcel.origin || '—'} • Destination : {parcel.destination || '—'}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">

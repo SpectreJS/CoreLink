@@ -1,9 +1,6 @@
-import React, { useMemo, useState } from 'react';
-
-const rates = {
-  air: 75000,
-  sea: 365,
-};
+import React, { useEffect, useMemo, useState } from 'react';
+import { listPricingSettings, updatePricingSetting } from '../services/pricingService.js';
+import { formatDate } from '../../utils/dateUtils.js';
 
 const categories = [
   {
@@ -74,7 +71,7 @@ function Icon({ children, className = '' }) {
   return <span aria-hidden="true" className={`material-symbols-outlined ${className}`}>{children}</span>;
 }
 
-function PricingCard({ label, title, icon, value, unit, badge, description, tone = 'text-secondary' }) {
+function PricingCard({ label, title, icon, value, unit, badge, description, tone = 'text-secondary', onEdit }) {
   return (
     <article className="flex flex-col justify-between rounded-xl border border-outline-variant bg-surface-container-lowest p-5 shadow-sm">
       <div className="flex items-start justify-between">
@@ -82,7 +79,7 @@ function PricingCard({ label, title, icon, value, unit, badge, description, tone
           <span className="block text-label-md font-label-md uppercase tracking-wider text-on-surface-variant">{label}</span>
           <h2 className="mt-1 text-title-md font-title-md font-bold text-on-surface">{title}</h2>
         </div>
-        <div className={`rounded-lg bg-surface-container-high p-2.5 ${tone}`}><Icon>{icon}</Icon></div>
+        <div className="flex items-start gap-2"><button aria-label={`Modifier ${title}`} className="rounded-lg border border-outline-variant px-2 py-1 text-label-sm text-secondary hover:bg-surface-container" onClick={onEdit} type="button"><Icon className="text-base">edit</Icon>Modifier</button><div className={`rounded-lg bg-surface-container-high p-2.5 ${tone}`}><Icon>{icon}</Icon></div></div>
       </div>
       <div className="mt-4 border-t border-outline-variant/50 pt-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -95,16 +92,77 @@ function PricingCard({ label, title, icon, value, unit, badge, description, tone
   );
 }
 
+function PricingModal({ setting, onClose, onSaved }) {
+  const [form, setForm] = useState(setting);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    const handleEscape = (event) => { if (event.key === 'Escape' && !saving) onClose(); };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose, saving]);
+  const setField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
+  const isExchange = setting.settingKey === 'exchange_cny_mga';
+  const submit = async (event) => {
+    event.preventDefault();
+    setError('');
+    if ((isExchange && (!form.rate || Number(form.rate) <= 0)) || (!isExchange && (!form.amount || Number(form.amount) <= 0 || !form.minimumBillable || Number(form.minimumBillable) <= 0)) || !form.deliveryDays.trim() || (!isExchange && !form.effectiveDate)) {
+      setError('Tous les champs numériques doivent être positifs et les champs obligatoires renseignés.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await onSaved(setting.settingKey, {
+        sourceCurrency: form.sourceCurrency || undefined,
+        targetCurrency: form.targetCurrency || undefined,
+        rate: isExchange ? Number(form.rate) : undefined,
+        amount: isExchange ? undefined : Number(form.amount),
+        currency: form.currency || undefined,
+        minimumBillable: isExchange ? undefined : Number(form.minimumBillable),
+        deliveryDays: form.deliveryDays.trim(),
+        status: form.status,
+        ...(!isExchange ? { effectiveDate: form.effectiveDate } : {}),
+      });
+    } catch (saveError) {
+      setError(saveError.message || 'Modification impossible.');
+    } finally {
+      setSaving(false);
+    }
+  };
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && !saving && onClose()}><section aria-modal="true" className="w-full max-w-xl rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-2xl" role="dialog"><div className="mb-5 flex items-center justify-between border-b border-outline-variant pb-3"><h2 className="text-headline-sm font-bold text-on-surface">Modifier la valeur tarifaire</h2><button aria-label="Fermer" disabled={saving} onClick={onClose} type="button"><Icon>close</Icon></button></div>{error && <p className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-body-sm text-red-800" role="alert">{error}</p>}<form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={submit}>{isExchange ? <><label>Devise source<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" maxLength="3" onChange={setField('sourceCurrency')} required value={form.sourceCurrency || ''} /></label><label>Devise cible<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" maxLength="3" onChange={setField('targetCurrency')} required value={form.targetCurrency || ''} /></label><label>Taux de change<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.0001" onChange={setField('rate')} required step="0.0001" type="number" value={form.rate || ''} /></label></> : <><label>Tarif<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.01" onChange={setField('amount')} required step="0.01" type="number" value={form.amount || ''} /></label><label>Devise<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" maxLength="3" onChange={setField('currency')} required value={form.currency || ''} /></label><label>Minimum facturable<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.001" onChange={setField('minimumBillable')} required step="0.001" type="number" value={form.minimumBillable || ''} /></label></>}{!isExchange && <label>Date d’application<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('effectiveDate')} required type="date" value={form.effectiveDate || ''} /></label>}<label>Statut<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('status')} value={form.status}><option value="active">Actif</option><option value="inactive">Inactif</option></select></label>{isExchange && <p className="rounded-lg bg-surface-container-low p-3 text-body-sm text-on-surface-variant">La date d’application sera automatiquement définie à la date de modification.</p>}<div className="flex justify-end gap-2 md:col-span-2"><button className="rounded-lg border border-outline-variant px-4 py-2" disabled={saving} onClick={onClose} type="button">Annuler</button><button className="rounded-lg bg-secondary px-4 py-2 font-semibold text-on-secondary" disabled={saving} type="submit">{saving ? 'Enregistrement…' : 'Enregistrer'}</button></div></form></section></div>;
+}
+
 export default function AdminPricingPage({ onNotice }) {
   const [freightType, setFreightType] = useState('air');
   const [category, setCategory] = useState('general');
   const [insurance, setInsurance] = useState('included');
   const [weight, setWeight] = useState('18.5');
   const [volume, setVolume] = useState('0.12');
+  const [pricing, setPricing] = useState([]);
+  const [loadingPricing, setLoadingPricing] = useState(true);
+  const [error, setError] = useState('');
+  const [editing, setEditing] = useState(null);
+
+  const loadPricing = async () => {
+    setLoadingPricing(true);
+    try {
+      const result = await listPricingSettings();
+      if (!Array.isArray(result?.data)) throw new Error('Réponse tarifaire invalide.');
+      setPricing(result.data);
+    } catch (loadError) {
+      setError(loadError.message || 'Impossible de charger les tarifs.');
+    } finally {
+      setLoadingPricing(false);
+    }
+  };
+  useEffect(() => { loadPricing(); }, []);
+  const settings = useMemo(() => Object.fromEntries(pricing.map((item) => [item.settingKey, item])), [pricing]);
+  const airRate = settings.air_express?.amount || 0;
+  const seaRate = settings.sea_lcl?.amount || 0;
 
   const estimate = useMemo(() => {
     const quantity = freightType === 'air' ? Number(weight) || 0 : Number(volume) || 0;
-    const amount = quantity * rates[freightType];
+    const amount = quantity * (freightType === 'air' ? airRate : seaRate);
     const protection = insurance === 'included' ? amount * 0.02 : 0;
     return {
       quantity,
@@ -112,12 +170,14 @@ export default function AdminPricingPage({ onNotice }) {
       protection,
       total: amount + protection,
     };
-  }, [freightType, insurance, volume, weight]);
+  }, [airRate, freightType, insurance, seaRate, volume, weight]);
 
   const formatAmount = (value) => value.toLocaleString('fr-FR', { maximumFractionDigits: 0 });
 
   return (
     <div className="space-y-6">
+      {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-body-sm text-red-800" role="alert">{error}</div>}
+      {loadingPricing && <div className="text-body-sm text-on-surface-variant">Chargement des tarifs…</div>}
       <header className="flex flex-col justify-between gap-4 border-b border-outline-variant/60 pb-5 md:flex-row md:items-end">
         <div>
           <h1 className="text-headline-lg font-headline-lg font-bold tracking-tight text-on-surface">Tarifs, Devis &amp; Cotations</h1>
@@ -127,9 +187,9 @@ export default function AdminPricingPage({ onNotice }) {
       </header>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <PricingCard label="Devises & Monnaie Locale" title="Taux de Change Officiel du Jour" icon="currency_exchange" value="1 RMB = 660 Ar" unit="" badge="Sourcing sécurisé" description="1 USD = 4 650 Ar · Dernière indexation : 08:30 GMT+3 (Bourse de Chine & Banque Centrale)" />
-        <PricingCard label="Fret Aérien Express" title="Fret Aérien Régulier Moyen" icon="flight_takeoff" value="75 000 Ar" unit="/ kg" badge="5 à 7 jours" description="Corridor CAN (Guangzhou Baiyun) → TNR (Ivato Antananarivo)" />
-        <PricingCard label="Fret Maritime Groupage" title="Fret Maritime LCL Groupage" icon="directions_boat" value="365 USD" unit="/ m³" badge="Min 0.1 CBM" description="Transit Foshan/Huangpu → Toamasina (35 - 45 jours navire)" tone="text-secondary-container" />
+        <PricingCard label="Devises & Monnaie Locale" title="Taux de Change Officiel du Jour" icon="currency_exchange" value={settings.exchange_cny_mga ? `1 ${settings.exchange_cny_mga.sourceCurrency} = ${settings.exchange_cny_mga.rate.toLocaleString('fr-FR')} ${settings.exchange_cny_mga.targetCurrency}` : '—'} unit="" badge={settings.exchange_cny_mga?.status === 'active' ? 'Actif' : 'Inactif'} description={settings.exchange_cny_mga ? `Application : ${formatDate(settings.exchange_cny_mga.effectiveDate)}` : 'Aucune valeur tarifaire disponible'} onEdit={() => setEditing(settings.exchange_cny_mga)} />
+        <PricingCard label="Fret Aérien Express" title="Fret Aérien Régulier Moyen" icon="flight_takeoff" value={settings.air_express ? settings.air_express.amount.toLocaleString('fr-FR') : '—'} unit={settings.air_express ? `/ ${settings.air_express.currency} / kg` : ''} badge={settings.air_express?.deliveryDays || '—'} description="Corridor CAN (Guangzhou Baiyun) → TNR (Ivato Antananarivo)" onEdit={() => setEditing(settings.air_express)} />
+        <PricingCard label="Fret Maritime Groupage" title="Fret Maritime LCL Groupage" icon="directions_boat" value={settings.sea_lcl ? settings.sea_lcl.amount.toLocaleString('fr-FR') : '—'} unit={settings.sea_lcl ? `/ ${settings.sea_lcl.currency} / m³` : ''} badge={settings.sea_lcl ? `Min ${settings.sea_lcl.minimumBillable} CBM` : '—'} description="Transit Foshan/Huangpu → Toamasina" tone="text-secondary-container" onEdit={() => setEditing(settings.sea_lcl)} />
       </section>
 
       <section className="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm" id="quotation-form">
@@ -138,7 +198,7 @@ export default function AdminPricingPage({ onNotice }) {
             <h2 className="flex items-center gap-2 text-headline-sm font-headline-sm font-bold text-on-surface"><Icon>calculate</Icon>Simulateur &amp; Calculateur Rapide de Cotation</h2>
             <p className="text-body-sm font-body-sm text-on-surface-variant">Estimez en temps réel le coût d’affrètement selon les normes de taxation volumétrique et de change CoreLink</p>
           </div>
-          <span className="rounded-lg border border-secondary-fixed bg-surface-container-low px-3 py-1 text-label-md font-label-md text-secondary">Taux actif : 1 USD = 4 650 MGA | 1 RMB = 660 MGA</span>
+          <span className="rounded-lg border border-secondary-fixed bg-surface-container-low px-3 py-1 text-label-md font-label-md text-secondary">Taux actif : {settings.exchange_cny_mga ? `1 ${settings.exchange_cny_mga.sourceCurrency} = ${settings.exchange_cny_mga.rate} ${settings.exchange_cny_mga.targetCurrency}` : 'non disponible'}</span>
         </div>
         <form className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-12" onSubmit={(event) => event.preventDefault()}>
           <label className="md:col-span-4"><span className="mb-1.5 block text-label-md font-label-md text-on-surface-variant">Mode d’Expédition</span><span className="grid grid-cols-2 gap-2">
@@ -158,6 +218,7 @@ export default function AdminPricingPage({ onNotice }) {
         </div>
         <button className="mt-4 inline-flex items-center gap-2 rounded-lg bg-secondary px-4 py-2 text-title-sm font-title-sm text-on-secondary" onClick={() => onNotice(`Estimation calculée pour la catégorie ${category}. Aucun devis n’est enregistré par cette page.`)} type="button"><Icon>request_quote</Icon>Générer une estimation</button>
       </section>
+      {editing && <PricingModal onClose={() => setEditing(null)} onSaved={async (key, values) => { const result = await updatePricingSetting(key, values); setPricing((current) => current.map((item) => item.settingKey === key ? result.data : item)); setEditing(null); onNotice?.('Tarif enregistré avec succès.'); }} setting={editing} />}
 
       <section className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
         <div className="flex flex-col justify-between gap-3 border-b border-outline-variant/60 p-5 md:flex-row md:items-center"><div><h2 className="flex items-center gap-2 text-headline-sm font-headline-sm font-bold text-on-surface"><Icon>table_chart</Icon>Grille Tarifaire Opérationnelle</h2><p className="text-body-sm text-on-surface-variant">Référentiel des coûts de transport, délais et spécifications douanières</p></div><button className="inline-flex items-center gap-2 rounded-lg border border-outline-variant px-3 py-2 text-label-md font-label-md text-on-surface" onClick={() => onNotice('La mise à jour de la grille nécessite un endpoint backend de gestion tarifaire.')} type="button"><Icon className="text-sm">edit</Icon>Mettre à jour Grille</button></div>

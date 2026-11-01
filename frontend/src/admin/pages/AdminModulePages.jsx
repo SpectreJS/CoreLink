@@ -4,11 +4,15 @@ import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/c
 import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
 import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
 import '../styles/admin-parcels.scss';
-import { createParcel, deleteParcel, deleteParcels, getParcel, listParcelStatuses, listParcelTransportModes, listParcels, updateParcel } from '../services/parcelService.js';
+import { createParcel, deleteParcel, deleteParcels, getParcel, getParcelStatusHistory, listParcelStatuses, listParcelTransportModes, listParcels, updateParcel } from '../services/parcelService.js';
+import ShipmentStatusSelector from '../components/parcels/ShipmentStatusSelector.jsx';
+import TransportModeSelector from '../components/parcels/TransportModeSelector.jsx';
+import { getShipmentStatusConfig } from '../components/parcels/shipmentStatusConfig.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
 import AdminPricingPage from './AdminPricingPage.jsx';
 import { useAdminAuth } from '../contexts/AdminAuthContext.jsx';
+import { formatDateTime } from '../../utils/dateUtils.js';
 
 function PageHeading({ title, description, action }) {
   return (
@@ -20,6 +24,7 @@ function PageHeading({ title, description, action }) {
 }
 
 const emptyParcelForm = {
+  trackingNumber: '',
   description: '',
   category: '',
   packageCount: '1',
@@ -46,6 +51,7 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
   const [loading, setLoading] = useState(isEdit || isView);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     const handleEscape = (event) => {
@@ -58,13 +64,14 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
   useEffect(() => {
     if (!parcelId) return undefined;
     let active = true;
-    getParcel(parcelId)
-      .then((result) => {
+    Promise.all([getParcel(parcelId), getParcelStatusHistory(parcelId)])
+      .then(([result, historyResult]) => {
         if (!result?.data) throw new Error('Colis introuvable.');
         if (!active) return;
         const value = result.data;
         setParcel(value);
         setForm(Object.fromEntries(Object.keys(emptyParcelForm).map((field) => [field, value[field] == null ? '' : String(value[field])])));
+        setHistory(Array.isArray(historyResult?.data) ? historyResult.data : []);
       })
       .catch((loadError) => { if (active) setError(loadError.message || 'Impossible de charger le colis.'); })
       .finally(() => { if (active) setLoading(false); });
@@ -78,12 +85,13 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
     if (!form.description.trim() || !form.category.trim() || !form.customerName.trim() || !form.phone.trim()
       || !form.origin.trim() || !form.destination.trim() || !form.transportMode || !form.weight || Number(form.weight) <= 0
       || !form.packageCount || Number(form.packageCount) < 1) {
-      setError('Description, catégorie, client, téléphone, origine, destination, transport, poids et nombre de colis sont obligatoires.');
+      setError('Numéro de suivi, description, catégorie, client, téléphone, origine, destination, transport, poids et nombre de colis sont obligatoires.');
       return;
     }
     setSaving(true);
     try {
       const payload = {
+        trackingNumber: form.trackingNumber.trim(),
         description: form.description.trim(),
         category: form.category.trim(),
         packageCount: Number(form.packageCount),
@@ -101,6 +109,11 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
         notes: form.notes.trim() || null,
       };
       if (isEdit) payload.status = form.status;
+      if (isEdit && parcel?.status !== form.status) {
+        const previousLabel = statuses.find((item) => item.value === parcel?.status)?.label || parcel?.status;
+        const nextLabel = statuses.find((item) => item.value === form.status)?.label || form.status;
+        if (!window.confirm(`Confirmer le changement du statut ${previousLabel} vers ${nextLabel} ?`)) return;
+      }
       const result = isEdit ? await updateParcel(parcelId, payload) : await createParcel(payload);
       await onSaved(isEdit ? `Le colis ${result.data.trackingNumber} a été modifié.` : `Le colis ${result.data.trackingNumber} a été créé.`);
     } catch (saveError) {
@@ -122,8 +135,16 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
         {!loading && error && <p className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-body-sm text-red-800" role="alert">{error}</p>}
         {!loading && !error && isView && parcel && (
           <div className="grid grid-cols-1 gap-4 text-body-sm md:grid-cols-2">
+            <div className="rounded-lg border border-secondary/30 bg-surface-container-low p-4 md:col-span-2">
+              <span className="block text-label-sm text-outline">Statut actuel</span>
+              <strong className="mt-1 flex items-center gap-2 text-title-md text-on-surface">
+                <span aria-hidden="true" className={`material-symbols-outlined shipment-status-history-icon is-${getShipmentStatusConfig(parcel.status).tone}`}>{getShipmentStatusConfig(parcel.status).icon}</span>
+                {parcel.statusLabel || statuses.find((item) => item.value === parcel.status)?.label || parcel.status}
+              </strong>
+            </div>
             {[
-              ['N° de suivi', parcel.trackingNumber],
+              ['N° de série', parcel.serialNumber || '—'],
+              ['N° de suivi externe', parcel.trackingNumber || '—'],
               ['Description', parcel.description],
               ['Catégorie', parcel.category],
               ['Client associé', parcel.customerName],
@@ -133,16 +154,20 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
               ['Mode de transport', transportModes.find((item) => item.value === parcel.transportMode)?.label || parcel.transportMode],
               ['Poids', `${parcel.weight} kg`],
               ['Nombre de colis', parcel.packageCount],
-              ['Statut actuel', parcel.statusLabel || statuses.find((item) => item.value === parcel.status)?.label || parcel.status],
-              ['Date de création', parcel.registeredAt ? new Date(parcel.registeredAt).toLocaleString('fr-FR') : '—'],
+              ['Date de création', formatDateTime(parcel.registeredAt)],
               ['Date de livraison estimée', 'Non fournie par l’API'],
-              ['Historique de suivi', 'Non disponible : aucun endpoint backend'],
+              ['Historique de suivi', history.length ? `${history.length} changement(s)` : 'Aucun changement enregistré'],
             ].map(([label, value]) => <div className="rounded-lg bg-surface-container-low p-3" key={label}><span className="block text-label-sm text-outline">{label}</span><strong className="text-on-surface">{value || '—'}</strong></div>)}
+            {history.length > 0 && <div className="md:col-span-2 border-t border-outline-variant pt-4"><h3 className="mb-3 font-semibold">Historique des statuts</h3><div className="space-y-3">{history.map((event) => { const config = getShipmentStatusConfig(event.newStatus); return <div className="flex items-start gap-3" key={event.id}><span className={`shipment-status-history-icon is-${config.tone}`}><span aria-hidden="true" className="material-symbols-outlined">{config.icon}</span></span><div><strong>{event.newLabel}</strong><p className="text-label-sm text-outline">{formatDateTime(event.createdAt)} · {event.changedBy}</p></div></div>; })}</div></div>}
             <div className="md:col-span-2 flex justify-end"><button className="rounded-lg bg-secondary px-4 py-2 font-semibold text-on-secondary" onClick={onClose} type="button">Fermer</button></div>
           </div>
         )}
         {!loading && !error && !isView && (
           <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={submit}>
+            <label className="text-label-md text-on-surface md:col-span-2">Numéro de suivi
+              <input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2 font-mono" onChange={setField('trackingNumber')} pattern="CL-[0-9]{4}" placeholder="Ex : CL-0001" required value={form.trackingNumber} />
+              <span className="mt-1 block text-label-sm text-on-surface-variant">Format attendu : CL-0001.</span>
+            </label>
             {[
               ['description', 'Description', 'text'],
               ['category', 'Catégorie', 'text'],
@@ -151,8 +176,12 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
               ['origin', 'Origine', 'text'],
               ['destination', 'Destination', 'text'],
             ].map(([field, label, type]) => <label className="text-label-md text-on-surface" key={field}>{label}<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField(field)} required value={form[field]} type={type} /></label>)}
-            <label className="text-label-md text-on-surface">Mode de transport<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('transportMode')} required value={form.transportMode}><option value="">Sélectionner</option>{transportModes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
-            {isEdit && <label className="text-label-md text-on-surface">Statut<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('status')} required value={form.status}>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
+            {isEdit ? (
+              <TransportModeSelector modes={transportModes} onChange={(value) => setForm((current) => ({ ...current, transportMode: value }))} value={form.transportMode} />
+            ) : (
+              <label className="text-label-md text-on-surface">Mode de transport<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('transportMode')} required value={form.transportMode}><option value="">Sélectionner</option>{transportModes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            )}
+            {isEdit && <ShipmentStatusSelector onChange={(value) => setForm((current) => ({ ...current, status: value }))} previousValue={parcel?.status} statuses={statuses} value={form.status} />}
             <label className="text-label-md text-on-surface">Poids (kg)<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.01" onChange={setField('weight')} required step="0.01" type="number" value={form.weight} /></label>
             <label className="text-label-md text-on-surface">Nombre de colis<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="1" onChange={setField('packageCount')} required type="number" value={form.packageCount} /></label>
             <label className="text-label-md text-on-surface">Destinataire<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('recipientName')} value={form.recipientName} /></label>
@@ -282,7 +311,7 @@ export function AdminParcelsPage() {
     const escapeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
     const csv = [
       columns.map(([, label]) => escapeCell(label)).join(';'),
-      ...rows.map((row) => columns.map(([key]) => escapeCell(row[key])).join(';')),
+      ...rows.map((row) => columns.map(([key]) => escapeCell(key === 'registeredAt' ? formatDateTime(row[key]) : row[key])).join(';')),
     ].join('\r\n');
     const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -459,7 +488,6 @@ export function AdminCustomerDetailsPage() {
 const modules = {
   tracking: { title: 'Gestion du suivi', description: 'Ajoutez des événements de suivi aux colis.', columns: ['Colis', 'Événement', 'Lieu', 'Date'] },
   shipments: { title: 'Expéditions', description: 'Organisez les lots, itinéraires et départs.', columns: ['Référence', 'Route', 'Départ', 'Statut'] },
-  invoices: { title: 'Factures', description: 'Suivez les factures émises et leur statut.', columns: ['N° facture', 'Client', 'Montant', 'Échéance'] },
   payments: { title: 'Paiements', description: 'Consultez les encaissements et rapprochements.', columns: ['Référence', 'Client', 'Montant', 'Statut'] },
   reports: { title: 'Rapports & analyses', description: 'Les indicateurs réels seront disponibles via l’API.', columns: ['Rapport', 'Période', 'État', 'Dernière génération'] },
   users: { title: 'Utilisateurs & permissions', description: 'Gérez les comptes et rôles administratifs.', columns: ['Nom', 'E-mail', 'Rôle', 'Statut'] },
