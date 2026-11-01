@@ -16,6 +16,8 @@ import {
   listAdminProfiles,
   updateAdminProfile,
 } from '../services/adminProfilesService.js';
+import '../styles/admin-parcels.scss';
+import { formatDateTime } from '../../utils/dateUtils.js';
 
 const tableTheme = createTheme({
   palette: { primary: { main: '#0051d5' }, background: { default: '#f8f9ff', paper: '#fff' } },
@@ -32,9 +34,7 @@ function initials(name) {
 }
 
 function formatDate(value) {
-  if (!value) return 'Jamais';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+  return value ? formatDateTime(value) : 'Jamais';
 }
 
 function ProfileModal({ profile, onClose, onSaved }) {
@@ -94,6 +94,8 @@ export default function AdminProfilesPage() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [details, setDetails] = useState(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   const loadProfiles = useCallback(async () => {
     setLoading(true);
@@ -161,16 +163,74 @@ export default function AdminProfilesPage() {
     { accessorKey: 'lastLoginAt', header: 'Dernière connexion', Cell: ({ cell }) => formatDate(cell.getValue()) },
     { accessorKey: 'createdAt', header: 'Date de création', Cell: ({ cell }) => formatDate(cell.getValue()) },
   ], []);
+  const statuses = useMemo(
+    () => [...new Set(rows.map((row) => row.status).filter(Boolean))],
+    [rows],
+  );
+  const filteredRows = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase('fr');
+    return rows.filter((row) => {
+      const matchesSearch = !query
+        || [row.name, row.email, row.phone].some((value) => String(value || '').toLocaleLowerCase('fr').includes(query));
+      return matchesSearch
+        && (!statusFilter || row.status === statusFilter);
+    });
+  }, [rows, search, statusFilter]);
   const table = useMaterialReactTable({
-    columns, data: rows, getRowId: (row) => String(row.id), enableRowSelection: true, enableColumnFilters: true, enableHiding: true, enableGlobalFilter: true, enableRowActions: true, positionActionsColumn: 'last', state: { isLoading: loading }, initialState: { pagination: { pageIndex: 0, pageSize: 10 } }, muiTablePaperProps: { elevation: 0 }, renderTopToolbarCustomActions: ({ table: currentTable }) => { const selectedIds = currentTable.getSelectedRowModel().rows.map(({ original }) => original.id); return selectedIds.length ? <button className="rounded-lg bg-red-600 px-3 py-2 text-label-md font-semibold text-white" onClick={() => removeMany(selectedIds)} type="button"><span className="material-symbols-outlined mr-1 align-middle text-base">delete</span>Supprimer ({selectedIds.length})</button> : null; }, renderRowActions: ({ row }) => <div className="flex gap-1"><button aria-label={`Voir ${row.original.name}`} className="rounded p-1.5 hover:bg-surface-container" onClick={async () => { try { const result = await getAdminProfile(row.original.id); setDetails(result?.data); } catch (loadError) { setError(loadError.message); } }} title="Voir" type="button"><span className="material-symbols-outlined text-lg">visibility</span></button><button aria-label={`Modifier ${row.original.name}`} className="rounded p-1.5 hover:bg-surface-container" onClick={() => setModal(row.original)} title="Modifier" type="button"><span className="material-symbols-outlined text-lg">edit</span></button><button aria-label={`Supprimer ${row.original.name}`} className="rounded p-1.5 text-error hover:bg-red-50" onClick={() => remove(row.original)} title="Supprimer" type="button"><span className="material-symbols-outlined text-lg">delete</span></button></div>,
-    renderEmptyRowsFallback: () => <div className="p-6 text-center text-on-surface-variant">Aucun profil administrateur enregistré.</div>,
+    columns,
+    data: filteredRows,
+    getRowId: (row) => String(row.id),
+    enableRowSelection: true,
+    enableColumnFilters: true,
+    enableHiding: true,
+    enableGlobalFilter: false,
+    enableRowActions: true,
+    positionActionsColumn: 'last',
+    state: { isLoading: loading },
+    initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
+    muiTablePaperProps: { elevation: 0, className: 'parcel-mrt-paper' },
+    muiTableContainerProps: { className: 'parcel-mrt-container' },
+    renderRowActions: ({ row }) => <div className="flex gap-1"><button aria-label={`Voir ${row.original.name}`} className="rounded p-1.5 hover:bg-surface-container" onClick={async () => { try { const result = await getAdminProfile(row.original.id); setDetails(result?.data); } catch (loadError) { setError(loadError.message); } }} title="Voir" type="button"><span className="material-symbols-outlined text-lg">visibility</span></button><button aria-label={`Modifier ${row.original.name}`} className="rounded p-1.5 hover:bg-surface-container" onClick={() => setModal(row.original)} title="Modifier" type="button"><span className="material-symbols-outlined text-lg">edit</span></button><button aria-label={`Supprimer ${row.original.name}`} className="rounded p-1.5 text-error hover:bg-red-50" onClick={() => remove(row.original)} title="Supprimer" type="button"><span className="material-symbols-outlined text-lg">delete</span></button></div>,
+    renderEmptyRowsFallback: () => <div className="parcel-empty-state"><strong>Aucun profil administrateur à afficher</strong><span>Modifiez les filtres ou créez un nouveau profil.</span></div>,
   });
+
+  const resetFilters = () => {
+    setSearch('');
+    setStatusFilter('');
+    table.resetColumnFilters();
+  };
+  const selectedIds = table.getSelectedRowModel().rows.map(({ original }) => original.id);
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><h1 className="text-headline-lg font-headline-lg font-bold tracking-tight text-on-surface">Gestion des Profils &amp; Utilisateurs Administrateurs</h1><p className="mt-1 text-body-md text-on-surface-variant">Gérez les rôles, permissions et l’activité de l’équipe logistique.</p></div><div className="flex flex-wrap gap-2"><button className="rounded-lg border border-outline-variant bg-surface-container-lowest px-3.5 py-2 text-title-sm" onClick={exportProfiles} type="button"><span className="material-symbols-outlined mr-1 align-middle text-lg">download</span>Exporter l’audit des accès</button><button className="rounded-lg bg-secondary px-4 py-2 text-title-sm text-on-secondary" onClick={() => setModal({ ...emptyForm })} type="button"><span className="material-symbols-outlined mr-1 align-middle text-lg">person_add</span>Nouvel Administrateur</button></div></header>
+      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><h1 className="text-headline-lg font-headline-lg font-bold tracking-tight text-on-surface">Gestion des Profils</h1><p className="mt-1 text-body-md text-on-surface-variant">Gérez les rôles, permissions et l’activité de l’équipe logistique.</p></div><div className="flex flex-wrap gap-2"><button className="rounded-lg border border-outline-variant bg-surface-container-lowest px-3.5 py-2 text-title-sm" onClick={exportProfiles} type="button"><span className="material-symbols-outlined mr-1 align-middle text-lg">download</span>Exporter l’audit des accès</button><button className="rounded-lg bg-secondary px-4 py-2 text-title-sm text-on-secondary" onClick={() => setModal({ ...emptyForm })} type="button"><span className="material-symbols-outlined mr-1 align-middle text-lg">person_add</span>Nouvel Administrateur</button></div></header>
       {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-body-sm text-red-800" role="alert">{error}</div>}
-      <section className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm"><div className="flex items-center justify-between border-b border-outline-variant px-6 py-4"><h2 className="text-title-md font-title-md font-bold text-on-surface">Comptes Opérateurs &amp; Privilèges Système <span className="ml-2 rounded bg-surface-container px-2 py-0.5 text-label-sm text-secondary">{rows.length} membres</span></h2><div className="flex gap-1"><button aria-label="Rafraîchir les données" className="rounded p-1.5 text-on-surface-variant hover:bg-surface-container" onClick={loadProfiles} type="button"><span className="material-symbols-outlined text-lg">refresh</span></button><MRT_ToggleFiltersButton aria-label="Filtres par colonne" table={table} /><MRT_ShowHideColumnsButton aria-label="Colonnes visibles" table={table} /></div></div><ThemeProvider theme={tableTheme}><MaterialReactTable table={table} /></ThemeProvider></section>
+      <section className="parcel-filter-bar">
+        <div className="parcel-filter-controls">
+          <label className="parcel-search-field">
+            <span aria-hidden="true" className="material-symbols-outlined">search</span>
+            <input aria-label="Rechercher un profil" onChange={(event) => setSearch(event.target.value)} placeholder="Nom, e-mail ou téléphone..." type="search" value={search} />
+            {search && <button aria-label="Effacer la recherche" onClick={() => setSearch('')} type="button"><span aria-hidden="true" className="material-symbols-outlined">cancel</span></button>}
+          </label>
+          <label className="parcel-select-field">
+            <span className="sr-only">Filtrer par statut</span>
+            <select aria-label="Filtrer par statut" onChange={(event) => setStatusFilter(event.target.value)} value={statusFilter}>
+              <option value="">Statut : Tous les statuts</option>
+              {statuses.map((status) => <option key={status} value={status}>{statusLabels[status] || status}</option>)}
+            </select>
+            <span aria-hidden="true" className="material-symbols-outlined">expand_more</span>
+          </label>
+        </div>
+        <div className="parcel-filter-actions">
+          {selectedIds.length > 0 && <button className="parcel-reset-button" onClick={() => removeMany(selectedIds)} type="button"><span aria-hidden="true" className="material-symbols-outlined">delete</span>Supprimer ({selectedIds.length})</button>}
+          <button className="parcel-reset-button" onClick={resetFilters} type="button"><span aria-hidden="true" className="material-symbols-outlined">filter_alt_off</span>Réinitialiser</button>
+          <span aria-hidden="true" className="parcel-filter-divider" />
+          <button aria-label="Rafraîchir les données" className="parcel-reset-button" onClick={loadProfiles} type="button"><span aria-hidden="true" className="material-symbols-outlined">refresh</span>Actualiser</button>
+          <MRT_ToggleFiltersButton aria-label="Filtres par colonne" table={table} />
+          <MRT_ShowHideColumnsButton aria-label="Colonnes visibles" table={table} />
+        </div>
+      </section>
+      <section aria-label="Liste des profils administrateurs" className="parcel-table-panel"><ThemeProvider theme={tableTheme}><MaterialReactTable table={table} /></ThemeProvider></section>
       {modal && <ProfileModal onClose={() => setModal(null)} onSaved={async (message) => { setModal(null); onNotice(message); await loadProfiles(); }} profile={modal.id ? modal : null} />}
       {details && <ProfileDetails onClose={() => setDetails(null)} profile={details} />}
     </div>

@@ -33,7 +33,7 @@ export default function Hero() {
     try {
       const record = await findTrackingRecord(normalized, request.signal);
       if (!record) {
-        setTrackingError('Aucun colis ne correspond à ce numéro de suivi.');
+        setTrackingError('Aucun colis trouvé avec ce numéro de suivi. Vérifiez votre saisie.');
         setTrackingState('error');
         return;
       }
@@ -76,7 +76,7 @@ export default function Hero() {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-glow to-electric">votre envoi ?</span>
                 </h1>
                 <p className="text-slate-gray text-base sm:text-lg max-w-xl font-normal leading-relaxed">
-                  Testez la recherche avec un code de démonstration. Ces données sont fictives et ne correspondent pas à des colis réels.
+                Saisissez votre numéro de suivi pour consulter les informations réelles de votre colis.
                 </p>
               </div>
 
@@ -84,7 +84,7 @@ export default function Hero() {
                 <div className="flex items-center justify-between text-[11px] font-mono text-slate-gray mb-3">
                   <span className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-delivered"></span>
-                    SUIVI DE COLIS · MODE DÉMONSTRATION
+                    SUIVI DE COLIS · DONNÉES EN TEMPS RÉEL
                   </span>
                 </div>
                 <form className="space-y-3" id="tracking-form" onSubmit={(event) => { event.preventDefault(); searchTracking(); }}>
@@ -93,7 +93,7 @@ export default function Hero() {
                       <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-gray">
                         <span className="material-symbols-outlined text-[20px]">search</span>
                       </span>
-                      <input autoComplete="off" className="w-full pl-10 pr-9 py-3.5 rounded-xl bg-night/80 border border-white/10 text-white font-mono text-sm placeholder:text-slate-gray/60 focus:outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow transition-all uppercase tracking-wider" id="tracking-input" onChange={(event) => { requestRef.current?.abort(); setTrackingNumber(event.target.value); setTrackingState('idle'); setTrackingError(''); }} placeholder="Exemple : CL-2026-00125" spellCheck="false" type="text" value={trackingNumber} />
+                      <input autoComplete="off" className="w-full pl-10 pr-9 py-3.5 rounded-xl bg-night/80 border border-white/10 text-white font-mono text-sm placeholder:text-slate-gray/60 focus:outline-none focus:border-cyan-glow focus:ring-1 focus:ring-cyan-glow transition-all uppercase tracking-wider" id="tracking-input" onChange={(event) => { requestRef.current?.abort(); setTrackingNumber(event.target.value); setTrackingState('idle'); setTrackingError(''); }} pattern="CL-[0-9]{4}" placeholder="Exemple : CL-0048" spellCheck="false" type="text" value={trackingNumber} />
                       <button className={`${trackingNumber ? '' : 'hidden'} absolute inset-y-0 right-0 pr-3 flex items-center text-slate-gray hover:text-white`} id="clear-input-btn" onClick={clearTracking} type="button">
                         <span className="material-symbols-outlined text-[18px]">cancel</span>
                       </button>
@@ -105,7 +105,7 @@ export default function Hero() {
                   </div>
                   <p className="text-[12px] text-slate-gray font-sans flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[14px] text-cyan-glow/80">info</span>
-                    Codes disponibles : CL-2026-00125 et CL123456789.
+                    Le numéro de suivi est fourni lors de l’enregistrement de votre colis.
                   </p>
                 </form>
 

@@ -131,6 +131,7 @@ export default function AdminParcelCreatePage({ edit = false }) {
     setSaving(true);
     try {
       const payload = {
+        trackingNumber: form.trackingNumber.trim(),
         description: form.description.trim(),
         category: form.category,
         packageCount: Number(form.packageCount),
@@ -187,13 +188,14 @@ export default function AdminParcelCreatePage({ edit = false }) {
             <ParcelSectionHeading icon="label">1. Informations Générales du Colis</ParcelSectionHeading>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <ParcelField className="md:col-span-4" htmlFor="trackingNumber">
-                Numéro de suivi (AWB / Code Interne)
+                Numéro de suivi <span className="text-error">*</span>
                 <span className="relative mt-1.5 block">
                   <span aria-hidden="true" className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[18px]">lock</span>
+                    <span className="material-symbols-outlined text-[18px]">barcode_scanner</span>
                   </span>
-                  <input className="w-full pl-9 pr-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-code-tracking font-code-tracking text-secondary font-bold cursor-not-allowed" id="trackingNumber" readOnly value={form.trackingNumber || 'Généré après enregistrement'} />
+                  <input className="w-full pl-9 pr-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-code-tracking font-code-tracking text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15" id="trackingNumber" onChange={setField('trackingNumber')} pattern="CL-[0-9]{4}" placeholder="Ex : CL-0001" required value={form.trackingNumber} />
                 </span>
+                <span className="text-label-sm font-label-sm text-on-surface-variant mt-1 block">Format attendu : CL-0001.</span>
               </ParcelField>
               <ParcelField className="md:col-span-8" htmlFor="description">
                 Nom / Désignation commerciale du colis <span className="text-error">*</span>

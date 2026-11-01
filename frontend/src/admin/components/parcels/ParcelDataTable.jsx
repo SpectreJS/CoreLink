@@ -6,6 +6,9 @@ import {
   MRT_ToggleFiltersButton,
   useMaterialReactTable,
 } from 'material-react-table';
+import { getShipmentStatusConfig } from './shipmentStatusConfig.js';
+import TransportBadge from './TransportBadge.jsx';
+import { formatDate, getCurrentMadagascarDateKey, getMadagascarDateKey } from '../../../utils/dateUtils.js';
 
 const parcelTheme = createTheme({
   palette: {
@@ -33,36 +36,30 @@ const statusTone = {
 };
 
 function formatRegisteredAt(value) {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(date);
+  return formatDate(value);
 }
 
 function matchesDateRange(dateValue, dateRange) {
   if (dateRange === 'all') return true;
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return false;
-  const now = new Date();
+  const dateKey = getMadagascarDateKey(dateValue);
+  const currentKey = getCurrentMadagascarDateKey();
+  if (!dateKey || !currentKey) return false;
   if (dateRange === 'month') {
-    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    return dateKey.slice(0, 7) === currentKey.slice(0, 7);
   }
   const days = Number(dateRange);
-  const start = new Date(now);
-  start.setDate(now.getDate() - days);
-  start.setHours(0, 0, 0, 0);
-  return date >= start && date <= now;
+  if (!Number.isFinite(days)) return false;
+  const date = Date.parse(`${dateKey}T00:00:00Z`);
+  const current = Date.parse(`${currentKey}T00:00:00Z`);
+  return current - date >= 0 && current - date <= days * 24 * 60 * 60 * 1000;
 }
 
 function ParcelStatus({ parcel }) {
+  const config = getShipmentStatusConfig(parcel.statusKey);
   return (
     <span className={`parcel-status is-${statusTone[parcel.statusKey] || 'reception'}`}>
-      <span aria-hidden="true" className="parcel-status-dot" />
+      <span aria-hidden="true" className="material-symbols-outlined text-sm">{config.icon}</span>
+     
       {parcel.status}
     </span>
   );
@@ -95,7 +92,7 @@ export default function ParcelDataTable({
       accessorKey: 'trackingNumber',
       header: 'N° de suivi',
       size: 130,
-      Cell: ({ cell }) => <span className="parcel-tracking-number">{cell.getValue()}</span>,
+      Cell: ({ cell }) => <span className="parcel-tracking-number">{cell.getValue() || '—'}</span>,
     },
     {
       accessorKey: 'customerName',
@@ -128,7 +125,10 @@ export default function ParcelDataTable({
           <span>{row.original.origin}</span>
           <span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span>
           <span>{row.original.destination}</span>
-          <small>{row.original.transportMode}</small>
+          <TransportBadge
+            label={transportModes.find((mode) => mode.value === (row.original.transportKey || row.original.transportMode))?.label}
+            value={row.original.transportKey || row.original.transportMode}
+          />
         </div>
       ),
     },
@@ -155,7 +155,7 @@ export default function ParcelDataTable({
       size: 120,
       Cell: ({ cell }) => formatRegisteredAt(cell.getValue()),
     },
-  ], []);
+  ], [transportModes]);
 
   const table = useMaterialReactTable({
     columns,

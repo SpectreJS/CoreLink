@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getOfficialExchangeRate } from '../services/pricing.js';
+import { formatDate } from '../utils/dateUtils.js';
 
 export default function ExchangeRate() {
   const [amount, setAmount] = useState('');
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    const controller = new AbortController();
+    getOfficialExchangeRate(controller.signal)
+      .then((rate) => setExchangeRate(rate))
+      .catch((loadError) => {
+        if (loadError.name !== 'AbortError') setError(loadError.message || 'Taux indisponible.');
+      })
+      .finally(() => setLoading(false));
+    return () => controller.abort();
+  }, []);
+  const rate = exchangeRate?.rate > 0 ? exchangeRate.rate : null;
   const numericAmount = Number.parseFloat(amount);
-  const ariary = Number.isFinite(numericAmount) && numericAmount > 0
-    ? `${Math.round(numericAmount * 660).toLocaleString('fr-FR')} Ar`
-    : '0 Ar';
+  const ariary = rate && Number.isFinite(numericAmount) && numericAmount > 0
+    ? `${Math.round(numericAmount * rate).toLocaleString('fr-FR')} ${exchangeRate.targetCurrency}`
+    : rate ? '0 Ar' : 'Taux indisponible';
 
   return (
     <>
@@ -37,10 +53,10 @@ export default function ExchangeRate() {
                 <div className="text-center sm:text-left">
                   <span className="text-[11px] font-mono uppercase text-slate-gray tracking-wider block">COURS DU JOUR OFFICIEL</span>
                   <div className="text-3xl sm:text-2xl font-mono font-bold text-cyan-glow tracking-tight mt-1">
-                    1 RMB = 660 Ar
+                    {loading ? 'Chargement…' : rate ? `1 ${exchangeRate.sourceCurrency} = ${rate.toLocaleString('fr-FR')} ${exchangeRate.targetCurrency}` : 'Taux indisponible'}
                   </div>
                   <span className="inline-block mt-2 px-2.5 py-0.5 rounded bg-delivered/10 border border-delivered/20 text-delivered text-[11px] font-mono">
-                    Taux préférentiel sourcing garanti
+                    {error || (exchangeRate ? `Mis à jour le ${formatDate(exchangeRate.effectiveDate)}` : 'Aucun taux actif')}
                   </span>
                 </div>
                 <div className="w-full sm:w-[1px] h-[1px] sm:h-16 bg-white/10"></div>
@@ -48,7 +64,7 @@ export default function ExchangeRate() {
                 <div className="w-full sm:w-64 space-y-2">
                   <label className="text-[11px] font-mono text-slate-gray block uppercase">Calcul rapide (RMB ➔ Ariary)</label>
                   <div className="flex items-center gap-2">
-                    <input className="w-28 px-2.5 py-2 rounded-lg bg-night border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-glow" id="rmb-calc-input" min="0" onChange={(event) => setAmount(event.target.value)} placeholder="Montant en ¥" type="number" value={amount} />
+                    <input className="w-28 px-2.5 py-2 rounded-lg bg-night border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-glow" disabled={!rate} id="rmb-calc-input" min="0" onChange={(event) => setAmount(event.target.value)} placeholder="Montant en ¥" type="number" value={amount} />
                     <span className="text-xs font-mono text-slate-gray">=</span>
                     <span className="text-xs font-mono font-bold text-white" id="rmb-calc-output">{ariary}</span>
                   </div>

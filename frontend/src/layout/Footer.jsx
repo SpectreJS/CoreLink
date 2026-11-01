@@ -1,7 +1,8 @@
 import React from 'react';
 import logo from '../assets/images/logo.png';
+import { formatDate } from '../utils/dateUtils.js';
 
-const currentYear = new Date().getFullYear();
+const currentYear = formatDate(new Date()).slice(-4);
 
 export default function Footer() {
 	return (

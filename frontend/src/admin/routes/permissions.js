@@ -1,6 +1,6 @@
 const rolePaths = {
   admin: ['/admin'],
-  manager: ['/admin/dashboard', '/admin/parcels', '/admin/customers', '/admin/tracking', '/admin/shipments', '/admin/invoices', '/admin/payments', '/admin/reports'],
+  manager: ['/admin/dashboard', '/admin/parcels', '/admin/customers', '/admin/tracking', '/admin/shipments', '/admin/payments', '/admin/reports'],
   operator: ['/admin/dashboard', '/admin/parcels', '/admin/customers', '/admin/tracking', '/admin/shipments'],
   viewer: ['/admin/dashboard', '/admin/parcels', '/admin/reports'],
 };
