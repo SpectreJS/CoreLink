@@ -6,6 +6,7 @@ import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
 import '../styles/admin-parcels.scss';
 import { createParcel, deleteParcel, deleteParcels, getParcel, getParcelStatusHistory, listParcelStatuses, listParcelTransportModes, listParcels, updateParcel } from '../services/parcelService.js';
 import ShipmentStatusSelector from '../components/parcels/ShipmentStatusSelector.jsx';
+import TransportModeSelector from '../components/parcels/TransportModeSelector.jsx';
 import { getShipmentStatusConfig } from '../components/parcels/shipmentStatusConfig.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
@@ -168,7 +169,11 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
               ['origin', 'Origine', 'text'],
               ['destination', 'Destination', 'text'],
             ].map(([field, label, type]) => <label className="text-label-md text-on-surface" key={field}>{label}<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField(field)} required value={form[field]} type={type} /></label>)}
-            <label className="text-label-md text-on-surface">Mode de transport<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('transportMode')} required value={form.transportMode}><option value="">Sélectionner</option>{transportModes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            {isEdit ? (
+              <TransportModeSelector modes={transportModes} onChange={(value) => setForm((current) => ({ ...current, transportMode: value }))} value={form.transportMode} />
+            ) : (
+              <label className="text-label-md text-on-surface">Mode de transport<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('transportMode')} required value={form.transportMode}><option value="">Sélectionner</option>{transportModes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            )}
             {isEdit && <ShipmentStatusSelector onChange={(value) => setForm((current) => ({ ...current, status: value }))} previousValue={parcel?.status} statuses={statuses} value={form.status} />}
             <label className="text-label-md text-on-surface">Poids (kg)<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.01" onChange={setField('weight')} required step="0.01" type="number" value={form.weight} /></label>
             <label className="text-label-md text-on-surface">Nombre de colis<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="1" onChange={setField('packageCount')} required type="number" value={form.packageCount} /></label>

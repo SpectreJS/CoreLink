@@ -16,8 +16,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Package, Plane, PlaneTakeoff, Ship } from 'lucide-react';
 import { getShipmentStatusConfig } from '../parcels/shipmentStatusConfig.js';
+import TransportBadge from '../parcels/TransportBadge.jsx';
 const theme = createTheme({
   palette: { primary: { main: '#0051d5' }, background: { default: '#f8f9ff', paper: '#fff' } },
   typography: { fontFamily: 'Inter, sans-serif', fontSize: 13 },
@@ -25,11 +25,6 @@ const theme = createTheme({
 });
 const statusColors = ['#64748b', '#0051d5', '#06b6d4', '#f59e0b', '#16a34a', '#ef4444', '#7c3aed'];
 const transportColors = ['#0051d5', '#06b6d4', '#7c3aed'];
-const transportBadgeConfig = {
-  air_express: { icon: PlaneTakeoff, className: 'border-violet-200 bg-violet-50 text-violet-700' },
-  air_regular: { icon: Plane, className: 'border-blue-200 bg-blue-50 text-blue-700' },
-  sea_lcl: { icon: Ship, className: 'border-cyan-200 bg-cyan-50 text-cyan-700' },
-};
 const statusBadgeClasses = {
   received: 'border-slate-200 bg-slate-50 text-slate-700',
   air_transit: 'border-blue-200 bg-blue-50 text-blue-700',
@@ -110,8 +105,7 @@ export function RecentActivityTable({ rows, statusLabels, transportLabels, onVie
       header: 'N° de colis',
       size: 145,
       Cell: ({ cell }) => (
-        <span className="inline-flex items-center gap-1.5 rounded-lg border border-blue-100 bg-blue-50 px-2.5 py-1.5 font-mono text-label-sm font-bold text-secondary">
-          <span aria-hidden="true" className="material-symbols-outlined text-base">package_2</span>
+        <span className="inline-flex items-center rounded-lg border border-blue-100 bg-blue-50 px-2.5 py-1.5 font-mono text-label-sm font-bold text-secondary">
           {cell.getValue() || '—'}
         </span>
       ),
@@ -150,14 +144,7 @@ export function RecentActivityTable({ rows, statusLabels, transportLabels, onVie
       size: 180,
       Cell: ({ cell }) => {
         const mode = cell.getValue();
-        const config = transportBadgeConfig[mode] || { icon: Package, className: 'border-slate-200 bg-slate-50 text-slate-600' };
-        const Icon = config.icon;
-        return (
-          <span className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-label-sm font-semibold transition-colors hover:shadow-sm ${config.className}`}>
-            <Icon aria-hidden="true" size={17} strokeWidth={2} />
-            {transportLabels?.[mode] || mode || 'Mode inconnu'}
-          </span>
-        );
+        return <TransportBadge label={transportLabels?.[mode]} value={mode} />;
       },
     },
     {
