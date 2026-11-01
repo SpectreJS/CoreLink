@@ -31,14 +31,15 @@ router.post('/login', loginLimiter, asyncHandler(async (request, response) => {
   if (!parsed.success) throw new HttpError(400, 'Identifiants invalides.');
 
   const [users] = await database.execute(
-    'SELECT id, name, email, password_hash, role, is_active FROM admin_users WHERE email = ? LIMIT 1',
+    'SELECT id, name, email, password_hash, role, is_active, account_status FROM admin_users WHERE email = ? LIMIT 1',
     [parsed.data.email.toLowerCase()],
   );
   const user = users[0];
   const validPassword = user ? await bcrypt.compare(parsed.data.password, user.password_hash) : false;
-  if (!user || !validPassword || !user.is_active) {
+  if (!user || !validPassword || !user.is_active || user.account_status !== 'active') {
     throw new HttpError(401, 'E-mail ou mot de passe incorrect.');
   }
+  await database.execute('UPDATE admin_users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?', [user.id]);
 
   const token = jwt.sign(
     { role: user.role },
@@ -63,11 +64,11 @@ router.post('/login', loginLimiter, asyncHandler(async (request, response) => {
 
 router.get('/me', authenticate, asyncHandler(async (request, response) => {
   const [users] = await database.execute(
-    'SELECT id, name, email, role, is_active FROM admin_users WHERE id = ? LIMIT 1',
+    'SELECT id, name, email, role, is_active, account_status FROM admin_users WHERE id = ? LIMIT 1',
     [request.admin.id],
   );
   const user = users[0];
-  if (!user || !user.is_active) throw new HttpError(401, 'Compte désactivé.');
+  if (!user || !user.is_active || user.account_status !== 'active') throw new HttpError(401, 'Compte désactivé.');
   response.json({ user: publicUser(user) });
 }));
 

@@ -6,8 +6,8 @@ import logo from '../../assets/images/logo.png';
 
 export default function AdminLoginPage() {
   const { isAuthenticated, login, status } = useAdminAuth();
-  const [email, setEmail] = useState(import.meta.env.DEV ? 'demo@corelink.local' : '');
-  const [password, setPassword] = useState(import.meta.env.DEV ? 'demo-only' : '');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -35,12 +35,6 @@ export default function AdminLoginPage() {
         <img alt="CoreLink" height="56" src={logo} style={{ width: 56, height: 56, objectFit: 'contain', borderRadius: 10 }} width="56" />
         <h1>Connexion admin</h1>
         <p>Connectez-vous à l’espace de gestion CoreLink.</p>
-        {import.meta.env.DEV && (
-          <div className="admin-demo-notice" style={{ marginBottom: 18 }}>
-            Accès de démonstration local uniquement — aucun backend ni compte réel.
-            <br />demo@corelink.local / demo-only
-          </div>
-        )}
         {status === 'loading' && <p>Vérification de la session…</p>}
         {error && <p className="admin-alert" role="alert">{error}</p>}
         <form className="admin-form" onSubmit={submit}>

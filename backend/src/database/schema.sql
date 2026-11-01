@@ -2,14 +2,22 @@ CREATE TABLE IF NOT EXISTS admin_users (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(160) NOT NULL,
   email VARCHAR(254) NOT NULL,
+  phone VARCHAR(40) NULL,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('admin', 'manager', 'operator', 'viewer') NOT NULL DEFAULT 'viewer',
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  account_status ENUM('active', 'inactive', 'suspended') NOT NULL DEFAULT 'active',
+  last_login_at TIMESTAMP NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uq_admin_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE admin_users
+  ADD COLUMN IF NOT EXISTS phone VARCHAR(40) NULL,
+  ADD COLUMN IF NOT EXISTS account_status ENUM('active', 'inactive', 'suspended') NOT NULL DEFAULT 'active',
+  ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP NULL;
 
 CREATE TABLE IF NOT EXISTS parcels (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

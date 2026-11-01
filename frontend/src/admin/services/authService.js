@@ -1,23 +1,12 @@
 import { adminApi } from './adminApi.js';
 
-const DEMO_USER = {
-  id: 'demo-admin',
-  name: 'Administrateur démo',
-  email: 'demo@corelink.local',
-  role: 'admin',
-};
-
 export async function loginAdmin({ email, password }) {
-  if (import.meta.env.DEV && email === 'demo@corelink.local' && password === 'demo-only') {
-    return { user: DEMO_USER, demo: true };
-  }
-
   const result = await adminApi('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
   if (!result?.user) throw new Error('La réponse d’authentification est invalide.');
-  return { user: result.user, demo: false };
+  return { user: result.user };
 }
 
 export async function getCurrentAdmin() {

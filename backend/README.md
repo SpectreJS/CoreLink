@@ -31,6 +31,11 @@ défaut, mot de passe de démonstration ou jeu de données métier n’est cré�
   suppressions (admin, manager, operator).
 - `GET /api/admin/parcels/statuses` et `/transport-modes` : valeurs métier
   centralisées.
+- `GET /api/admin/users` et `/api/admin/users/:id` : profils administrateurs
+  (Super Administrateur uniquement).
+- `POST /api/admin/users`, `PATCH /api/admin/users/:id` et
+  `DELETE /api/admin/users/:id` : gestion sécurisée des profils, avec mots de
+  passe hachés et protection du dernier Super Administrateur.
 - Les autres routes `/api/admin/*` répondent `501` tant que leurs modules
   métier ne sont pas implémentés.
 

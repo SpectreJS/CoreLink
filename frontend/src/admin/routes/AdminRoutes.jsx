@@ -13,6 +13,7 @@ import {
   AdminParcelFormPage,
   AdminParcelsPage,
 } from '../pages/AdminModulePages.jsx';
+import AdminProfilesPage from '../pages/AdminProfilesPage.jsx';
 
 export default function AdminRoutes() {
   return (
@@ -36,7 +37,7 @@ export default function AdminRoutes() {
           <Route path="invoices" element={<AdminModulePage module="invoices" />} />
           <Route path="payments" element={<AdminModulePage module="payments" />} />
           <Route path="reports" element={<AdminModulePage module="reports" />} />
-          <Route path="users" element={<AdminModulePage module="users" />} />
+          <Route path="users" element={<AdminProfilesPage />} />
           <Route path="settings" element={<AdminModulePage module="settings" />} />
           <Route path="*" element={<Navigate replace to="/admin/dashboard" />} />
         </Route>

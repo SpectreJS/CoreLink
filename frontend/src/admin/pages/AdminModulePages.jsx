@@ -4,7 +4,7 @@ import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/c
 import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
 import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
 import '../styles/admin-parcels.scss';
-import { deleteParcel, deleteParcels, listParcelStatuses, listParcelTransportModes, listParcels } from '../services/parcelService.js';
+import { createParcel, deleteParcel, deleteParcels, getParcel, listParcelStatuses, listParcelTransportModes, listParcels, updateParcel } from '../services/parcelService.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
 import AdminPricingPage from './AdminPricingPage.jsx';
@@ -19,6 +19,161 @@ function PageHeading({ title, description, action }) {
   );
 }
 
+const emptyParcelForm = {
+  description: '',
+  category: '',
+  packageCount: '1',
+  weight: '',
+  length: '',
+  width: '',
+  height: '',
+  customerName: '',
+  recipientName: '',
+  phone: '',
+  email: '',
+  origin: '',
+  destination: '',
+  transportMode: '',
+  status: '',
+  notes: '',
+};
+
+function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSaved }) {
+  const isView = mode === 'view';
+  const isEdit = mode === 'edit';
+  const [parcel, setParcel] = useState(null);
+  const [form, setForm] = useState(emptyParcelForm);
+  const [loading, setLoading] = useState(isEdit || isView);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && !saving) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose, saving]);
+
+  useEffect(() => {
+    if (!parcelId) return undefined;
+    let active = true;
+    getParcel(parcelId)
+      .then((result) => {
+        if (!result?.data) throw new Error('Colis introuvable.');
+        if (!active) return;
+        const value = result.data;
+        setParcel(value);
+        setForm(Object.fromEntries(Object.keys(emptyParcelForm).map((field) => [field, value[field] == null ? '' : String(value[field])])));
+      })
+      .catch((loadError) => { if (active) setError(loadError.message || 'Impossible de charger le colis.'); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [parcelId]);
+
+  const setField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
+  const submit = async (event) => {
+    event.preventDefault();
+    setError('');
+    if (!form.description.trim() || !form.category.trim() || !form.customerName.trim() || !form.phone.trim()
+      || !form.origin.trim() || !form.destination.trim() || !form.transportMode || !form.weight || Number(form.weight) <= 0
+      || !form.packageCount || Number(form.packageCount) < 1) {
+      setError('Description, catégorie, client, téléphone, origine, destination, transport, poids et nombre de colis sont obligatoires.');
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        description: form.description.trim(),
+        category: form.category.trim(),
+        packageCount: Number(form.packageCount),
+        weight: Number(form.weight),
+        length: Number(form.length) || 0,
+        width: Number(form.width) || 0,
+        height: Number(form.height) || 0,
+        customerName: form.customerName.trim(),
+        recipientName: form.recipientName.trim() || null,
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        origin: form.origin.trim(),
+        destination: form.destination.trim(),
+        transportMode: form.transportMode,
+        notes: form.notes.trim() || null,
+      };
+      if (isEdit) payload.status = form.status;
+      const result = isEdit ? await updateParcel(parcelId, payload) : await createParcel(payload);
+      await onSaved(isEdit ? `Le colis ${result.data.trackingNumber} a été modifié.` : `Le colis ${result.data.trackingNumber} a été créé.`);
+    } catch (saveError) {
+      setError(saveError.message || 'Enregistrement impossible.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const title = isView ? 'Détails du colis' : isEdit ? 'Modifier le colis' : 'Enregistrer un colis';
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && !saving && onClose()}>
+      <section aria-labelledby="parcel-modal-title" aria-modal="true" className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-2xl" role="dialog">
+        <div className="mb-5 flex items-center justify-between border-b border-outline-variant pb-3">
+          <h2 className="text-headline-sm font-bold text-on-surface" id="parcel-modal-title">{title}</h2>
+          <button aria-label="Fermer" className="text-outline" disabled={saving} onClick={onClose} type="button"><span className="material-symbols-outlined">close</span></button>
+        </div>
+        {loading && <p aria-live="polite" className="py-8 text-center text-on-surface-variant">Chargement du colis…</p>}
+        {!loading && error && <p className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-body-sm text-red-800" role="alert">{error}</p>}
+        {!loading && !error && isView && parcel && (
+          <div className="grid grid-cols-1 gap-4 text-body-sm md:grid-cols-2">
+            {[
+              ['N° de suivi', parcel.trackingNumber],
+              ['Description', parcel.description],
+              ['Catégorie', parcel.category],
+              ['Client associé', parcel.customerName],
+              ['Téléphone', parcel.phone],
+              ['Origine', parcel.origin],
+              ['Destination', parcel.destination],
+              ['Mode de transport', transportModes.find((item) => item.value === parcel.transportMode)?.label || parcel.transportMode],
+              ['Poids', `${parcel.weight} kg`],
+              ['Nombre de colis', parcel.packageCount],
+              ['Statut actuel', parcel.statusLabel || statuses.find((item) => item.value === parcel.status)?.label || parcel.status],
+              ['Date de création', parcel.registeredAt ? new Date(parcel.registeredAt).toLocaleString('fr-FR') : '—'],
+              ['Date de livraison estimée', 'Non fournie par l’API'],
+              ['Historique de suivi', 'Non disponible : aucun endpoint backend'],
+            ].map(([label, value]) => <div className="rounded-lg bg-surface-container-low p-3" key={label}><span className="block text-label-sm text-outline">{label}</span><strong className="text-on-surface">{value || '—'}</strong></div>)}
+            <div className="md:col-span-2 flex justify-end"><button className="rounded-lg bg-secondary px-4 py-2 font-semibold text-on-secondary" onClick={onClose} type="button">Fermer</button></div>
+          </div>
+        )}
+        {!loading && !error && !isView && (
+          <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={submit}>
+            {[
+              ['description', 'Description', 'text'],
+              ['category', 'Catégorie', 'text'],
+              ['customerName', 'Client', 'text'],
+              ['phone', 'Téléphone', 'tel'],
+              ['origin', 'Origine', 'text'],
+              ['destination', 'Destination', 'text'],
+            ].map(([field, label, type]) => <label className="text-label-md text-on-surface" key={field}>{label}<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField(field)} required value={form[field]} type={type} /></label>)}
+            <label className="text-label-md text-on-surface">Mode de transport<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('transportMode')} required value={form.transportMode}><option value="">Sélectionner</option>{transportModes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            {isEdit && <label className="text-label-md text-on-surface">Statut<select className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('status')} required value={form.status}>{statuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
+            <label className="text-label-md text-on-surface">Poids (kg)<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="0.01" onChange={setField('weight')} required step="0.01" type="number" value={form.weight} /></label>
+            <label className="text-label-md text-on-surface">Nombre de colis<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" min="1" onChange={setField('packageCount')} required type="number" value={form.packageCount} /></label>
+            <label className="text-label-md text-on-surface">Destinataire<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('recipientName')} value={form.recipientName} /></label>
+            <label className="text-label-md text-on-surface">E-mail<input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2" onChange={setField('email')} type="email" value={form.email} /></label>
+            <div className="flex justify-end gap-2 md:col-span-2"><button className="rounded-lg border border-outline-variant px-4 py-2" disabled={saving} onClick={onClose} type="button">Annuler</button><button className="rounded-lg bg-secondary px-4 py-2 font-semibold text-on-secondary" disabled={saving} type="submit">{saving ? 'Enregistrement…' : 'Enregistrer'}</button></div>
+          </form>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function DeleteParcelModal({ parcel, onClose, onConfirm, loading }) {
+  useEffect(() => {
+    const handleEscape = (event) => { if (event.key === 'Escape' && !loading) onClose(); };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [loading, onClose]);
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && !loading && onClose()}><section aria-modal="true" className="w-full max-w-md rounded-xl border border-outline-variant bg-surface-container-lowest p-6 shadow-2xl" role="dialog"><h2 className="text-headline-sm font-bold text-on-surface">Confirmer la suppression</h2><p className="mt-3 text-body-sm text-on-surface-variant">Supprimer le colis <strong>{parcel.trackingNumber}</strong> — {parcel.contents} ?</p><div className="mt-6 flex justify-end gap-2"><button className="rounded-lg border border-outline-variant px-4 py-2" disabled={loading} onClick={onClose} type="button">Annuler</button><button className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white" disabled={loading} onClick={onConfirm} type="button">{loading ? 'Suppression…' : 'Confirmer la suppression'}</button></div></section></div>;
+}
+
 export function AdminParcelsPage() {
   const [rows, setRows] = useState([]);
   const [statuses, setStatuses] = useState([]);
@@ -26,6 +181,9 @@ export function AdminParcelsPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [actionNotice, setActionNotice] = useState('');
+  const [modal, setModal] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const { user } = useAdminAuth();
   const location = useLocation();
   const canMutate = ['admin', 'manager', 'operator'].includes(user?.role);
@@ -75,14 +233,23 @@ export function AdminParcelsPage() {
   }, [location.state]);
 
   const removeParcel = async (parcel) => {
-    if (!window.confirm(`Supprimer définitivement le colis ${parcel.trackingNumber} ?`)) return;
     setActionNotice('');
+    setDeleteTarget(parcel);
+  };
+
+  const confirmRemoveParcel = async () => {
+    if (!deleteTarget) return;
+    const parcel = deleteTarget;
+    setDeleting(true);
     try {
       await deleteParcel(parcel.id);
       setActionNotice(`Le colis ${parcel.trackingNumber} a été supprimé.`);
       await loadParcels();
+      setDeleteTarget(null);
     } catch (deleteError) {
       setError(deleteError.message || 'La suppression du colis a échoué.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -146,10 +313,10 @@ export function AdminParcelsPage() {
             <span aria-hidden="true" className="material-symbols-outlined">download</span>
             Exporter CSV / Excel
           </button>
-          <Link className="parcel-management-button is-primary" to="/admin/parcels/new">
+          <button className="parcel-management-button is-primary" onClick={() => setModal({ mode: 'create' })} type="button">
             <span aria-hidden="true" className="material-symbols-outlined">add</span>
             Enregistrer un colis
-          </Link>
+          </button>
         </div>
       </section>
 
@@ -192,12 +359,14 @@ export function AdminParcelsPage() {
         isLoading={isLoading}
         onDelete={removeParcel}
         onDeleteMany={removeParcels}
-        onEdit={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}/edit`)}
-        onView={(parcel) => navigate(`/admin/parcels/${encodeURIComponent(parcel.id)}`)}
+        onEdit={(parcel) => setModal({ mode: 'edit', parcelId: parcel.id })}
+        onView={(parcel) => setModal({ mode: 'view', parcelId: parcel.id })}
         rows={rows}
         statuses={statuses}
         transportModes={transportModes}
       />
+      {modal && <ParcelModal mode={modal.mode} onClose={() => setModal(null)} onSaved={async (message) => { setModal(null); setActionNotice(message); await loadParcels(); }} parcelId={modal.parcelId} statuses={statuses} transportModes={transportModes} />}
+      {deleteTarget && <DeleteParcelModal loading={deleting} onClose={() => setDeleteTarget(null)} onConfirm={confirmRemoveParcel} parcel={deleteTarget} />}
     </div>
   );
 }

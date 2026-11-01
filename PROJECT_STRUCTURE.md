@@ -233,3 +233,5 @@ comme persistés.
 
 
 accès admin ==> http://localhost:5173/admin/
+demo@corelink.local
+Tsjl206206*-
