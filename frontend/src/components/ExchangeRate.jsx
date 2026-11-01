@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getOfficialExchangeRate } from '../services/pricing.js';
+import { formatDate } from '../utils/dateUtils.js';
 
 export default function ExchangeRate() {
   const [amount, setAmount] = useState('');
@@ -55,7 +56,7 @@ export default function ExchangeRate() {
                     {loading ? 'Chargement…' : rate ? `1 ${exchangeRate.sourceCurrency} = ${rate.toLocaleString('fr-FR')} ${exchangeRate.targetCurrency}` : 'Taux indisponible'}
                   </div>
                   <span className="inline-block mt-2 px-2.5 py-0.5 rounded bg-delivered/10 border border-delivered/20 text-delivered text-[11px] font-mono">
-                    {error || (exchangeRate ? `Mis à jour le ${new Date(exchangeRate.effectiveDate).toLocaleDateString('fr-FR')}` : 'Aucun taux actif')}
+                    {error || (exchangeRate ? `Mis à jour le ${formatDate(exchangeRate.effectiveDate)}` : 'Aucun taux actif')}
                   </span>
                 </div>
                 <div className="w-full sm:w-[1px] h-[1px] sm:h-16 bg-white/10"></div>

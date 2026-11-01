@@ -108,10 +108,10 @@ async function seedParcels(connection, actorId) {
   let inserted = 0;
   for (let index = 1; index <= 50; index += 1) {
     const sequence = String(index).padStart(4, '0');
-    const trackingNumber = `${seedMarker}-${sequence}`;
+    const trackingNumber = `CL-${sequence}`;
     const [existing] = await connection.execute(
-      'SELECT id FROM parcels WHERE tracking_number = ? LIMIT 1',
-      [trackingNumber],
+      'SELECT id FROM parcels WHERE tax_id = ? LIMIT 1',
+      [`${seedMarker}-${sequence}`],
     );
     if (existing.length) continue;
 
@@ -134,7 +134,7 @@ async function seedParcels(connection, actorId) {
         weight, length, width, height, volume_cbm, volumetric_weight,
         customer_name, recipient_name, phone, email, tax_id, origin, destination,
         transport_mode, status, notes, created_by, updated_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)` ,
       [
         trackingNumber,
         serialNumber,

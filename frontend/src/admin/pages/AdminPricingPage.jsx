@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { listPricingSettings, updatePricingSetting } from '../services/pricingService.js';
+import { formatDate } from '../../utils/dateUtils.js';
 
 const categories = [
   {
@@ -186,7 +187,7 @@ export default function AdminPricingPage({ onNotice }) {
       </header>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <PricingCard label="Devises & Monnaie Locale" title="Taux de Change Officiel du Jour" icon="currency_exchange" value={settings.exchange_cny_mga ? `1 ${settings.exchange_cny_mga.sourceCurrency} = ${settings.exchange_cny_mga.rate.toLocaleString('fr-FR')} ${settings.exchange_cny_mga.targetCurrency}` : '—'} unit="" badge={settings.exchange_cny_mga?.status === 'active' ? 'Actif' : 'Inactif'} description={settings.exchange_cny_mga ? `Application : ${settings.exchange_cny_mga.effectiveDate}` : 'Aucune valeur tarifaire disponible'} onEdit={() => setEditing(settings.exchange_cny_mga)} />
+        <PricingCard label="Devises & Monnaie Locale" title="Taux de Change Officiel du Jour" icon="currency_exchange" value={settings.exchange_cny_mga ? `1 ${settings.exchange_cny_mga.sourceCurrency} = ${settings.exchange_cny_mga.rate.toLocaleString('fr-FR')} ${settings.exchange_cny_mga.targetCurrency}` : '—'} unit="" badge={settings.exchange_cny_mga?.status === 'active' ? 'Actif' : 'Inactif'} description={settings.exchange_cny_mga ? `Application : ${formatDate(settings.exchange_cny_mga.effectiveDate)}` : 'Aucune valeur tarifaire disponible'} onEdit={() => setEditing(settings.exchange_cny_mga)} />
         <PricingCard label="Fret Aérien Express" title="Fret Aérien Régulier Moyen" icon="flight_takeoff" value={settings.air_express ? settings.air_express.amount.toLocaleString('fr-FR') : '—'} unit={settings.air_express ? `/ ${settings.air_express.currency} / kg` : ''} badge={settings.air_express?.deliveryDays || '—'} description="Corridor CAN (Guangzhou Baiyun) → TNR (Ivato Antananarivo)" onEdit={() => setEditing(settings.air_express)} />
         <PricingCard label="Fret Maritime Groupage" title="Fret Maritime LCL Groupage" icon="directions_boat" value={settings.sea_lcl ? settings.sea_lcl.amount.toLocaleString('fr-FR') : '—'} unit={settings.sea_lcl ? `/ ${settings.sea_lcl.currency} / m³` : ''} badge={settings.sea_lcl ? `Min ${settings.sea_lcl.minimumBillable} CBM` : '—'} description="Transit Foshan/Huangpu → Toamasina" tone="text-secondary-container" onEdit={() => setEditing(settings.sea_lcl)} />
       </section>

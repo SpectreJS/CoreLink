@@ -12,6 +12,7 @@ import { createCustomer, getCustomer, listCustomers } from '../services/customer
 import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
 import AdminPricingPage from './AdminPricingPage.jsx';
 import { useAdminAuth } from '../contexts/AdminAuthContext.jsx';
+import { formatDateTime } from '../../utils/dateUtils.js';
 
 function PageHeading({ title, description, action }) {
   return (
@@ -23,6 +24,7 @@ function PageHeading({ title, description, action }) {
 }
 
 const emptyParcelForm = {
+  trackingNumber: '',
   description: '',
   category: '',
   packageCount: '1',
@@ -83,12 +85,13 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
     if (!form.description.trim() || !form.category.trim() || !form.customerName.trim() || !form.phone.trim()
       || !form.origin.trim() || !form.destination.trim() || !form.transportMode || !form.weight || Number(form.weight) <= 0
       || !form.packageCount || Number(form.packageCount) < 1) {
-      setError('Description, catégorie, client, téléphone, origine, destination, transport, poids et nombre de colis sont obligatoires.');
+      setError('Numéro de suivi, description, catégorie, client, téléphone, origine, destination, transport, poids et nombre de colis sont obligatoires.');
       return;
     }
     setSaving(true);
     try {
       const payload = {
+        trackingNumber: form.trackingNumber.trim(),
         description: form.description.trim(),
         category: form.category.trim(),
         packageCount: Number(form.packageCount),
@@ -112,7 +115,7 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
         if (!window.confirm(`Confirmer le changement du statut ${previousLabel} vers ${nextLabel} ?`)) return;
       }
       const result = isEdit ? await updateParcel(parcelId, payload) : await createParcel(payload);
-      await onSaved(isEdit ? `Le colis ${result.data.serialNumber} a été modifié.` : `Le colis ${result.data.serialNumber} a été créé.`);
+      await onSaved(isEdit ? `Le colis ${result.data.trackingNumber} a été modifié.` : `Le colis ${result.data.trackingNumber} a été créé.`);
     } catch (saveError) {
       setError(saveError.message || 'Enregistrement impossible.');
     } finally {
@@ -151,16 +154,20 @@ function ParcelModal({ mode, parcelId, statuses, transportModes, onClose, onSave
               ['Mode de transport', transportModes.find((item) => item.value === parcel.transportMode)?.label || parcel.transportMode],
               ['Poids', `${parcel.weight} kg`],
               ['Nombre de colis', parcel.packageCount],
-              ['Date de création', parcel.registeredAt ? new Date(parcel.registeredAt).toLocaleString('fr-FR') : '—'],
+              ['Date de création', formatDateTime(parcel.registeredAt)],
               ['Date de livraison estimée', 'Non fournie par l’API'],
               ['Historique de suivi', history.length ? `${history.length} changement(s)` : 'Aucun changement enregistré'],
             ].map(([label, value]) => <div className="rounded-lg bg-surface-container-low p-3" key={label}><span className="block text-label-sm text-outline">{label}</span><strong className="text-on-surface">{value || '—'}</strong></div>)}
-            {history.length > 0 && <div className="md:col-span-2 border-t border-outline-variant pt-4"><h3 className="mb-3 font-semibold">Historique des statuts</h3><div className="space-y-3">{history.map((event) => { const config = getShipmentStatusConfig(event.newStatus); return <div className="flex items-start gap-3" key={event.id}><span className={`shipment-status-history-icon is-${config.tone}`}><span aria-hidden="true" className="material-symbols-outlined">{config.icon}</span></span><div><strong>{event.newLabel}</strong><p className="text-label-sm text-outline">{new Date(event.createdAt).toLocaleString('fr-FR')} · {event.changedBy}</p></div></div>; })}</div></div>}
+            {history.length > 0 && <div className="md:col-span-2 border-t border-outline-variant pt-4"><h3 className="mb-3 font-semibold">Historique des statuts</h3><div className="space-y-3">{history.map((event) => { const config = getShipmentStatusConfig(event.newStatus); return <div className="flex items-start gap-3" key={event.id}><span className={`shipment-status-history-icon is-${config.tone}`}><span aria-hidden="true" className="material-symbols-outlined">{config.icon}</span></span><div><strong>{event.newLabel}</strong><p className="text-label-sm text-outline">{formatDateTime(event.createdAt)} · {event.changedBy}</p></div></div>; })}</div></div>}
             <div className="md:col-span-2 flex justify-end"><button className="rounded-lg bg-secondary px-4 py-2 font-semibold text-on-secondary" onClick={onClose} type="button">Fermer</button></div>
           </div>
         )}
         {!loading && !error && !isView && (
           <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={submit}>
+            <label className="text-label-md text-on-surface md:col-span-2">Numéro de suivi
+              <input className="mt-1 w-full rounded-lg border border-outline-variant px-3 py-2 font-mono" onChange={setField('trackingNumber')} pattern="CL-[0-9]{4}" placeholder="Ex : CL-0001" required value={form.trackingNumber} />
+              <span className="mt-1 block text-label-sm text-on-surface-variant">Format attendu : CL-0001.</span>
+            </label>
             {[
               ['description', 'Description', 'text'],
               ['category', 'Catégorie', 'text'],
@@ -304,7 +311,7 @@ export function AdminParcelsPage() {
     const escapeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
     const csv = [
       columns.map(([, label]) => escapeCell(label)).join(';'),
-      ...rows.map((row) => columns.map(([key]) => escapeCell(row[key])).join(';')),
+      ...rows.map((row) => columns.map(([key]) => escapeCell(key === 'registeredAt' ? formatDateTime(row[key]) : row[key])).join(';')),
     ].join('\r\n');
     const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);

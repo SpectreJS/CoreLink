@@ -47,18 +47,7 @@ function SidebarLink({ link, onNavigate, role }) {
         {link.icon}
       </span>
       <span className="text-label-md font-label-md">{link.label}</span>
-      {link.count && (
-        <span className={`ml-auto rounded px-1.5 py-0.5 text-label-sm font-label-sm ${
-          link.warning
-            ? 'bg-amber-100 font-semibold text-amber-800'
-            : link.exact
-              ? 'rounded-full bg-secondary px-2 text-on-secondary'
-              : 'bg-surface-container-high text-on-surface-variant'
-        }`}
-        >
-          {link.count}
-        </span>
-      )}
+    
     </NavLink>
   );
 }
@@ -88,17 +77,6 @@ export default function StitchAdminSidebar({ open, onNavigate, onNotice, onLogou
             <h1 className="truncate text-title-md font-title-md font-bold leading-tight tracking-tight text-on-surface">CoreLink BO</h1>
             <p className="truncate text-label-sm font-label-sm text-on-surface-variant">Transit GZ-TNR Hub</p>
           </div>
-        </div>
-
-        <div className="px-4 pb-2 pt-4">
-          <button
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-3 py-2.5 text-title-sm font-title-sm text-on-secondary shadow-sm transition-all duration-150 hover:bg-secondary-container active:scale-[0.99]"
-            onClick={() => onNotice('Scanner de réception — cette fonctionnalité sera connectée dans une prochaine étape.')}
-            type="button"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-lg">qr_code_scanner</span>
-            Scanner Réception
-          </button>
         </div>
 
         <nav aria-label="Navigation administrative" className="custom-scrollbar flex-1 space-y-1 overflow-y-auto px-3 py-3">

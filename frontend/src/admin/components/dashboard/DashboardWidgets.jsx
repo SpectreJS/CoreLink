@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { formatDate as formatCoreLinkDate } from '../../../utils/dateUtils.js';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import {
@@ -46,13 +47,7 @@ function initials(value) {
 }
 
 function formatDate(value) {
-  if (!value) return '—';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? '—' : new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(date);
+  return formatCoreLinkDate(value);
 }
 
 function Card({ children, className = '' }) {
@@ -100,16 +95,6 @@ export function TransportDistribution({ data, labels, loading }) {
 export function RecentActivityTable({ rows, statusLabels, transportLabels, onView }) {
   const [globalFilter, setGlobalFilter] = useState('');
   const columns = useMemo(() => [
-    {
-      accessorKey: 'serialNumber',
-      header: 'N° de colis',
-      size: 145,
-      Cell: ({ cell }) => (
-        <span className="inline-flex items-center rounded-lg border border-blue-100 bg-blue-50 px-2.5 py-1.5 font-mono text-label-sm font-bold text-secondary">
-          {cell.getValue() || '—'}
-        </span>
-      ),
-    },
     { accessorKey: 'trackingNumber', header: 'N° de suivi', size: 140, Cell: ({ cell }) => <span className="font-mono text-label-sm text-on-surface-variant">{cell.getValue() || '—'}</span> },
     { accessorKey: 'description', header: 'Description', size: 210, Cell: ({ cell }) => <span className="font-medium text-on-surface">{cell.getValue() || '—'}</span> },
     {

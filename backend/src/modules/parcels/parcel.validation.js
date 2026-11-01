@@ -2,8 +2,12 @@ import { z } from 'zod';
 import { parcelStatusValues, parcelTransportModeValues } from './parcel.constants.js';
 
 const optionalText = (max) => z.string().trim().max(max).optional().nullable();
-
+const trackingNumber = z.string()
+  .trim()
+  .regex(/^CL-\d{4}$/, 'Le numéro de suivi doit respecter le format CL-0001.')
+  .transform((value) => value.toUpperCase());
 export const parcelFieldsSchema = z.object({
+  trackingNumber,
   description: z.string().trim().min(1).max(500),
   category: z.string().trim().min(1).max(120),
   packageCount: z.coerce.number().int().min(1).max(10000),

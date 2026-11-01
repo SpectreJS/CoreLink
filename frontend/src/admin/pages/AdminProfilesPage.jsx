@@ -17,6 +17,7 @@ import {
   updateAdminProfile,
 } from '../services/adminProfilesService.js';
 import '../styles/admin-parcels.scss';
+import { formatDateTime } from '../../utils/dateUtils.js';
 
 const tableTheme = createTheme({
   palette: { primary: { main: '#0051d5' }, background: { default: '#f8f9ff', paper: '#fff' } },
@@ -33,9 +34,7 @@ function initials(name) {
 }
 
 function formatDate(value) {
-  if (!value) return 'Jamais';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+  return value ? formatDateTime(value) : 'Jamais';
 }
 
 function ProfileModal({ profile, onClose, onSaved }) {

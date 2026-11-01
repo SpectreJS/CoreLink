@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ScrollReveal from '../components/ScrollReveal.jsx';
 import { findTrackingRecord, normalizeTrackingCode } from '../services/tracking.js';
+import { formatDateTime } from '../utils/dateUtils.js';
 
 const stages = [
   { title: 'Enregistré', detail: 'Réception au centre logistique', icon: 'inventory_2' },
@@ -51,7 +52,7 @@ export default function DetailsPage({ trackingNumber }) {
       .then((result) => {
         if (!result) {
           setState('error');
-          setErrorMessage('Aucun colis ne correspond à ce numéro de suivi.');
+          setErrorMessage('Aucun colis trouvé avec ce numéro de suivi. Vérifiez votre saisie.');
           return;
         }
         setRecord(result);
@@ -98,7 +99,7 @@ export default function DetailsPage({ trackingNumber }) {
       const result = await findTrackingRecord(code, controller.signal);
       if (!result) {
         setState('error');
-        setErrorMessage('Aucun colis ne correspond à ce numéro de suivi.');
+        setErrorMessage('Aucun colis trouvé avec ce numéro de suivi. Vérifiez votre saisie.');
         return;
       }
       if (normalizeTrackingCode(trackingNumber || '') === code) {
@@ -137,19 +138,6 @@ export default function DetailsPage({ trackingNumber }) {
 
   return (
     <ScrollReveal as="main" className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 details-page">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#0a1526]/70 border border-[#1e3a66]/50 rounded-xl px-4 py-3 text-xs backdrop-blur-sm">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-slate-400 font-mono uppercase tracking-wider text-[11px] font-semibold">Mode démonstration :</span>
-          <span className="px-3 py-1 rounded-md text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
-            Données fictives
-          </span>
-        </div>
-        <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span className="text-slate-300">SUIVI STATIQUE DE DÉMONSTRATION</span>
-        </div>
-      </div>
-
       <section className="relative rounded-2xl bg-gradient-to-b from-[#0c1c36] to-[#081224] p-6 sm:p-10 border border-[#1e3a66] shadow-2xl overflow-hidden grid-bg" id="search-section">
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -162,7 +150,7 @@ export default function DetailsPage({ trackingNumber }) {
             Où en est <span className="bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">votre expédition ?</span>
           </h1>
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Consultez les données fictives de démonstration pour un numéro présent dans le jeu d’exemple.
+            Consultez les informations réelles de votre colis à partir de son numéro de suivi.
           </p>
         </div>
 
@@ -185,7 +173,8 @@ export default function DetailsPage({ trackingNumber }) {
                   }
                   setSearchValue(event.target.value);
                 }}
-                placeholder="Ex : CL-2026-00125"
+                pattern="CL-[0-9]{4}"
+                placeholder="Ex : CL-0048"
                 spellCheck="false"
                 type="text"
                 value={searchValue}
@@ -209,7 +198,7 @@ export default function DetailsPage({ trackingNumber }) {
           </div>
           <p className="mt-3 text-xs font-mono text-slate-400 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px] text-cyan-400">receipt_long</span>
-            Codes de test : CL-2026-00125 et CL123456789.
+            Utilisez le numéro de suivi communiqué lors de l’enregistrement du colis.
           </p>
         </form>
       </section>
@@ -220,7 +209,7 @@ export default function DetailsPage({ trackingNumber }) {
             <span className="material-symbols-outlined text-[48px]">sync</span>
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Recherche du numéro de suivi…</h2>
-          <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">Vérification dans le jeu de données de démonstration.</p>
+          <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">Interrogation sécurisée des données de suivi.</p>
         </div>
       )}
 
@@ -231,7 +220,7 @@ export default function DetailsPage({ trackingNumber }) {
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Numéro de suivi introuvable</h2>
           <p className="text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">{errorMessage}</p>
-          <p className="text-xs text-slate-400">Essayez CL-2026-00125 ou CL123456789.</p>
+          <p className="text-xs text-slate-400">Format attendu : CL-0048.</p>
         </div>
       )}
 
@@ -247,7 +236,7 @@ export default function DetailsPage({ trackingNumber }) {
                     <span className="material-symbols-outlined text-[18px]">content_copy</span>
                   </button>
                 </div>
-                <span className="text-xs font-mono text-cyan-400/80 mt-1 block">RÉF : {displayValue(record.reference, '—')}</span>
+                <span className="text-xs font-mono text-cyan-400/80 mt-1 block">N° de série : {displayValue(record.serialNumber, '—')}</span>
               </div>
               <div className="border-b sm:border-b-0 lg:border-r border-[#1e3a66]/70 pb-4 sm:pb-0 lg:pr-4">
                 <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-1.5 font-semibold">Statut actuel</span>
@@ -270,14 +259,14 @@ export default function DetailsPage({ trackingNumber }) {
                   <span className="material-symbols-outlined text-[20px] text-cyan-400">airplanemode_active</span>
                   {displayValue(record.freightType)}
                 </div>
-                <span className="text-xs text-slate-400 mt-1 block font-mono">Estimation : {displayValue(record.estimatedDelivery)}</span>
+                <span className="text-xs text-slate-400 mt-1 block">Client : {displayValue(record.customerName)}</span>
               </div>
               <div>
                 <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block mb-1.5 font-semibold">Dernière mise à jour</span>
-                <p className="text-xs font-mono text-white leading-snug">{displayValue(record.updatedAt)}</p>
-                <span className="text-xs font-mono text-amber-300 flex items-center gap-1.5 mt-1 font-medium">
+                <p className="text-xs font-mono text-white leading-snug">{formatDateTime(record.updatedAt)}</p>
+                <span className="text-xs font-mono text-cyan-300 flex items-center gap-1.5 mt-1 font-medium">
                   <span className="w-2 h-2 rounded-full bg-amber-300"></span>
-                  Donnée de démonstration
+                  Donnée actualisée
                 </span>
               </div>
             </div>
@@ -288,9 +277,9 @@ export default function DetailsPage({ trackingNumber }) {
               <div className="bg-[#0c1a2e] px-4 sm:px-6 py-3.5 border-b border-[#1e3a66]/60 flex flex-wrap justify-between items-center gap-3">
                 <div className="flex items-center gap-2.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#38bdf8]"></span>
-                  <span className="font-mono text-xs font-semibold text-white tracking-wider">SUIVI DU CORRIDOR : CAN ➔ TNR</span>
+                  <span className="font-mono text-xs font-semibold text-white tracking-wider">SUIVI DU CORRIDOR : {displayValue(record.origin)} ➔ {displayValue(record.destination)}</span>
                 </div>
-                <span className="text-xs font-mono text-cyan-400 font-semibold">MODE DÉMONSTRATION</span>
+                <span className="text-xs font-mono text-cyan-400 font-semibold">SUIVI EN TEMPS RÉEL</span>
               </div>
               <div className="relative w-full overflow-hidden bg-[#060c18] border-b border-[#1e3a66]/60">
                 <div className="relative w-full min-h-72 sm:min-h-80 overflow-hidden grid-bg">
@@ -300,7 +289,7 @@ export default function DetailsPage({ trackingNumber }) {
                       <span className="material-symbols-outlined text-cyan-400 text-[18px]">package_2</span>
                       <span className="font-mono text-xs font-bold text-white tracking-wide">COLIS #{shipmentCode}</span>
                     </div>
-                    <span className="px-3 py-1.5 rounded-lg bg-[#050b14]/90 border border-amber-500/40 text-[11px] font-mono font-semibold text-amber-200">DONNÉES FICTIVES</span>
+                    <span className="px-3 py-1.5 rounded-lg bg-[#050b14]/90 border border-cyan-500/40 text-[11px] font-mono font-semibold text-cyan-200">DONNÉES RÉELLES</span>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4 bg-[#0a1526]/95 border border-[#1e3a66] backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-2xl">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3.5">
@@ -310,7 +299,7 @@ export default function DetailsPage({ trackingNumber }) {
                         </div>
                         <div>
                           <h2 className="text-sm font-bold text-white">Corridor {displayValue(record.origin)} ➔ {displayValue(record.destination)}</h2>
-                          <p className="text-xs text-slate-300 font-mono mt-0.5">{displayValue(record.currentHub)}</p>
+                          <p className="text-xs text-slate-300 font-mono mt-0.5">Client : {displayValue(record.customerName)}</p>
                         </div>
                       </div>
                       <span className="text-xs font-mono text-cyan-300">{progress}% du parcours estimé</span>
@@ -360,8 +349,8 @@ export default function DetailsPage({ trackingNumber }) {
                 </div>
               </div>
               <div className="bg-[#091526] px-4 sm:px-6 py-3 border-t border-[#1e3a66]/60 flex flex-wrap justify-between items-center text-xs font-mono text-slate-400 gap-3">
-                <span className="flex items-center gap-2"><span className="material-symbols-outlined text-cyan-400 text-[16px]">info</span>Étapes indicatives issues du jeu de données de démonstration.</span>
-                <span className="text-cyan-400/90 font-semibold">UTC+3 | UTC+8</span>
+                <span className="flex items-center gap-2"><span className="material-symbols-outlined text-cyan-400 text-[16px]">info</span>Les étapes affichées proviennent de l’historique enregistré.</span>
+                <span className="text-cyan-400/90 font-semibold">MADAGASCAR (UTC+3)</span>
               </div>
             </div>
 
@@ -371,16 +360,15 @@ export default function DetailsPage({ trackingNumber }) {
                   <span className="material-symbols-outlined text-cyan-400 text-[20px]">assignment</span>
                   Fiche technique
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 text-[11px] font-mono font-semibold">DÉMO</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 text-[11px] font-mono font-semibold">RÉEL</span>
               </div>
               <dl className="space-y-3.5 font-mono text-xs">
                 {[
                   ['Numéro de suivi', shipmentCode],
-                  ['Référence interne', displayValue(record.reference)],
-                  ['Poids & volume', displayValue(record.weight)],
+                  ['Numéro de série', displayValue(record.serialNumber)],
                   ['Événements enregistrés', `${events.length} événement${events.length === 1 ? '' : 's'}`],
-                  ['Hub actuel', displayValue(record.currentHub)],
-                  ['Dernière mise à jour', displayValue(record.updatedAt)],
+                  ['Client', displayValue(record.customerName)],
+                  ['Dernière mise à jour', formatDateTime(record.updatedAt)],
                 ].map(([label, value]) => (
                   <div className="flex items-start justify-between gap-3 py-1.5 border-b border-[#1e3a66]/40" key={label}>
                     <dt className="text-slate-400">{label}</dt>
@@ -420,10 +408,10 @@ export default function DetailsPage({ trackingNumber }) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1e3a66]/70 pb-5">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Historique du colis</h2>
-                <p className="text-sm text-slate-400 mt-1">Événements présents dans les données de démonstration.</p>
+                <p className="text-sm text-slate-400 mt-1">Événements enregistrés pour ce colis.</p>
               </div>
               <div className="text-xs font-mono text-cyan-400/80 bg-[#0c1a2e] px-3 py-1.5 rounded-lg border border-[#1e3a66]">
-                FUSEAUX : UTC+8 / UTC+3
+                HEURE : MADAGASCAR (UTC+3)
               </div>
             </div>
             {events.length > 0 ? (
@@ -433,7 +421,8 @@ export default function DetailsPage({ trackingNumber }) {
                   const title = eventValue(item, 'status', 'title', 'description');
                   if (!title) return null;
                   const location = eventValue(item, 'location');
-                  const date = eventValue(item, 'date', 'timestamp');
+                  const rawDate = eventValue(item, 'date', 'timestamp');
+                  const date = rawDate ? formatDateTime(rawDate) : '';
                   const current = index === events.length - 1;
                   return (
                     <li className="relative group" key={`${title}-${index}`}>
@@ -463,7 +452,7 @@ export default function DetailsPage({ trackingNumber }) {
                 })}
               </ol>
             ) : (
-              <p className="text-sm text-slate-300">Aucun événement n’est enregistré pour ce colis de démonstration.</p>
+              <p className="text-sm text-slate-300">Aucun événement n’est enregistré pour ce colis.</p>
             )}
           </section>
         </div>
@@ -471,9 +460,9 @@ export default function DetailsPage({ trackingNumber }) {
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
         {[
-          ['verified_user', 'Assurance Cargo', 'Les données affichées sur cette page sont des données de démonstration et ne représentent pas un suivi réel.'],
-          ['gavel', 'Conformité douanière', 'Les étapes de transport sont présentées à titre illustratif pour montrer le parcours de suivi.'],
-          ['notifications_active', 'Alertes de suivi', 'Les événements affichés proviennent du jeu de données statique fourni avec l’application.'],
+          ['verified_user', 'Suivi sécurisé', 'Les informations sont récupérées depuis le dossier réel du colis.'],
+          ['gavel', 'Conformité douanière', 'Le statut affiché correspond à la dernière mise à jour enregistrée.'],
+          ['notifications_active', 'Historique de suivi', 'Les événements sont affichés lorsqu’ils sont disponibles dans le dossier du colis.'],
         ].map(([icon, title, description]) => (
           <div className="bg-[#0a1526] rounded-2xl p-6 border border-[#1e3a66] hover:border-cyan-400/50 transition-all space-y-3.5 shadow-lg group" key={title}>
             <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20 group-hover:scale-105 transition-transform">
