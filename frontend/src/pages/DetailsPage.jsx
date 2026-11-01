@@ -12,6 +12,16 @@ const stages = [
   { title: 'Disponible', detail: 'Retrait ou livraison finale', icon: 'home_pin' },
 ];
 
+const operationalStatusLabels = {
+  received: 'Réception Chine',
+  air_transit: 'En transit aérien',
+  sea_transit: 'En transit maritime',
+  customs_clearance: 'Dédouanement Ivato',
+  ready_for_pickup: 'Prêt au retrait',
+  delivered: 'Livré au client',
+  delayed: 'Retardé',
+};
+
 function displayValue(value, fallback = 'Non renseigné') {
   return typeof value === 'string' || typeof value === 'number' ? String(value) : fallback;
 }
@@ -418,12 +428,13 @@ export default function DetailsPage({ trackingNumber }) {
               <ol className="relative pl-8 sm:pl-10 space-y-8 before:absolute before:inset-0 before:left-3.5 sm:before:left-4 before:w-[2px] before:bg-gradient-to-b before:from-emerald-400 before:via-cyan-400 before:to-[#1e3a66] before:content-['']">
                 {events.map((item, index) => {
                   if (!item || typeof item !== 'object') return null;
-                  const title = eventValue(item, 'status', 'title', 'description');
+                  const status = eventValue(item, 'status');
+                  const title = operationalStatusLabels[status] || status;
                   if (!title) return null;
                   const location = eventValue(item, 'location');
                   const rawDate = eventValue(item, 'date', 'timestamp');
                   const date = rawDate ? formatDateTime(rawDate) : '';
-                  const current = index === events.length - 1;
+                  const current = index === 0;
                   return (
                     <li className="relative group" key={`${title}-${index}`}>
                       <div className={`absolute -left-8 sm:-left-10 top-1 w-7 h-7 rounded-full flex items-center justify-center font-bold ring-4 ring-[#0a1526] ${current ? 'bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/50' : 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30'}`}>
