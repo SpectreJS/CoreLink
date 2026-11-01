@@ -10,6 +10,8 @@ import Advantages from './components/Advantages.jsx';
 import Contact from './components/Contact.jsx';
 import Footer from './layout/Footer.jsx';
 import DetailsPage from './pages/DetailsPage.jsx';
+import AdminRoutes from './admin/routes/AdminRoutes.jsx';
+import { AdminAuthProvider } from './admin/contexts/AdminAuthContext.jsx';
 
 function SiteLayout({ children, details = false }) {
   return (
@@ -56,12 +58,15 @@ function LegacyDetailsRoute() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/tracking/details/:trackingNumber" element={<TrackingDetailsRoute />} />
-      <Route path="/details" element={<LegacyDetailsRoute />} />
-      <Route path="/details.html" element={<LegacyDetailsRoute />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <AdminAuthProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/tracking/details/:trackingNumber" element={<TrackingDetailsRoute />} />
+        <Route path="/details" element={<LegacyDetailsRoute />} />
+        <Route path="/details.html" element={<LegacyDetailsRoute />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AdminAuthProvider>
   );
 }
