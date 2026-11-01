@@ -1,5 +1,10 @@
 {
   "editor.tabSize": 3,
   "editor.insertSpaces": false,
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "[javascriptreact]": {
+    "editor.tabSize": 3,
+    "editor.insertSpaces": false,
+    "editor.detectIndentation": false
+  }
 }

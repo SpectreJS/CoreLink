@@ -1,14 +1,15 @@
-<!DOCTYPE html><html class="h-full bg-background" lang="fr" style="width: 1280px; height: 2098px; overflow: hidden; position: relative;"><head>
+<!DOCTYPE html><html class="h-full bg-surface" lang="fr" style=""><head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>CoreLink Back-Office — Fiche Détaillée Colis CL123456789</title>
-<!-- Fonts -->
+<title>CoreLink BO — 06. Tarifs &amp; Devis</title>
+<!-- Google Fonts: Manrope & Inter -->
 <link href="https://fonts.googleapis.com" rel="preconnect">
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<!-- Tailwind CDN -->
+<!-- Tailwind CSS v3 -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
     tailwind.config = {
@@ -16,53 +17,53 @@
       theme: {
         extend: {
           "colors": {
-            "on-primary-fixed-variant": "#3f465c",
-            "primary-fixed": "#dae2fd",
-            "surface-container-lowest": "#ffffff",
-            "outline": "#76777d",
-            "surface-container-highest": "#d3e4fe",
-            "on-primary-fixed": "#131b2e",
-            "on-background": "#0b1c30",
-            "tertiary": "#000000",
-            "on-secondary-fixed-variant": "#003ea8",
-            "background": "#f8f9ff",
-            "surface-tint": "#565e74",
-            "on-error-container": "#93000a",
-            "inverse-on-surface": "#eaf1ff",
-            "on-surface-variant": "#45464d",
-            "on-surface": "#0b1c30",
-            "tertiary-fixed": "#7ffc97",
-            "surface-dim": "#cbdbf5",
             "secondary-fixed": "#dbe1ff",
-            "surface-container": "#e5eeff",
-            "tertiary-container": "#002109",
-            "on-primary": "#ffffff",
-            "surface-container-high": "#dce9ff",
-            "surface": "#f8f9ff",
-            "on-tertiary": "#ffffff",
-            "primary-container": "#131b2e",
-            "outline-variant": "#c6c6cd",
-            "on-error": "#ffffff",
-            "on-secondary-fixed": "#00174b",
-            "on-tertiary-container": "#009842",
-            "surface-bright": "#f8f9ff",
-            "on-primary-container": "#7c839b",
+            "on-tertiary-fixed": "#002109",
             "inverse-primary": "#bec6e0",
             "on-secondary-container": "#fefcff",
-            "error": "#ba1a1a",
-            "secondary-container": "#316bf3",
-            "error-container": "#ffdad6",
-            "secondary-fixed-dim": "#b4c5ff",
-            "inverse-surface": "#213145",
-            "on-tertiary-fixed-variant": "#005320",
-            "on-tertiary-fixed": "#002109",
-            "on-secondary": "#ffffff",
-            "surface-variant": "#d3e4fe",
-            "secondary": "#0051d5",
+            "on-primary-fixed-variant": "#3f465c",
             "primary-fixed-dim": "#bec6e0",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed": "#131b2e",
+            "primary-container": "#131b2e",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-tint": "#565e74",
+            "on-primary-container": "#7c839b",
+            "on-tertiary": "#ffffff",
+            "outline": "#76777d",
+            "secondary": "#0051d5",
+            "surface-container-highest": "#d3e4fe",
+            "background": "#f8f9ff",
+            "on-surface-variant": "#45464d",
+            "on-tertiary-fixed-variant": "#005320",
+            "surface": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "inverse-surface": "#213145",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-container": "#002109",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-fixed": "#00174b",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#7ffc97",
+            "surface-container-high": "#dce9ff",
             "surface-container-low": "#eff4ff",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#003ea8",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#b4c5ff",
+            "secondary-container": "#316bf3",
+            "surface-container-lowest": "#ffffff",
+            "surface-dim": "#cbdbf5",
             "primary": "#000000",
-            "tertiary-fixed-dim": "#62df7d"
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#009842",
+            "outline-variant": "#c6c6cd",
+            "on-background": "#0b1c30",
+            "on-surface": "#0b1c30",
+            "primary-fixed": "#dae2fd",
+            "tertiary": "#000000",
+            "on-error": "#ffffff"
           },
           "borderRadius": {
             "DEFAULT": "0.125rem",
@@ -71,50 +72,50 @@
             "full": "0.75rem"
           },
           "spacing": {
-            "space-md": "1rem",
-            "gutter": "1.5rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
             "space-lg": "1.5rem",
             "margin-mobile": "1rem",
-            "margin": "2rem",
-            "gutter-mobile": "1rem",
             "space-xl": "2.5rem",
-            "space-sm": "0.5rem",
-            "space-xs": "0.25rem"
+            "gutter": "1.5rem",
+            "gutter-mobile": "1rem",
+            "space-md": "1rem"
           },
           "fontFamily": {
-            "body-md": ["Inter"],
-            "code-tracking": ["Inter"],
-            "title-sm": ["Inter"],
-            "title-md": ["Inter"],
-            "body-lg": ["Inter"],
-            "headline-lg": ["Manrope"],
-            "body-sm": ["Inter"],
-            "label-sm": ["Inter"],
-            "headline-sm": ["Manrope"],
-            "headline-lg-mobile": ["Manrope"],
-            "headline-xl": ["Manrope"],
-            "headline-xl-mobile": ["Manrope"],
             "label-md": ["Inter"],
-            "headline-md": ["Manrope"]
+            "headline-lg-mobile": ["Manrope"],
+            "headline-md": ["Manrope"],
+            "headline-sm": ["Manrope"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Manrope"],
+            "label-sm": ["Inter"],
+            "headline-xl-mobile": ["Manrope"],
+            "title-sm": ["Inter"],
+            "code-tracking": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-xl": ["Manrope"],
+            "title-md": ["Inter"],
+            "body-md": ["Inter"]
           },
           "fontSize": {
-            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
-            "code-tracking": ["13px", { "lineHeight": "18px", "letterSpacing": "0.06em", "fontWeight": "600" }],
-            "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }],
-            "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
-            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
-            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
-            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
-            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }],
-            "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600" }],
-            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-            "headline-xl-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
             "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
-            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+            "headline-xl-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "code-tracking": ["13px", { "lineHeight": "18px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }]
           }
-        }
-      }
+        },
+      },
     }
   </script>
 <style>
@@ -122,748 +123,684 @@
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
       font-size: 20px;
       line-height: 1;
-      display: inline-block;
-      vertical-align: middle;
     }
-    .custom-scroll::-webkit-scrollbar {
+    .custom-scrollbar::-webkit-scrollbar {
       width: 5px;
       height: 5px;
     }
-    .custom-scroll::-webkit-scrollbar-thumb {
+    .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #c6c6cd;
       border-radius: 4px;
     }
   </style>
 </head>
-<body class="h-full bg-background text-on-surface antialiased overflow-x-hidden font-body-md text-body-md flex">
-<!-- ========================================================================= -->
-<!-- SIDEBAR NAVIGATION (Shared Component: SideNavBar)                        -->
-<!-- ========================================================================= -->
-<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col z-30 bg-surface-container-lowest border-r border-outline-variant shrink-0 select-none">
-<!-- Brand / Hub Header -->
-<div class="p-4 border-b border-outline-variant flex items-center gap-3">
-<div class="h-10 w-10 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container border border-outline-variant shrink-0 p-0.5">
-<img alt="Logo CoreLink Administration" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfy9YGHRV4MaqaC_tPPk92vs5enbBPepX-_FFNFM6aPN6wr77plQYN52GjEL3KL7iQ-pj_FDigFPXRoSwP1hco5UmhmRGdgeI4rFBa1mjsB1hGsjDha1XRwpzKvaHylbei4qPH1tLE0puqEXkanxyylG2Uqa1coYm-V736FJYO1loZPmkmjK4kB_-Pb4ChRXjKFGTxBBsIznimO9RvgA7Vh1mHZz96VdUSabYWkm3mCQKFSh81-uZT">
+<body class="h-full font-body-md text-on-surface antialiased bg-background flex overflow-hidden">
+<!-- LEFT SIDEBAR: Shared SideNavBar (256px / w-64) -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col z-30 bg-surface-container-lowest border-r border-outline-variant shrink-0 justify-between p-4">
+<!-- Top Section: Brand + CTA + Navigation -->
+<div class="flex flex-col gap-5">
+<!-- Brand & Hub Status -->
+<div class="flex items-center gap-3 px-1 py-1">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-headline-md text-headline-sm font-bold shadow-sm">
+          CL
+        </div>
+<div class="flex flex-col">
+<span class="text-title-md font-title-md font-bold text-on-surface tracking-tight">CoreLink BO</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Transit GZ-TNR Hub
+          </span>
 </div>
-<div class="flex flex-col min-w-0">
-<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight truncate leading-tight">CoreLink BO</span>
-<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Transit GZ-TNR Hub</span>
 </div>
-</div>
-<!-- Quick Scan CTA -->
-<div class="p-3">
-<button class="w-full flex items-center justify-center gap-2 bg-secondary text-on-secondary px-3 py-2 rounded-lg font-label-md text-label-md shadow-sm hover:bg-secondary-container transition-all duration-150">
-<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+<!-- CTA: Scanner Réception -->
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary hover:bg-secondary-container text-on-secondary font-title-sm text-title-sm transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
 <span class="">Scanner Réception</span>
 </button>
-</div>
-<!-- Primary Nav Items -->
-<nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto custom-scroll">
-<!-- Item 1: Tous les colis (ACTIVE STATE for parcel detail / inspection context) -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-secondary font-semibold transition-all duration-150" href="#">
-<span class="material-symbols-outlined text-secondary" style="font-variation-settings: &quot;FILL&quot; 1;">inventory_2</span>
-<span class="font-label-md text-label-md">Tous les colis</span>
-<span class="ml-auto text-xs bg-secondary text-on-secondary px-1.5 py-0.5 rounded font-mono font-semibold">ACTIF</span>
+<!-- Navigation Tabs (7 Primary) -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="inventory_2">inventory_2</span>
+<span class="">Tous les colis</span>
 </a>
-<!-- Item 2: Réception Guangzhou -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">warehouse</span>
-<span class="font-label-md text-label-md">Réception Guangzhou</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="warehouse">warehouse</span>
+<span class="">Réception Guangzhou</span>
 </a>
-<!-- Item 3: Expéditions Fret -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">flight_takeoff</span>
-<span class="font-label-md text-label-md">Expéditions Fret</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="flight_takeoff">flight_takeoff</span>
+<span class="">Expéditions Fret</span>
 </a>
-<!-- Item 4: Dédouanement Ivato TNR -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">gavel</span>
-<span class="font-label-md text-label-md">Dédouanement Ivato TNR</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="gavel">gavel</span>
+<span class="">Dédouanement Ivato TNR</span>
 </a>
-<!-- Item 5: Livraisons Behintsy -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">local_shipping</span>
-<span class="font-label-md text-label-md">Livraisons Behintsy</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="local_shipping">local_shipping</span>
+<span class="">Livraisons Behintsy</span>
 </a>
-<!-- Item 6: Clients & Comptes -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">group</span>
-<span class="font-label-md text-label-md">Clients &amp; Comptes</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 ease-in-out font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="group">group</span>
+<span class="">Clients &amp; Comptes</span>
 </a>
-<!-- Item 7: Tarifs & Devis -->
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">payments</span>
-<span class="font-label-md text-label-md">Tarifs &amp; Devis</span>
+<!-- ACTIVE TAB: Tarifs & Devis -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-secondary font-semibold font-title-sm text-title-sm transition-all duration-150 ease-in-out shadow-sm" href="#">
+<span class="material-symbols-outlined text-secondary" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="">Tarifs &amp; Devis</span>
 </a>
 </nav>
-<!-- Footer System Actions -->
-<div class="p-3 border-t border-outline-variant space-y-1 bg-surface">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-normal hover:bg-surface-container-low hover:text-on-surface transition-all duration-150" href="#">
-<span class="material-symbols-outlined">tune</span>
-<span class="font-label-md text-label-md">Paramètres Hub</span>
+</div>
+<!-- Footer Tabs -->
+<div class="flex flex-col gap-1 pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="tune">tune</span>
+<span class="">Paramètres Hub</span>
 </a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/40 transition-all duration-150" href="#">
-<span class="material-symbols-outlined text-error">logout</span>
-<span class="font-label-md text-label-md">Déconnexion</span>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
+<span class="">Déconnexion</span>
 </a>
 </div>
 </aside>
-<!-- ========================================================================= -->
-<!-- MAIN CONTENT WRAPPER                                                      -->
-<!-- ========================================================================= -->
-<div class="pl-64 flex-1 flex flex-col min-w-0">
-<!-- TOP NAV BAR (Shared Component: TopNavBar) -->
-<header class="h-16 flex items-center justify-between px-6 w-full bg-surface border-b border-outline-variant shadow-sm shrink-0 sticky top-0 z-20">
-<!-- Search on Left -->
-<div class="flex items-center gap-4 w-96">
-<div class="relative w-full">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-<input class="w-full bg-surface-container-lowest pl-9 pr-4 py-1.5 rounded-lg border border-outline-variant text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15 transition-all" placeholder="Rechercher AWB, Colis (ex: CL123456789), Client..." type="text" value="CL123456789">
+<!-- MAIN WRAPPER (Offset sidebar by 256px) -->
+<div class="flex-1 flex flex-col pl-64 h-full min-w-0">
+<!-- TOP BAR (Shared TopNavBar style, search centered, no breadcrumb here) -->
+<header class="h-16 flex items-center justify-between px-8 bg-surface-container-lowest border-b border-outline-variant z-20 shrink-0 shadow-sm">
+<!-- Search Bar -->
+<div class="w-full max-w-xl relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-outline">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</span>
+<input class="w-full pl-10 pr-4 py-2 text-body-sm font-body-sm rounded-lg bg-background border border-outline-variant focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-on-surface placeholder:text-on-surface-variant/60 transition-all" placeholder="Rechercher colis, client, conteneur ou bordereau..." type="text">
 </div>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center gap-4">
+<!-- Quick Action Icons -->
+<div class="flex items-center gap-1 border-r border-outline-variant pr-4">
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-surface-container-low rounded-lg transition-colors relative" title="Notifications" type="button">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-surface-container-low rounded-lg transition-colors" title="Aide &amp; Documentation" type="button">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-surface-container-low rounded-lg transition-colors" title="Paramètres" type="button">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
 </div>
-<!-- Center Brand text anchor -->
-<div class="hidden lg:flex items-center gap-2">
-<span class="font-title-md text-title-md font-bold text-on-surface tracking-tight">CoreLink Sourcing &amp; Logistics</span>
-
-</div>
-<!-- Trailing cluster actions -->
-<div class="flex items-center gap-2.5">
-
-
-<div class="h-5 w-px bg-outline-variant mx-1"></div>
-<!-- Icons -->
-<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors relative" title="Notifications">
-<span class="material-symbols-outlined">notifications</span>
-<span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-error"></span>
-</button>
-<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors" title="Aide">
-<span class="material-symbols-outlined">help</span>
-</button>
-<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors" title="Paramètres">
-<span class="material-symbols-outlined">settings</span>
-</button>
-<!-- User Chip -->
-<div class="flex items-center gap-2 pl-2 border-l border-outline-variant">
-<div class="w-8 h-8 rounded-full bg-primary-container text-inverse-on-surface flex items-center justify-center font-bold text-xs ring-1 ring-secondary/30">
-            OP
+<!-- User Profile Pill -->
+<div class="flex items-center gap-3 pl-1">
+<div class="w-9 h-9 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-title-sm shadow-sm ring-2 ring-surface-container">
+            RK
           </div>
-<div class="hidden xl:flex flex-col text-left">
-<span class="text-xs font-semibold text-on-surface leading-tight">Agent Andry R.</span>
-<span class="text-[10px] text-outline font-medium">Contrôleur Hub GZ</span>
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-title-sm font-title-sm text-on-surface font-semibold leading-tight">Rado K.</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Admin Cotations &amp; Fret</span>
 </div>
 </div>
 </div>
 </header>
-<!-- ======================================================================= -->
-<!-- MAIN WORKSPACE                                                          -->
-<!-- ======================================================================= -->
-<main class="flex-1 p-6 space-y-6 max-w-[1600px] w-full mx-auto">
-<!-- BREADCRUMB & HEADER SECTION -->
-<section class="space-y-3">
-<!-- Breadcrumb -->
-<div class="flex items-center gap-2 text-xs text-slate-500 mb-2 font-medium">
-  <span class="">Colis</span>
-  <span class="text-slate-400">/</span>
-  <span class="">CL123456789</span>
-  <span class="text-slate-400">/</span>
-  <span class="text-slate-800 font-semibold">Fiche d'expédition &amp; Traçabilité</span>
+<!-- SCROLLABLE PAGE CANVAS -->
+<main class="flex-1 overflow-y-auto px-8 py-6 space-y-6 custom-scrollbar">
+<!-- Breadcrumbs in Main Content Area -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
+<span class="text-on-surface-variant hover:text-secondary cursor-pointer">Finances &amp; Grilles</span>
+<span class="material-symbols-outlined text-sm leading-none" data-icon="chevron_right">chevron_right</span>
+<span class="text-secondary font-semibold">Tarifs &amp; Gestion des Devis</span>
+</nav>
+<!-- Page Header with Title and Global Primary Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Grilles Tarifaires &amp; Devis d'Expédition</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">Gestion des barèmes de fret aérien &amp; maritime, taux de change RMB/Ariary et simulateur de cotations clients</p>
 </div>
-<!-- Title & Rapid Actions Bar -->
-<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-outline-variant">
-<div class="space-y-1.5">
-<div class="flex flex-wrap items-center gap-3">
-<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">
-                Détails du Colis CL123456789
-              </h1>
-<!-- Status Chip -->
-<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider bg-sky-50 text-sky-700 border border-sky-300">
-<span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
-                EN TRANSIT INTERNATIONAL
-              </span>
-<!-- Freight Type Chip -->
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide bg-surface-container-high text-secondary border border-secondary/20">
-<span class="material-symbols-outlined text-[15px]">flight</span>
-                FRET AÉRIEN EXPRESS
-              </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
-              Enregistré le 21 Mai 2025 à 09:42 (UTC+8) • Hub d'origine : Guangzhou Baiyun (CAN) • Destination : Antananarivo Ivato (TNR)
-            </p>
-</div>
-<!-- Quick Action Buttons -->
-<div class="flex flex-wrap items-center gap-2">
-<button class="px-3 py-2 bg-surface-container-lowest border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-low hover:border-outline transition-all duration-150 flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[18px]">edit_note</span>
-<span class="">Modifier</span>
+<div class="flex items-center gap-3 shrink-0">
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant hover:border-secondary hover:bg-surface-container-low text-on-surface text-title-sm font-title-sm rounded-lg transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-secondary" data-icon="sync">sync</span>
+<span class="">Actualiser Taux du Jour</span>
 </button>
-<button class="px-3 py-2 bg-surface-container-lowest border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-low hover:border-outline transition-all duration-150 flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[18px]">print</span>
-<span class="">Imprimer</span>
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary-container text-on-secondary text-title-sm font-title-sm rounded-lg transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="">+ Établir une Cotation / Devis</span>
 </button>
-
-
+</div>
+</div>
+<!-- KPI OPERATIONAL METRICS: STRICTLY 3 COLUMNS -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- KPI 1: Taux de Change Officiel du Jour -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider block">Devises &amp; Monnaie Locale</span>
+<h2 class="text-title-md font-title-md font-bold text-on-surface mt-1">Taux de Change Officiel du Jour</h2>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-high text-secondary">
+<span class="material-symbols-outlined" data-icon="currency_exchange">currency_exchange</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50">
+<div class="flex items-baseline justify-between">
+<div>
+<span class="text-headline-md font-headline-md font-extrabold text-on-surface">1 RMB = 660 Ar</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant font-medium mt-0.5">1 USD = 4 650 Ar</span>
+</div>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="material-symbols-outlined text-xs" data-icon="verified_user">verified_user</span>
+                Sourcing sécurisé
+              </span>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-2">Dernière indexation : 08:30 GMT+3 (Bourse de Chine &amp; Banque Centrale)</p>
+</div>
+</div>
+<!-- KPI 2: Fret Aérien Régulier Moyen -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider block">Fret Aérien Express</span>
+<h2 class="text-title-md font-title-md font-bold text-on-surface mt-1">Fret Aérien Régulier Moyen</h2>
+</div>
+<div class="p-2.5 rounded-lg bg-blue-50 text-secondary">
+<span class="material-symbols-outlined" data-icon="flight_takeoff">flight_takeoff</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50">
+<div class="flex items-baseline justify-between">
+<span class="text-headline-md font-headline-md font-extrabold text-secondary">75 000 Ar <span class="text-title-sm font-title-sm text-on-surface-variant font-normal">/ kg</span></span>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-blue-50 text-secondary border border-blue-200">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+                5 à 7 jours
+              </span>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-2">Corridor CAN (Guangzhou Baiyun) → TNR (Ivato Antananarivo)</p>
+</div>
+</div>
+<!-- KPI 3: Fret Maritime LCL Groupage -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider block">Fret Maritime Groupage</span>
+<h2 class="text-title-md font-title-md font-bold text-on-surface mt-1">Fret Maritime LCL Groupage</h2>
+</div>
+<div class="p-2.5 rounded-lg bg-indigo-50 text-secondary-container">
+<span class="material-symbols-outlined" data-icon="directions_boat">directions_boat</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/50">
+<div class="flex items-baseline justify-between">
+<span class="text-headline-md font-headline-md font-extrabold text-on-surface">365 USD <span class="text-title-sm font-title-sm text-on-surface-variant font-normal">/ m³</span></span>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-slate-100 text-on-surface font-semibold border border-outline-variant">
+                Min 0.1 CBM
+              </span>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-2">Transit Foshan/Huangpu → Toamasina (35 - 45 jours navire)</p>
 </div>
 </div>
 </section>
-<!-- ======================================================================= -->
-<!-- TOP KPI SUMMARY BAR (Bento Metric Strip)                                -->
-<!-- ======================================================================= -->
-<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
-<!-- KPI 1: Poids Pesé -->
-<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)] relative overflow-hidden">
-<div class="flex items-center justify-between text-outline mb-1">
-<span class="font-label-md text-label-md uppercase tracking-wider">Poids Effectif</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">scale</span>
-</div>
-<div class="font-headline-sm text-headline-sm font-bold text-on-surface">7.45 kg</div>
-<div class="text-[11px] text-on-tertiary-container font-medium mt-0.5 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">check_circle</span>
-            Mettler Toledo cal. certifié
-          </div>
-</div>
-<!-- KPI 2: Volume & Dimensions -->
-<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-<div class="flex items-center justify-between text-outline mb-1">
-<span class="font-label-md text-label-md uppercase tracking-wider">Dimensions (CBM)</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">view_in_ar</span>
-</div>
-<div class="font-headline-sm text-headline-sm font-bold text-on-surface">40 × 30 × 25 cm</div>
-<div class="text-[11px] text-on-surface-variant font-medium mt-0.5">
-            0.030 m³ • Poids vol. 6.00 kg
-          </div>
-</div>
-<!-- KPI 3: Expéditeur -->
-<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-<div class="flex items-center justify-between text-outline mb-1">
-<span class="font-label-md text-label-md uppercase tracking-wider">Origine / Expéditeur</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">flight_takeoff</span>
-</div>
-<div class="font-title-md text-title-md font-bold text-on-surface truncate">Toronto / Guangzhou</div>
-<div class="text-[11px] text-on-surface-variant font-medium mt-0.5 truncate">
-            Hub CAN Transit Hub #04
-          </div>
-</div>
-<!-- KPI 4: Destinataire -->
-<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-<div class="flex items-center justify-between text-outline mb-1">
-<span class="font-label-md text-label-md uppercase tracking-wider">Destinataire Final</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">person_pin_circle</span>
-</div>
-<div class="font-title-md text-title-md font-bold text-on-surface truncate">Foibe Malagasy</div>
-<div class="text-[11px] text-on-surface-variant font-medium mt-0.5 truncate">
-            Antananarivo 101, Madagascar
-          </div>
-</div>
-<!-- KPI 5: Date estimée (ETA) -->
-<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/80 border-t-2 border-t-secondary shadow-[0_1px_3px_rgba(15,23,42,0.04)] col-span-2 md:col-span-1">
-<div class="flex items-center justify-between text-outline mb-1">
-<span class="font-label-md text-label-md uppercase tracking-wider">ETA Ivato (TNR)</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">event_available</span>
-</div>
-<div class="font-headline-sm text-headline-sm font-bold text-secondary">28 Mai 2025</div>
-<div class="text-[11px] text-outline font-medium mt-0.5">
-            Vol AF-8120 CAN-CDG-TNR
-          </div>
-</div>
-</section>
-<!-- ======================================================================= -->
-<!-- MAIN TWO-COLUMN CONTENT GRID (65% Left / 35% Right)                    -->
-<!-- ======================================================================= -->
-<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-<!-- =================================================================== -->
-<!-- LEFT COLUMN (65% -> col-span-8)                                     -->
-<!-- =================================================================== -->
-<div class="lg:col-span-8 space-y-6">
-<!-- CARD 1: INSPECTION OFFICIELLE & PHOTO VIGNETTE DU COLIS -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
-<div class="p-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/50">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">verified</span>
-<h2 class="font-title-md text-title-md font-bold text-on-surface">
-                  Vérification Physique &amp; Inspection d'Entrepôt
-                </h2>
-</div>
-<span class="font-code-tracking text-code-tracking bg-surface-container px-2 py-0.5 rounded text-on-surface">
-                SCAN-REF: GZ-20250521-884
-              </span>
-</div>
-<div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-<!-- Photo High-Res on Scale -->
-<div class="md:col-span-6 relative rounded-lg overflow-hidden border border-outline-variant bg-surface group">
-<img alt="Colis sécurisé CL123456789 sur balance Mettler Toledo indiquant 7.45 kg" class="w-full h-64 object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida/AEtjO1Va3tN4evrT9S4WsYN_9sGjVkyv8m0y7VWLcSBZfTlXZdXbxzdJczevd5C5HhV76QUkWln1Ild4yny29ui5F1kOQe2kvSFlR98KVbaQYZosOp1dXvRkPDaCn9dgZPOrmTAeEQVwhR06QOqW16HI6_1bVmbfHo2OhUnru1xXD0qW2D-TMCJbODAF-DAySkgYgOmaWg5P5M65pjmugx4j7PD4z-DZD7BlpVF3xzJwXZMCRkieHm9uqX5S4Y4">
-<div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent flex items-end p-3">
-<div class="text-white text-xs space-y-0.5">
-<p class="font-semibold flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">photo_camera</span>
-                      Cliché d'admission : Hub Guangzhou Baiyun (Hall B)
-                    </p>
-<p class="text-[11px] text-surface-container">21 Mai 2025 • 09:48:12 UTC+8</p>
-</div>
-</div>
-<div class="absolute top-2 right-2 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-1 rounded text-[11px] font-mono font-bold text-on-surface border border-outline-variant">
-                  7.45 KG DÉTECTÉ
-                </div>
-</div>
-<!-- Inspection Metadata & Checkpoints -->
-<div class="md:col-span-6 flex flex-col justify-between space-y-4">
-<div class="space-y-3">
-<h3 class="font-title-sm text-title-sm text-on-surface font-bold">
-                    Validation des Contrôles Réglementaires
-                  </h3>
-<!-- Check badges -->
-<div class="space-y-2">
-<div class="flex items-center justify-between p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-lg">
-<div class="flex items-center gap-2 text-emerald-800 font-medium text-body-sm">
-<span class="material-symbols-outlined text-emerald-600" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
-<span class="">Pesée certifiée Mettler Toledo</span>
-</div>
-<span class="font-mono text-xs font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">7.45 kg OK</span>
-</div>
-<div class="flex items-center justify-between p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-lg">
-<div class="flex items-center gap-2 text-emerald-800 font-medium text-body-sm">
-<span class="material-symbols-outlined text-emerald-600" style="font-variation-settings: &quot;FILL&quot; 1;">security</span>
-<span class="">Scellé de sécurité bande rouge inviolable</span>
-</div>
-<span class="font-mono text-xs font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">TAMPER EVIDENT</span>
-</div>
-<div class="flex items-center justify-between p-2.5 bg-emerald-50/70 border border-emerald-200 rounded-lg">
-<div class="flex items-center gap-2 text-emerald-800 font-medium text-body-sm">
-<span class="material-symbols-outlined text-emerald-600" style="font-variation-settings: &quot;FILL&quot; 1;">fact_check</span>
-<span class="">Contrôle Douane Export &amp; Rayons X</span>
-</div>
-<span class="font-mono text-xs font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">CONFORME</span>
-</div>
-</div>
-</div>
-<div class="bg-surface p-3 rounded-lg border border-outline-variant text-xs space-y-1">
-<div class="text-on-surface-variant flex justify-between">
-<span class="">Opérateur de contrôle :</span>
-<strong class="text-on-surface">Chen Wei (ID: GZ-88)</strong>
-</div>
-<div class="text-on-surface-variant flex justify-between">
-<span class="">Bordereau étiqueté :</span>
-<strong class="font-mono text-secondary">CL123456789-CAN-TNR</strong>
-</div>
-<div class="text-on-surface-variant flex justify-between">
-<span class="">Instructions de manipulation :</span>
-<strong class="text-error font-medium">AIR FREIGHT PRIORITY / FRAGILE</strong>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- CARD 2: CHRONOLOGIE COMPLÈTE & INTERACTIVE DES ÉVÉNEMENTS (Vertical Timeline) -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-5 space-y-5">
-<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
-<div class="space-y-0.5">
-<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">timeline</span>
-                  Traçabilité Opérationnelle &amp; Chronologie Complète
-                </h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                  Suivi multi-segments en temps réel entre le corridor Chine et Madagascar
-                </p>
-</div>
-<span class="px-2.5 py-1 bg-surface-container-high text-secondary rounded font-mono text-xs font-bold">
-                5 ÉTAPES CLÉS
-              </span>
-</div>
-<!-- TIMELINE CONTAINER -->
-<div class="relative pl-6 space-y-8 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-outline-variant">
-<!-- ÉTAPE 1: RÉCEPTIONNÉ (EFFECTUÉ) -->
-<div class="relative flex items-start gap-4 group">
-<div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-emerald-600 border-4 border-surface-container-lowest flex items-center justify-center shadow">
-<span class="material-symbols-outlined text-[11px] text-white" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
-</div>
-<div class="flex-1 bg-surface-container-low/40 p-4 rounded-xl border border-outline-variant/60 hover:border-secondary/50 transition-all">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<span class="font-title-sm text-title-sm font-bold text-on-surface">
-                      Colis réceptionné au hub Chine (Guangzhou Baiyun)
-                    </span>
-<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-bold uppercase tracking-wider">
-                      Effectué
-                    </span>
-</div>
-<div class="flex flex-wrap items-center gap-4 text-xs text-outline mb-2">
-<span class="flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px]">schedule</span>
-                      21 Mai 2025 • 09:42 UTC+8
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">pin_drop</span>
-                      Entrepôt CoreLink Terminal 2, CAN, Chine
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">badge</span>
-                      Opérateur : C. Wei
-                    </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                    Déchargement du camion de collecte régionale, scan d'entrée informatique et génération du code de suivi unique CL123456789.
-                  </p>
-</div>
-</div>
-<!-- ÉTAPE 2: CONTRÔLE VOLUMÉTRIQUE & SCELLÉ (EFFECTUÉ) -->
-<div class="relative flex items-start gap-4 group">
-<div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-emerald-600 border-4 border-surface-container-lowest flex items-center justify-center shadow">
-<span class="material-symbols-outlined text-[11px] text-white" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
-</div>
-<div class="flex-1 bg-surface-container-low/40 p-4 rounded-xl border border-outline-variant/60 hover:border-secondary/50 transition-all">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<span class="font-title-sm text-title-sm font-bold text-on-surface">
-                      Contrôle volumétrique et scellé de sécurité apposé
-                    </span>
-<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-bold uppercase tracking-wider">
-                      Effectué
-                    </span>
-</div>
-<div class="flex flex-wrap items-center gap-4 text-xs text-outline mb-2">
-<span class="flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px]">schedule</span>
-                      21 Mai 2025 • 10:15 UTC+8
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">pin_drop</span>
-                      Poste de Pesage #03, CAN
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">badge</span>
-                      Opérateur : L. Zhang
-                    </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                    Poids validé à 7.45 kg. Bande de sécurité rouge "SECURITY TAPE - TAMPER EVIDENT" cerclée à 2 feuillards polypropylène. Étiquetage priorité vol cargo validé.
-                  </p>
-</div>
-</div>
-<!-- ÉTAPE 3: VOL CARGO (EN COURS) -->
-<div class="relative flex items-start gap-4 group">
-<div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-secondary border-4 border-surface-container-lowest flex items-center justify-center shadow ring-4 ring-secondary/20 animate-pulse">
-<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-</div>
-<div class="flex-1 bg-sky-50/60 p-4 rounded-xl border border-sky-300 shadow-sm transition-all">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<span class="font-title-sm text-title-sm font-bold text-secondary flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[18px]">flight</span>
-                      Pris en charge sur le manifeste vol cargo CAN-TNR
-                    </span>
-<span class="px-2.5 py-0.5 bg-sky-100 text-sky-800 border border-sky-300 rounded text-xs font-bold uppercase tracking-wider animate-pulse">
-                      En cours
-                    </span>
-</div>
-<div class="flex flex-wrap items-center gap-4 text-xs text-outline mb-2">
-<span class="flex items-center gap-1 font-mono text-secondary font-semibold">
-<span class="material-symbols-outlined text-[14px]">schedule</span>
-                      22 Mai 2025 • 14:30 UTC+8 (En vol)
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">flight_takeoff</span>
-                      Vol Cargo AF-8120 (CAN &gt; CDG &gt; TNR)
-                    </span>
-<span class="flex items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined text-[14px]">badge</span>
-                      Superviseur Fret : CoreLink AirOps
-                    </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface">
-                    La palette consolidée ULD #CL-7712 contenant le colis est en transit aérien international. Prochaine escale technique avant acheminement direct vers Antananarivo.
-                  </p>
-</div>
-</div>
-<!-- ÉTAPE 4: ARRIVÉE & DÉDOUANEMENT IVATO (À VENIR) -->
-<div class="relative flex items-start gap-4 group opacity-75">
-<div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-surface-container-high border-4 border-surface-container-lowest flex items-center justify-center">
-<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
-</div>
-<div class="flex-1 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant border-dashed">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<span class="font-title-sm text-title-sm font-semibold text-on-surface">
-                      Arrivée prévue Ivato (Antananarivo) &amp; Dédouanement GasyNet
-                    </span>
-<span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold uppercase tracking-wider">
-                      À venir
-                    </span>
-</div>
-<div class="flex flex-wrap items-center gap-4 text-xs text-outline mb-2">
-<span class="flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px]">event</span>
-                      Prévu : 26 Mai 2025 • ~16:00 UTC+3
-                    </span>
-<span class="flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">local_airport</span>
-                      Aéroport International d'Ivato (TNR)
-                    </span>
-<span class="flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">gavel</span>
-                      Agent Transitaire : CoreLink TNR Office
-                    </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                    Déclaration sommaire, inspection documentaire GasyNet / Douanes Malagasy et liquidation des droits d'importation.
-                  </p>
-</div>
-</div>
-<!-- ÉTAPE 5: LIVRAISON BEHINTSY (À VENIR) -->
-<div class="relative flex items-start gap-4 group opacity-75">
-<div class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-surface-container-high border-4 border-surface-container-lowest flex items-center justify-center">
-<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
-</div>
-<div class="flex-1 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant border-dashed">
-<div class="flex flex-wrap items-center justify-between gap-2 mb-1">
-<span class="font-title-sm text-title-sm font-semibold text-on-surface">
-                      Mise à disposition Dépôt Behintsy (Ambohimangakely)
-                    </span>
-<span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold uppercase tracking-wider">
-                      À venir
-                    </span>
-</div>
-<div class="flex flex-wrap items-center gap-4 text-xs text-outline mb-2">
-<span class="flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px]">event</span>
-                      Prévu : 28 Mai 2025 • ~10:00 UTC+3
-                    </span>
-<span class="flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">storefront</span>
-                      Entrepôt Central CoreLink Behintsy
-                    </span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">
-                    Colis disponible pour enlèvement sur présentation du bon de retrait ou expédition vers l'adresse finale du client par coursier local.
-                  </p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- =================================================================== -->
-<!-- RIGHT COLUMN (35% -> col-span-4)                                    -->
-<!-- =================================================================== -->
-<div class="lg:col-span-4 space-y-6">
-<!-- CARTE 1: CLIENT & DESTINATAIRE -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 space-y-4">
-<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">person</span>
-<h3 class="font-title-md text-title-md font-bold text-on-surface">Client &amp; Destinataire</h3>
-</div>
-<span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">Compte Actif</span>
-</div>
-<!-- Profile Info -->
-<div class="space-y-3">
+<!-- SIMULATEUR ET CALCULATEUR RAPIDE DE DEVIS -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-outline-variant/60 gap-2">
 <div>
-<span class="text-xs text-outline uppercase font-semibold">Nom de l'organisation / Contact</span>
-<h4 class="font-title-md text-title-md font-bold text-on-surface">FOIBE MALAGASY</h4>
-<p class="text-body-sm text-on-surface-variant">Réf Client : CLI-MG-9042</p>
-</div>
-<!-- WhatsApp Quick Action -->
-<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/60">
-<div class="flex items-center gap-2.5">
-<div class="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center font-bold">
-<span class="material-symbols-outlined text-[18px]">chat</span>
-</div>
-<div>
-<span class="text-xs text-outline block">WhatsApp direct</span>
-<strong class="font-mono text-sm text-on-surface">+261 34 12 345 67</strong>
-</div>
-</div>
-<a class="p-1.5 hover:bg-surface-container-high rounded text-secondary transition-colors" href="https://wa.me/261341234567" target="_blank" title="Ouvrir discussion WhatsApp">
-<span class="material-symbols-outlined">send</span>
-</a>
-</div>
-<!-- Address Block -->
-<div class="space-y-1 text-body-sm">
-<span class="text-xs text-outline uppercase font-semibold">Adresse de livraison à Tana</span>
-<p class="text-on-surface font-medium">Awtnanarivo 101, Madagascar</p>
-<p class="text-on-surface-variant text-xs">Précision : Ampefiloha près du tribunal, Porte 4</p>
-</div>
-<!-- History summary -->
-<div class="pt-2 border-t border-outline-variant flex justify-between text-xs text-on-surface-variant">
-<span class="">Historique client :</span>
-<strong class="text-secondary font-semibold">14 colis acheminés (100% reçus)</strong>
-</div>
-</div>
-</div>
-<!-- CARTE 2: TARIFICATION & PAIEMENT -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 space-y-4">
-<div class="flex items-center justify-between pb-3 border-b border-outline-variant">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">payments</span>
-<h3 class="font-title-md text-title-md font-bold text-on-surface">Tarification &amp; Paiement</h3>
+<span class="material-symbols-outlined text-secondary" data-icon="calculate">calculate</span>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Simulateur &amp; Calculateur Rapide de Cotation</h2>
 </div>
-<span class="text-xs bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2 py-0.5 rounded">
-                À Régler au Dépôt
-              </span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Estimez en temps réel le coût d'affrètement selon les normes de taxation volumétrique et de change CoreLink</p>
 </div>
-<div class="space-y-2.5 text-body-sm">
-<div class="flex justify-between items-center">
-<span class="text-on-surface-variant">Tarif Express Aérien :</span>
-<span class="font-mono font-semibold text-on-surface">82 500 Ar / kg</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-on-surface-variant">Poids taxable retenu :</span>
-<span class="font-mono font-semibold text-on-surface">7.45 kg</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-on-surface-variant">Assurance fret incluse :</span>
-<span class="text-emerald-700 font-medium text-xs">Incluse (Standard)</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-on-surface-variant">Frais fixes dossier :</span>
-<span class="font-mono font-semibold text-on-surface">15 000 Ar</span>
-</div>
-<!-- Total calculation -->
-<div class="pt-3 border-t border-outline-variant flex justify-between items-baseline">
-<div>
-<span class="font-title-md text-title-md font-bold text-on-surface block">Total Estimé</span>
-<span class="text-[11px] text-outline">TVA &amp; manutention incluses</span>
-</div>
-<div class="text-right">
-<span class="font-headline-sm text-headline-sm font-bold text-secondary font-mono">
-                    629 625 Ar
-                  </span>
-<span class="text-[11px] text-outline block">~ 132.50 USD</span>
-</div>
-</div>
-<div class="mt-2 p-2 bg-surface-container rounded text-xs text-on-surface space-y-1">
-<div class="flex justify-between">
-<span class="">Modalité :</span>
-<strong>Payable à l'enlèvement (Behintsy)</strong>
-</div>
-<div class="flex justify-between">
-<span class="">Acompte enregistré :</span>
-<span class="text-emerald-700 font-semibold">0 Ar (Dérogation Fidélité)</span>
-</div>
-</div>
-</div>
-</div>
-<!-- CARTE 3: DOCUMENTS ATTACHÉS -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 space-y-3">
-<div class="flex items-center justify-between pb-2 border-b border-outline-variant">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">attachment</span>
-<h3 class="font-title-md text-title-md font-bold text-on-surface">Documents Attachés</h3>
-</div>
-<span class="font-mono text-xs text-outline">3 fichiers</span>
-</div>
-<div class="space-y-2">
-<!-- Doc 1 -->
-<a class="flex items-center justify-between p-2.5 bg-surface rounded-lg border border-outline-variant/70 hover:border-secondary transition-colors group" href="#">
-<div class="flex items-center gap-2.5 truncate">
-<span class="material-symbols-outlined text-error text-[20px]">picture_as_pdf</span>
-<div class="truncate">
-<span class="font-label-md text-label-md text-on-surface block truncate group-hover:text-secondary">
-                      Bordereau_LTA_CL123456789.pdf
-                    </span>
-<span class="text-[11px] text-outline">Air Waybill • 420 KB</span>
-</div>
-</div>
-<span class="material-symbols-outlined text-outline group-hover:text-secondary text-[18px]">download</span>
-</a>
-<!-- Doc 2 -->
-<a class="flex items-center justify-between p-2.5 bg-surface rounded-lg border border-outline-variant/70 hover:border-secondary transition-colors group" href="#">
-<div class="flex items-center gap-2.5 truncate">
-<span class="material-symbols-outlined text-secondary text-[20px]">receipt_long</span>
-<div class="truncate">
-<span class="font-label-md text-label-md text-on-surface block truncate group-hover:text-secondary">
-                      Facture_Commerciale_GZ_CAN.pdf
-                    </span>
-<span class="text-[11px] text-outline">Déclaration valeur • 1.1 MB</span>
-</div>
-</div>
-<span class="material-symbols-outlined text-outline group-hover:text-secondary text-[18px]">download</span>
-</a>
-<!-- Doc 3 -->
-<a class="flex items-center justify-between p-2.5 bg-surface rounded-lg border border-outline-variant/70 hover:border-secondary transition-colors group" href="#">
-<div class="flex items-center gap-2.5 truncate">
-<span class="material-symbols-outlined text-amber-700 text-[20px]">gavel</span>
-<div class="truncate">
-<span class="font-label-md text-label-md text-on-surface block truncate group-hover:text-secondary">
-                      Declaration_Douane_GasyNet.pdf
-                    </span>
-<span class="text-[11px] text-outline">Bordereau d'exportation • 280 KB</span>
-</div>
-</div>
-<span class="material-symbols-outlined text-outline group-hover:text-secondary text-[18px]">download</span>
-</a>
-</div>
-<button class="w-full py-1.5 mt-1 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-secondary hover:bg-surface-container-low transition-colors flex items-center justify-center gap-1">
-<span class="material-symbols-outlined text-[16px]">upload_file</span>
-              Ajouter un document justificatif
-            </button>
-</div>
-<!-- CARTE 4: HISTORIQUE DES NOTIFICATIONS CLIENT -->
-<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 space-y-3">
-<div class="flex items-center justify-between pb-2 border-b border-outline-variant">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary">sms</span>
-<h3 class="font-title-md text-title-md font-bold text-on-surface">Historique Notifications</h3>
-</div>
-<span class="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">Délivré</span>
-</div>
-<div class="space-y-3 text-xs">
-<!-- Notification 1 -->
-<div class="p-2.5 bg-surface rounded-lg border-l-2 border-l-emerald-600 border border-outline-variant/60 space-y-1">
-<div class="flex items-center justify-between">
-<strong class="text-on-surface flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px] text-emerald-600">check</span>
-                    SMS Automatique de confirmation
-                  </strong>
-<span class="text-[10px] text-outline">22/05 • 08:30</span>
-</div>
-<p class="text-on-surface-variant font-mono text-[11px] bg-white p-1.5 rounded border border-outline-variant/40">
-                  "CoreLink: Votre colis CL123456789 (7.45kg) est en vol cargo CAN-TNR. Arrivée estimée le 28/05 à Tana. Suivi: corelink.mg/track/CL123456789"
-                </p>
-<div class="flex justify-between text-[10px] text-outline pt-0.5">
-<span class="">Destinataire : +261 34 12 345 67</span>
-<span class="text-emerald-700 font-medium">Reçu (Rapport réseau Telma OK)</span>
-</div>
-</div>
-<!-- Notification 2 -->
-<div class="p-2.5 bg-surface rounded-lg border-l-2 border-l-secondary border border-outline-variant/60 space-y-1">
-<div class="flex items-center justify-between">
-<strong class="text-on-surface flex items-center gap-1 font-mono">
-<span class="material-symbols-outlined text-[14px] text-secondary">chat</span>
-                    WhatsApp Dispatch Hub Guangzhou
-                  </strong>
-<span class="text-[10px] text-outline">21/05 • 10:20</span>
-</div>
-<p class="text-on-surface-variant font-mono text-[11px] bg-white p-1.5 rounded border border-outline-variant/40">
-                  "Photo de réception et confirmation de pesée transmise au client avec étiquette officielle Mettler Toledo."
-                </p>
-<div class="flex justify-between text-[10px] text-outline pt-0.5">
-<span class="">Envoyé par : Agent C. Wei</span>
-<span class="text-secondary font-medium">Vu (Double check bleu)</span>
-</div>
-</div>
-</div>
-<button class="w-full py-1.5 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">send_to_mobile</span>
-              Renvoyer un rappel de livraison
-            </button>
-</div>
-</div>
-</section>
-<!-- SYSTEM METRIC FOOTER STRIP -->
-<footer class="mt-8 pt-4 pb-6 border-t border-outline-variant flex flex-col md:flex-row items-center justify-between text-xs text-outline gap-3">
-<div class="flex items-center gap-4">
-<span class="flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Passerelle API GasyNet : En ligne (Latence 42ms)
+<span class="text-label-md font-label-md px-3 py-1 bg-surface-container-low text-secondary rounded-lg border border-secondary-fixed">
+            Taux actif : 1 USD = 4 650 MGA | 1 RMB = 660 MGA
           </span>
-<span class="">•</span>
-<span class="">Serveur Hub Guangzhou : v4.12.8</span>
-<span class="">•</span>
-<span class="">Chiffrement : TLS 1.3 AES-256</span>
 </div>
-<div class="">
-          © 2025 CoreLink Sourcing &amp; Logistics. Système de Traçabilité Multimodal Chine-Madagascar.
-        </div>
-</footer>
+<form class="mt-6 grid grid-cols-1 md:grid-cols-12 gap-5" id="quotationForm" onsubmit="event.preventDefault();"><!-- Ligne 1 : Configuration générale du Fret en 3 colonnes -->
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Mode d'Expédition</label>
+  <div class="grid grid-cols-2 gap-2">
+    <label class="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-secondary bg-surface-container-low text-secondary font-title-sm text-title-sm cursor-pointer select-none transition-all">
+      <input checked="" class="text-secondary focus:ring-secondary" name="freight_type" type="radio" value="air">
+      <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-base" data-icon="flight_takeoff">flight_takeoff</span> Aérien</span>
+    </label>
+    <label class="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-title-sm text-title-sm cursor-pointer hover:bg-surface-container-low select-none transition-all">
+      <input class="text-secondary focus:ring-secondary" name="freight_type" type="radio" value="sea">
+      <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-base" data-icon="directions_boat">directions_boat</span> Maritime LCL</span>
+    </label>
+  </div>
+</div>
+
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Nature de Marchandise</label>
+  <select class="w-full py-2.5 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/20 shadow-sm">
+    <option value="general">Marchandises Générales (Textile, Quincaillerie standard)</option>
+    <option value="electronics">Électronique sensible &amp; Smartphones</option>
+    <option value="battery">Batteries &amp; Matières Spéciales DG</option>
+    <option value="cosmetics">Cosmétiques, Liquides &amp; Crèmes</option>
+    <option value="automotive">Pièces détachées auto &amp; Métallurgie</option>
+  </select>
+</div>
+
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Assurance &amp; Protection (2% ad val.)</label>
+  <select class="w-full py-2.5 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/20 shadow-sm">
+    <option value="included">Oui (Inclus — Couverture intégrale 100%)</option>
+    <option value="none">Non (Décharge de responsabilité signée)</option>
+  </select>
+</div>
+
+<!-- Ligne 2 : Dimensions, Poids & Ratio de taxation en 3 colonnes -->
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Poids Réel (kg)</label>
+  <div class="relative">
+    <input class="w-full py-2.5 px-3 pr-11 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-title-sm text-title-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20 shadow-sm" step="0.1" type="number" value="18.5">
+    <span class="absolute right-3 top-2.5 text-label-sm font-label-sm text-outline font-bold">KG</span>
+  </div>
+</div>
+
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Volume Réel (CBM / m³)</label>
+  <div class="relative">
+    <input class="w-full py-2.5 px-3 pr-11 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-title-sm text-title-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20 shadow-sm" step="0.01" type="number" value="0.12">
+    <span class="absolute right-3 top-2.5 text-label-sm font-label-sm text-outline font-bold">CBM</span>
+  </div>
+</div>
+
+<div class="md:col-span-4">
+  <label class="block text-label-md font-label-md text-on-surface-variant mb-1.5">Ratio Volumétrique &amp; Règle</label>
+  <div class="flex items-center justify-between py-2.5 px-3 rounded-lg border border-outline-variant/60 bg-surface-container-low text-body-sm font-body-sm text-on-surface">
+    <span class="flex items-center gap-1.5 text-on-surface-variant">
+      <span class="material-symbols-outlined text-sm text-secondary" data-icon="info">info</span>
+      <span class="">Ratio Aérien : 1 CBM = 167 kg</span>
+    </span>
+    <span class="text-label-sm font-label-sm font-semibold text-secondary px-2 py-0.5 rounded bg-surface-container border border-secondary-fixed">Poids réel prépondérant</span>
+  </div>
+</div></form>
+<!-- Calculatrice Preview & Call to Action -->
+<div class="mt-5 p-5 rounded-xl bg-surface-container-low border border-surface-container-highest flex flex-col gap-4 shadow-sm"><div class="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-outline-variant/60"><div class="flex items-center gap-3 pt-2 md:pt-0"><span class="material-symbols-outlined text-secondary text-2xl" data-icon="price_check">price_check</span><div><span class="text-label-sm font-label-sm text-on-surface-variant uppercase font-semibold block">Estimation Totale Ariary</span><p class="text-headline-md font-headline-md font-extrabold text-on-surface">1 387 500 Ar <span class="text-title-sm font-title-sm text-outline font-normal">TTC</span></p></div></div><div class="pt-4 md:pt-0 md:pl-6"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase font-semibold block">Contre-valeur Devises</span><p class="text-title-md font-title-md font-bold text-secondary">~ 298.38 USD <span class="text-on-surface-variant font-normal text-body-sm">| 2 102.27 RMB</span></p></div><div class="pt-4 md:pt-0 md:pl-6"><span class="text-label-sm font-label-sm text-on-surface-variant uppercase font-semibold block">Base de Taxation Retenue</span><p class="text-body-sm font-body-sm font-medium text-on-surface">Aérien Poids Brut (18.50 kg @ 75 000 Ar)</p></div></div><div class="pt-4 border-t border-outline-variant/60 flex items-center justify-end gap-3 w-full"><button class="px-4 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-high text-on-surface font-title-sm text-title-sm transition-all shadow-sm" type="button">Réinitialiser</button><button class="px-5 py-2.5 rounded-lg bg-secondary hover:bg-secondary-container text-on-secondary font-title-sm text-title-sm flex items-center gap-2 transition-all shadow-sm" type="button"><span class="material-symbols-outlined text-lg" data-icon="description">description</span><span class="">Convertir en Devis Officiel</span></button></div></div>
+</section>
+<!-- GRILLE TARIFAIRE DÉTAILLÉE DES CATÉGORIES DE FRET -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="p-5 border-b border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div>
+<h2 class="text-title-md font-title-md font-bold text-on-surface">Barèmes Officiels CoreLink — Transit Chine - Madagascar</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Tableau de référence opérationnel appliqué aux réceptions des entrepôts de Guangzhou et Foshan</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant text-label-md font-label-md text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+              Exporter PDF / Excel
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-secondary text-label-md font-label-md hover:bg-surface-container-high transition-colors font-semibold" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+              Mettre à jour Grille
+            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">
+<th class="py-3.5 px-5">Catégorie de Marchandise</th>
+<th class="py-3.5 px-5">Fret Aérien (CAN → TNR)</th>
+<th class="py-3.5 px-5">Fret Maritime LCL (FOS → TMM)</th>
+<th class="py-3.5 px-5">Délai Indicatif</th>
+<th class="py-3.5 px-5">Spécifications &amp; Traitement Douanier</th>
+<th class="py-3.5 px-4 text-right">Statut</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 text-body-sm font-body-sm">
+<!-- Item 1 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-blue-50 text-secondary material-symbols-outlined" data-icon="category">category</span>
+<div>
+<span class="font-bold text-on-surface text-title-sm font-title-sm block">Marchandises Générales</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">Vêtements, chaussures, quincaillerie standard</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  70 000 – 75 000 Ar <span class="text-on-surface-variant font-normal">/ kg</span>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  355 USD <span class="text-on-surface-variant font-normal">/ m³</span>
+</td>
+<td class="py-4 px-5">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="schedule">schedule</span>
+                    5–7j (Air) | 35j (Mer)
+                  </span>
+</td>
+<td class="py-4 px-5 text-on-surface-variant">
+                  Dédouanement groupé standard Ivato TNR, zéro restriction ADR.
+                </td>
+<td class="py-4 px-4 text-right">
+<span class="inline-block px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                    Actif
+                  </span>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-indigo-50 text-secondary material-symbols-outlined" data-icon="smartphone">smartphone</span>
+<div>
+<span class="font-bold text-on-surface text-title-sm font-title-sm block">Électronique sensible &amp; Smartphones</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">Smartphones neufs/reconditionnés, tablettes, laptops</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-5 font-semibold text-secondary">
+                  80 000 – 100 000 Ar <span class="text-on-surface-variant font-normal">/ pièce</span> <br>
+<span class="text-label-sm font-label-sm text-outline font-normal">ou 100 000 Ar / kg</span>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  Sur cotation spéciale
+                </td>
+<td class="py-4 px-5">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="schedule">schedule</span>
+                    6–8j (Air sécurisé)
+                  </span>
+</td>
+<td class="py-4 px-5 text-on-surface-variant">
+                  Enregistrement IMEI requis en douane Ivato + Scellé inviolable.
+                </td>
+<td class="py-4 px-4 text-right">
+<span class="inline-block px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                    Actif
+                  </span>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-amber-50 text-amber-700 material-symbols-outlined" data-icon="battery_charging_full">battery_charging_full</span>
+<div>
+<span class="font-bold text-on-surface text-title-sm font-title-sm block">Batteries &amp; Matières Spéciales DG</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">Powerbanks, accus lithium-ion, hoverboards</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  100 000 – 120 000 Ar <span class="text-on-surface-variant font-normal">/ kg</span>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  400 – 420 USD <span class="text-on-surface-variant font-normal">/ m³</span>
+</td>
+<td class="py-4 px-5">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="schedule">schedule</span>
+                    8–12j (Vol Cargo DG)
+                  </span>
+</td>
+<td class="py-4 px-5 text-on-surface-variant">
+                  Déclaration UN3480/UN3481, bordereau MSDS exigé à Guangzhou.
+                </td>
+<td class="py-4 px-4 text-right">
+<span class="inline-block px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-amber-100 text-amber-800">
+                    Contrôlé
+                  </span>
+</td>
+</tr>
+<!-- Item 4 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-rose-50 text-rose-600 material-symbols-outlined" data-icon="sanitizer">sanitizer</span>
+<div>
+<span class="font-bold text-on-surface text-title-sm font-title-sm block">Cosmétiques &amp; Liquides</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">Sérums, parfums, huiles corporelles, gels</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  75 000 – 95 000 Ar <span class="text-on-surface-variant font-normal">/ kg</span>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  375 USD <span class="text-on-surface-variant font-normal">/ m³</span>
+</td>
+<td class="py-4 px-5">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="schedule">schedule</span>
+                    7–10j (Ligne dédiée)
+                  </span>
+</td>
+<td class="py-4 px-5 text-on-surface-variant">
+                  Emballage étanche obligatoire anti-fuite. Agrément sanitaire.
+                </td>
+<td class="py-4 px-4 text-right">
+<span class="inline-block px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                    Actif
+                  </span>
+</td>
+</tr>
+<!-- Item 5 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-5">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-slate-100 text-on-surface material-symbols-outlined" data-icon="directions_car">directions_car</span>
+<div>
+<span class="font-bold text-on-surface text-title-sm font-title-sm block">Pièces automobiles &amp; Métallurgie lourde</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">Moteurs, amortisseurs, jantes, machinerie d'atelier</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  70 000 Ar <span class="text-on-surface-variant font-normal">/ kg (&gt; 50kg)</span>
+</td>
+<td class="py-4 px-5 font-semibold text-on-surface">
+                  320 – 340 USD <span class="text-on-surface-variant font-normal">/ m³ (Pondéré)</span>
+</td>
+<td class="py-4 px-5">
+<span class="inline-flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-sm text-outline" data-icon="schedule">schedule</span>
+                    35–45j (Maritime groupé)
+                  </span>
+</td>
+<td class="py-4 px-5 text-on-surface-variant">
+                  Mise en caisse bois traitée NIMP15 pour transport par mer.
+                </td>
+<td class="py-4 px-4 text-right">
+<span class="inline-block px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                    Actif
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- SECTION INFÉRIEURE : STRICTEMENT 3 COLONNES -->
+<section class="gap-6 pb-6 flex flex-col w-full">
+<!-- Colonne 1 : Dernières Demandes de Devis -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="receipt_long">receipt_long</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface">Dernières Demandes de Devis</h3>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-secondary font-semibold">4 récents</span>
+</div>
+<!-- Liste des 4 devis récents -->
+<div class="divide-y divide-outline-variant/50 mt-2">
+<!-- Devis 1 -->
+<div class="py-3 flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-body-sm font-body-sm">DEV-2025-0841</span>
+<span class="text-label-sm font-label-sm text-outline">Aérien (24 kg)</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-0.5">Société Malagasy Import / Tantely R.</p>
+<span class="text-title-sm font-title-sm font-bold text-secondary mt-1 block">1 800 000 MGA</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-amber-100 text-amber-800">
+                  En attente
+                </span>
+</div>
+<!-- Devis 2 -->
+<div class="py-3 flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-body-sm font-body-sm">DEV-2025-0839</span>
+<span class="text-label-sm font-label-sm text-outline">Maritime (1.8 CBM)</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-0.5">Hery Distribution SARL</p>
+<span class="text-title-sm font-title-sm font-bold text-secondary mt-1 block">657 USD (~ 3.05M Ar)</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                  Accepté
+                </span>
+</div>
+<!-- Devis 3 -->
+<div class="py-3 flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-body-sm font-body-sm">DEV-2025-0838</span>
+<span class="text-label-sm font-label-sm text-outline">Aérien DG (6.2 kg)</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-0.5">TechZone Antanimena</p>
+<span class="text-title-sm font-title-sm font-bold text-secondary mt-1 block">682 000 MGA</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-emerald-100 text-emerald-800">
+                  Accepté
+                </span>
+</div>
+<!-- Devis 4 -->
+<div class="py-3 flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-body-sm font-body-sm">DEV-2025-0835</span>
+<span class="text-label-sm font-label-sm text-outline">Maritime (0.4 CBM)</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-0.5">Boutique Ravina Behoririka</p>
+<span class="text-title-sm font-title-sm font-bold text-secondary mt-1 block">146 USD (~ 678K Ar)</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-amber-100 text-amber-800">
+                  En attente
+                </span>
+</div>
+</div>
+</div>
+<a class="mt-3 block text-center py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-secondary text-label-md font-label-md font-semibold transition-colors" href="#">
+            Voir tous les 48 devis de la semaine →
+          </a>
+</div>
+<!-- Colonne 2 : Conditions Générales & Suppléments -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="policy">policy</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface">Conditions Générales &amp; Suppléments</h3>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="info">info</span>
+</div>
+<div class="mt-4 space-y-3.5 text-body-sm font-body-sm">
+<div class="flex items-start gap-3">
+<div class="p-1.5 rounded-md bg-blue-50 text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="inventory">inventory</span>
+</div>
+<div>
+<strong class="text-on-surface block font-semibold">Emballage Renforcé Hub Guangzhou :</strong>
+<span class="text-on-surface-variant">Carton triple cannelure : 15 RMB / colis. Caissage bois : 80 à 150 RMB selon cubage.</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="p-1.5 rounded-md bg-emerald-50 text-emerald-700 shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="shield">shield</span>
+</div>
+<div>
+<strong class="text-on-surface block font-semibold">Assurance Ad Valorem (Recommandée) :</strong>
+<span class="text-on-surface-variant">2% de la valeur déclarée invoice fournisseur. Indemnisation à 100% perte ou avarie.</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="p-1.5 rounded-md bg-indigo-50 text-secondary-container shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="gavel">gavel</span>
+</div>
+<div>
+<strong class="text-on-surface block font-semibold">Dédouanement Ivato &amp; Toamasina :</strong>
+<span class="text-on-surface-variant">Inclus dans le tarif groupage au kilo ou au m³. Aucun frais de débarquement caché.</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="p-1.5 rounded-md bg-amber-50 text-amber-700 shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="timer">timer</span>
+</div>
+<div>
+<strong class="text-on-surface block font-semibold">Franchise de Gardiennage Behintsy :</strong>
+<span class="text-on-surface-variant">5 jours ouvrés gratuits dès notification d'arrivée SMS. Au-delà : 2 500 Ar / jour / colis.</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 p-3 rounded-lg bg-surface-container-low border border-surface-container-high text-label-sm font-label-sm text-on-surface-variant">
+            Document légal contractuel officiel — Révision 2025.02 / CoreLink Logistics Antananarivo.
+          </div>
+</div>
+<!-- Colonne 3 : Historique des Fluctuations Tarifaires -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="trending_up">trending_up</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface">Historique des Fluctuations</h3>
+</div>
+<span class="text-label-sm font-label-sm text-outline">30 derniers jours</span>
+</div>
+<!-- Graphique / Barres de fluctuation de marché -->
+<div class="mt-4 space-y-4">
+<!-- Indicateur 1: Surcharge Carburant Aérien (BAF) -->
+<div>
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="font-medium text-on-surface">Surcharge Carburant Aérien (FSC/BAF)</span>
+<span class="font-bold text-emerald-600">-2.4% (Stable)</span>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 42%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-outline mt-1 block">Impact direct sur lignes Ethiopian / Kenya Airways</span>
+</div>
+<!-- Indicateur 2: Taux Fret Conteneur Maritime Asie-Océan Indien -->
+<div>
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="font-medium text-on-surface">Fret Conteneur Asie - Tamatave</span>
+<span class="font-bold text-amber-600">+4.1% (Léger pic)</span>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 68%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-outline mt-1 block">Tension portuaire Colombo &amp; Singapour transbordement</span>
+</div>
+<!-- Indicateur 3: Volatilité Ariary vs Dollar USD -->
+<div>
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="font-medium text-on-surface">Taux MGA / USD (MID MID)</span>
+<span class="font-bold text-secondary font-code-tracking">4 650 Ar (+0.8%)</span>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 55%;"></div>
+</div>
+<span class="text-label-sm font-label-sm text-outline mt-1 block">Marge de sécurité de change CoreLink : +1.5% appliquée</span>
+</div>
+</div>
+<!-- Mini résumé statut -->
+<div class="mt-5 p-3 rounded-lg bg-surface-container flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="auto_graph">auto_graph</span>
+<p class="text-label-sm font-label-sm text-on-surface">
+<strong>Recommandation système :</strong> Aucune révision à la hausse requise pour la semaine en cours sur le fret aérien régulier.
+              </p>
+</div>
+</div>
+<button class="mt-4 w-full py-2 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-label-md font-label-md transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="analytics">analytics</span>
+<span class="">Rapport complet des indices mondiaux</span>
+</button>
+</div>
+</section>
 </main>
 </div>
-
-
 
 
 </body></html>

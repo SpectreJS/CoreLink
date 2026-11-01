@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { AdminBadge, AdminButton, AdminField, AdminTable } from '../components/common/AdminUI.jsx';
 import ParcelDataTable from '../components/parcels/ParcelDataTable.jsx';
 import AdminParcelCreatePage from './AdminParcelCreatePage.jsx';
@@ -7,6 +7,7 @@ import '../styles/admin-parcels.scss';
 import { deleteParcel, deleteParcels, listParcelStatuses, listParcelTransportModes, listParcels } from '../services/parcelService.js';
 import { createCustomer, getCustomer, listCustomers } from '../services/customerService.js';
 import ParcelDetailsPage from './AdminParcelDetailsPage.jsx';
+import AdminPricingPage from './AdminPricingPage.jsx';
 import { useAdminAuth } from '../contexts/AdminAuthContext.jsx';
 
 function PageHeading({ title, description, action }) {
@@ -133,11 +134,6 @@ export function AdminParcelsPage() {
     <div className="parcel-management-page">
       <section className="parcel-management-heading">
         <div>
-          <nav aria-label="Fil d’Ariane" className="parcel-management-breadcrumb">
-            <span>Opérations</span>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Gestion des colis</span>
-          </nav>
           <h1>Gestion des Colis &amp; Expéditions</h1>
           <p>Surveillez, filtrez et mettez à jour l’ensemble des colis enregistrés sur le corridor Chine – Madagascar.</p>
         </div>
@@ -302,6 +298,8 @@ const modules = {
 };
 
 export function AdminModulePage({ module }) {
+  const { onNotice } = useOutletContext();
+  if (module === 'tracking') return <AdminPricingPage onNotice={onNotice} />;
   const info = modules[module];
   return (
     <>

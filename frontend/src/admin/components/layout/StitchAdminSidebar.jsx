@@ -15,7 +15,7 @@ const navigationGroups = [
   {
     label: 'Supervision Hub',
     links: [
-      { to: '/admin/tracking', label: 'Traçabilité Multi-Hub', icon: 'monitoring' },
+      { to: '/admin/tracking', label: 'Tarifs & Devis', icon: 'monitoring' },
       { to: '/admin/invoices', label: 'Facturation & Douanes', icon: 'receipt_long' },
     ],
   },

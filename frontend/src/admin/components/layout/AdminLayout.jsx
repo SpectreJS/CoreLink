@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AdminBreadcrumb from './AdminBreadcrumb.jsx';
 import '../../styles/admin-main.scss';
 import '../../styles/admin-stitch.css';
@@ -8,7 +8,6 @@ import StitchAdminSidebar from './StitchAdminSidebar.jsx';
 import { useAdminAuth } from '../../contexts/AdminAuthContext.jsx';
 
 export default function AdminLayout() {
-  const { pathname } = useLocation();
   const { logout } = useAdminAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,7 +38,7 @@ export default function AdminLayout() {
           searchValue={searchTerm}
         />
         <main className="flex-1 space-y-6 p-6 max-md:p-4">
-          {pathname !== '/admin/dashboard' && <AdminBreadcrumb />}
+          <AdminBreadcrumb />
           <Outlet context={{ searchTerm, onNotice: setToast }} />
         </main>
       </div>

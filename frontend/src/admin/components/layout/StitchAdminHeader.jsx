@@ -51,7 +51,7 @@ export default function StitchAdminHeader({ onMenuToggle, searchValue, onSearchC
             aria-label="Rechercher dans les colis de démonstration"
             className="w-full rounded-xl border border-outline-variant bg-surface-container-lowest py-1.5 pl-9 pr-12 text-body-sm font-body-sm text-on-surface shadow-xs transition-all placeholder:text-outline focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/15"
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="⌘K Rechercher colis, client, conteneur ou bordereau..."
+            placeholder="Rechercher colis, client, conteneur ou bordereau..."
             ref={searchRef}
             type="search"
             value={searchValue}

@@ -91,11 +91,6 @@ export default function Dashboard() {
     <>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <nav aria-label="Breadcrumb" className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span>Accueil</span>
-            <span aria-hidden="true" className="text-slate-400">/</span>
-            <span aria-current="page" className="font-semibold text-slate-800">Tableau de bord</span>
-          </nav>
           <h2 className="text-headline-md font-headline-md tracking-tight text-on-surface">Supervision &amp; Transit International</h2>
           <p className="mt-0.5 text-body-sm font-body-sm text-on-surface-variant">
             Corridor Chine (Guangzhou / Yiwu) ➔ Madagascar (Antananarivo / Toamasina). Données d’exemple, non reliées à une base.

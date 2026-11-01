@@ -3,10 +3,6 @@
   padding: 24px;
 }
 
-.corelink-admin main:has(> .parcel-detail-page) > .admin-breadcrumb {
-  display: none;
-}
-
 .parcel-detail-page {
   width: min(100%, 1600px);
   margin-inline: auto;

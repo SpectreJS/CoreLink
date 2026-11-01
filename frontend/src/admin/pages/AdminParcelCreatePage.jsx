@@ -165,14 +165,6 @@ export default function AdminParcelCreatePage({ edit = false }) {
     <div className="parcel-create-page">
       <div className="px-6 py-6">
         <div className="mb-6">
-          <nav aria-label="Fil d’Ariane" className="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mb-2">
-            <Link className="hover:text-secondary flex items-center gap-1" to="/admin/parcels">
-              <span aria-hidden="true" className="material-symbols-outlined text-[14px]">inventory_2</span>
-              Colis
-            </Link>
-            <span aria-hidden="true" className="text-outline">/</span>
-            <span aria-current="page" className="text-secondary font-semibold">{edit ? 'Modifier le colis' : 'Nouvel enregistrement'}</span>
-          </nav>
           <div className="parcel-create-heading">
             <div>
               <h1 className="text-headline-lg font-headline-lg text-on-surface tracking-tight">{edit ? `Modifier le colis ${form.trackingNumber}` : 'Enregistrer un nouveau colis'}</h1>
