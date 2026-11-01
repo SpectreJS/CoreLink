@@ -1,0 +1,737 @@
+<!DOCTYPE html><html class="h-full bg-background" lang="fr"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CoreLink BO — Gestion des Profils &amp; Droits Administrateurs</title>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS with custom configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#3f465c",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#b4c5ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary-fixed": "#00174b",
+            "on-surface-variant": "#45464d",
+            "on-primary-fixed": "#131b2e",
+            "tertiary": "#000000",
+            "secondary": "#0051d5",
+            "on-background": "#0b1c30",
+            "tertiary-container": "#002109",
+            "on-surface": "#0b1c30",
+            "tertiary-fixed": "#7ffc97",
+            "inverse-surface": "#213145",
+            "secondary-fixed": "#dbe1ff",
+            "on-tertiary-fixed": "#002109",
+            "primary-container": "#131b2e",
+            "surface-container": "#e5eeff",
+            "surface-dim": "#cbdbf5",
+            "outline": "#76777d",
+            "on-error": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "on-secondary": "#ffffff",
+            "outline-variant": "#c6c6cd",
+            "surface-tint": "#565e74",
+            "surface-container-highest": "#d3e4fe",
+            "surface": "#f8f9ff",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "inverse-primary": "#bec6e0",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary-container": "#009842",
+            "primary": "#000000",
+            "on-primary-container": "#7c839b",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#dae2fd",
+            "background": "#f8f9ff",
+            "secondary-container": "#316bf3",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed-variant": "#003ea8",
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005320",
+            "primary-fixed-dim": "#bec6e0",
+            "on-secondary-container": "#fefcff",
+            "error-container": "#ffdad6"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "gutter-mobile": "1rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "gutter": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-xl-mobile": ["Manrope"],
+            "headline-lg": ["Manrope"],
+            "label-md": ["Inter"],
+            "headline-lg-mobile": ["Manrope"],
+            "headline-sm": ["Manrope"],
+            "body-sm": ["Inter"],
+            "title-md": ["Inter"],
+            "title-sm": ["Inter"],
+            "headline-xl": ["Manrope"],
+            "code-tracking": ["Inter"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Manrope"]
+          },
+          "fontSize": {
+            "headline-xl-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "code-tracking": ["13px", { "lineHeight": "18px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Custom clean scrollbar for dense tables */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-on-surface antialiased flex selection:bg-surface-container selection:text-secondary">
+<!-- ========================================================= -->
+<!-- 1. LEFT FIXED SIDE NAVIGATION (Shared Component: SideNavBar) -->
+<!-- ========================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col z-30 bg-surface-container-lowest border-r border-outline-variant select-none">
+<!-- Header Logo & Subtext -->
+<div class="p-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-on-secondary font-headline-sm font-extrabold shadow-sm tracking-tight">
+          CL
+        </div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-title-md font-title-md font-bold text-on-surface tracking-tight">CoreLink BO</span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-medium">Transit GZ-TNR Hub</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick CTA: Scanner Réception -->
+<div class="px-4 pt-4 pb-2">
+<button class="w-full flex items-center justify-center gap-2 bg-secondary text-on-secondary px-3 py-2.5 rounded-lg text-title-sm font-title-sm hover:bg-secondary-container transition-all duration-150 shadow-sm active:scale-[0.99]">
+<span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+<span class="">Scanner Réception</span>
+</button>
+</div>
+<!-- Navigation Tab List -->
+<div class="flex-1 overflow-y-auto px-3 py-2 space-y-1">
+<div class="px-3 py-1.5 text-[10px] font-label-md tracking-wider text-outline uppercase font-semibold">
+        Opérations Hub &amp; Fret
+      </div>
+<!-- Tab 1 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="">Tous les colis</span>
+</a>
+<!-- Tab 2 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">warehouse</span>
+<span class="">Réception Guangzhou</span>
+</a>
+<!-- Tab 3 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">flight_takeoff</span>
+<span class="">Expéditions Fret</span>
+</a>
+<!-- Tab 4 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">gavel</span>
+<span class="">Dédouanement Ivato TNR</span>
+</a>
+<!-- Tab 5 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="">Livraisons Behintsy</span>
+</a>
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-md tracking-wider text-outline uppercase font-semibold">
+        Gestion &amp; Administration
+      </div>
+<!-- Tab 6 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="">Clients &amp; Comptes</span>
+</a>
+<!-- Tab 7 -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="">Tarifs &amp; Devis</span>
+</a>
+<!-- ACTIVE TAB: Profils & Équipe -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-secondary font-semibold transition-all duration-150 text-body-sm font-body-sm border border-secondary-fixed" href="#">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-weight="fill">badge</span>
+<span class="flex-1">Profils &amp; Équipe</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</a>
+</div>
+<!-- Footer Controls -->
+<div class="p-3 border-t border-outline-variant space-y-1 bg-surface-container-low/40">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+<span class="">Paramètres Hub</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-error hover:bg-error-container/20 transition-all duration-150 text-body-sm font-body-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="">Déconnexion</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================= -->
+<!-- 2. MAIN VIEWPORT WRAPPER (Includes TopAppBar + Content) -->
+<!-- ========================================================= -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- TopNavBar (Shared Component) -->
+<header class="h-16 flex items-center justify-between px-8 w-full bg-surface border-b border-outline-variant shrink-0 sticky top-0 z-20 backdrop-blur-md bg-opacity-95">
+<!-- Search on the left -->
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-outline pointer-events-none">
+            search
+          </span>
+<input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline pl-10 pr-4 py-2 rounded-lg border border-outline-variant text-body-md font-body-md focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/15 transition-all shadow-xs" placeholder="Rechercher un collaborateur, rôle, email ou agence..." type="text">
+</div>
+</div>
+<!-- Trailing Action Cluster & User Profile -->
+<div class="flex items-center gap-4 pl-6">
+<!-- Action Buttons -->
+<button class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors text-label-md font-label-md">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span class="">Rapports Douane</span>
+</button>
+<button class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-secondary text-on-secondary hover:bg-secondary-container transition-colors text-label-md font-label-md shadow-xs">
+<span class="material-symbols-outlined text-[18px]">add_box</span>
+<span class="">Nouveau Colis</span>
+</button>
+<!-- Divider -->
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<!-- System Icons -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="relative p-2 rounded-lg hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[21px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-low transition-colors" title="Aide technique">
+<span class="material-symbols-outlined text-[21px]">help</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-low transition-colors" title="Paramètres système">
+<span class="material-symbols-outlined text-[21px]">settings</span>
+</button>
+</div>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-3 pl-2 border-l border-outline-variant">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-primary-container text-surface flex items-center justify-center font-bold text-label-md tracking-tight ring-2 ring-surface-container-highest">
+              RK
+            </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim ring-2 ring-surface"></span>
+</div>
+<div class="hidden xl:block text-left">
+<div class="text-title-sm font-title-sm text-on-surface leading-tight">Rado K.</div>
+<div class="text-[11px] font-label-sm text-on-surface-variant font-medium">Super Admin • Hub TNR</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================= -->
+<!-- 3. PAGE BODY CONTENT CANVAS -->
+<!-- ========================================================= -->
+<main class="flex-1 p-8 space-y-7 max-w-[1600px] w-full mx-auto">
+<!-- Breadcrumbs & Page Header -->
+<section class="space-y-2">
+<nav class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
+<span class="hover:text-secondary cursor-pointer transition-colors">Administration &amp; Sécurité</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="text-secondary font-semibold">Profils &amp; Équipes</span>
+</nav>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-1">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">
+              Gestion des Profils &amp; Utilisateurs Administrateurs
+            </h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">
+              Gérez les rôles, permissions granulaires, accès par hub (Guangzhou, Ivato TNR, Behintsy) et l'activité de l'équipe logistique.
+            </p>
+</div>
+<!-- Header Action CTA Buttons -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-all text-title-sm font-title-sm shadow-xs">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="">Exporter l'audit des accès</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-on-secondary hover:bg-secondary-container transition-all text-title-sm font-title-sm shadow-sm active:scale-[0.99]">
+<span class="material-symbols-outlined text-[19px]">person_add</span>
+<span class="">+ Nouvel Administrateur</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- 4. KEY METRICS BENTO BANNER (3 Columns) -->
+<!-- ========================================================= -->
+
+<!-- ========================================================= -->
+<!-- 5. FILTER BAR & SEARCH TOOLBAR -->
+<!-- ========================================================= -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+<!-- Select Filters -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Hub Filter -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold uppercase">Hub :</span>
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 text-title-sm font-title-sm text-on-surface focus:outline-none focus:border-secondary">
+<option>Tous les Hubs (CAN, TNR, Behintsy)</option>
+<option>Guangzhou CAN (Entrepôt Chine)</option>
+<option>Antananarivo TNR (Aéroport / Douane Ivato)</option>
+<option>Hub Behintsy (Centre Distribution)</option>
+<option>Siège Administratif</option>
+</select>
+</div>
+<!-- Role Filter -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold uppercase">Rôle :</span>
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 text-title-sm font-title-sm text-on-surface focus:outline-none focus:border-secondary">
+<option>Tous les rôles</option>
+<option>Super Administrateur</option>
+<option>Superviseur Hub Chine</option>
+<option>Gestionnaire Douane &amp; Fret</option>
+<option>Responsable Distribution</option>
+<option>Chargée Facturation &amp; Devis</option>
+</select>
+</div>
+<!-- Status Filter -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold uppercase">Statut :</span>
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 text-title-sm font-title-sm text-on-surface focus:outline-none focus:border-secondary">
+<option>Tous les statuts</option>
+<option>Actif &amp; En ligne</option>
+<option>Actif récent</option>
+<option>2FA en attente</option>
+<option>Suspendu</option>
+</select>
+</div>
+</div>
+<!-- Quick filter actions -->
+<div class="flex items-center gap-2 justify-end">
+<button class="px-3 py-1.5 text-label-md font-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
+<span class="">Réinitialiser</span>
+</button>
+<div class="h-4 w-px bg-outline-variant"></div>
+<span class="text-label-sm font-label-sm text-outline font-medium">6 sur 18 affichés</span>
+</div>
+</div>
+<!-- ========================================================= -->
+<!-- 6. TABLEAU INTERACTIF DES COMPTES ADMINISTRATEURS -->
+<!-- ========================================================= -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xs overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[22px] text-secondary">manage_accounts</span>
+<h2 class="text-title-md font-title-md font-bold text-on-surface">Comptes Opérateurs &amp; Privilèges Système</h2>
+<span class="ml-2 px-2 py-0.5 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm font-bold">18 membres</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant" title="Rafraîchir les données">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant" title="Affichage compact">
+<span class="material-symbols-outlined text-[18px]">density_medium</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 border-b border-outline-variant text-[11px] font-label-md uppercase tracking-wider text-on-surface-variant">
+<th class="py-3 px-6">Collaborateur</th>
+<th class="py-3 px-4">Rôle &amp; Permissions</th>
+<th class="py-3 px-4">Hub / Assignation</th>
+
+<th class="py-3 px-4">Dernière Connexion &amp; IP</th>
+<th class="py-3 px-6 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-md font-body-md">
+<!-- ROW 1: Rado K. -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-primary-container text-surface flex items-center justify-center font-bold text-label-md">
+                        RK
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold flex items-center gap-1.5">
+<span class="">Rado K.</span>
+<span class="material-symbols-outlined text-[15px] text-secondary" data-weight="fill" title="Super Administrateur Vérifié">verified_user</span>
+</div>
+<div class="text-body-sm font-body-sm text-outline">rado.k@corelink-logistics.mg</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1 font-semibold text-secondary text-title-sm">
+                      Super Administrateur
+                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Accès Total &amp; Clé Maître</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-high text-on-surface font-medium">TNR &amp; CAN</span>
+<span class="text-label-sm text-outline font-normal">Global</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-emerald-600 font-medium flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    En ligne maintenant
+                  </div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">102.16.89.24 • Antananarivo</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Gérer permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2: Li Wei -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-blue-100 text-secondary flex items-center justify-center font-bold text-label-md">
+                        LW
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold">Li Wei (李伟)</div>
+<div class="text-body-sm font-body-sm text-outline">li.wei@corelink-gz.cn</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-title-sm">Superviseur Hub Chine</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Réception, pesée, étiquetage QR</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-blue-50 text-blue-800 border border-blue-200 font-medium">Guangzhou CAN</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-on-surface font-medium">Il y a 12 min</div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">113.28.14.77 • Baiyun, Guangzhou</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Gérer permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Tantely R. -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-label-md">
+                        TR
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-slate-300 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold">Tantely R.</div>
+<div class="text-body-sm font-body-sm text-outline">tantely.r@corelink-logistics.mg</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-title-sm">Gestionnaire Douane &amp; Fret</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Dédouanement Ivato &amp; Manifestes</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-amber-50 text-amber-900 border border-amber-200 font-medium">Ivato TNR (Aéroport)</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-on-surface font-medium">Il y a 1 heure</div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">102.16.74.19 • Ivato, Antananarivo</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Gérer permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Hasina M. -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-purple-100 text-purple-900 flex items-center justify-center font-bold text-label-md">
+                        HM
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-slate-300 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold">Hasina M.</div>
+<div class="text-body-sm font-body-sm text-outline">hasina.m@corelink-logistics.mg</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-title-sm">Responsable Distribution</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Entrepôt Behintsy, bordereaux remise</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-purple-50 text-purple-900 border border-purple-200 font-medium">Hub Behintsy</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-on-surface font-medium">Il y a 3 heures</div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">41.213.235.12 • Behintsy, Analamanga</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Gérer permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5: Aina V. -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-rose-100 text-rose-900 flex items-center justify-center font-bold text-label-md">
+                        AV
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold">Aina V.</div>
+<div class="text-body-sm font-body-sm text-outline">aina.v@corelink-logistics.mg</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-title-sm">Chargée Facturation &amp; Devis</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Gestion tarifs, devises RMB / MGA</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-slate-100 text-slate-800 border border-slate-200 font-medium">Siège Antaninarenina</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-on-surface font-medium">Hier à 17:42</div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">102.16.89.11 • Antananarivo</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Renvoyer l'invitation 2FA">
+<span class="material-symbols-outlined text-[18px] text-amber-600">forward_to_inbox</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 6: Chen Bo -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-9 h-9 rounded-full bg-cyan-100 text-cyan-900 flex items-center justify-center font-bold text-label-md">
+                        CB
+                      </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-slate-300 ring-2 ring-white"></span>
+</div>
+<div>
+<div class="text-title-sm font-title-sm text-on-surface font-semibold">Chen Bo (陈波)</div>
+<div class="text-body-sm font-body-sm text-outline">chen.bo@corelink-gz.cn</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-title-sm">Opérateur Scanner &amp; Pesée</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Entrée dépôt, cubage volumétrique</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-blue-50 text-blue-800 border border-blue-200 font-medium">Guangzhou Baiyun Hub</span>
+</div>
+</td>
+
+<td class="py-3.5 px-4">
+<div class="text-title-sm font-title-sm text-on-surface font-medium">Aujourd'hui 06:14</div>
+<div class="text-code-tracking font-code-tracking text-outline text-[11px]">113.28.14.80 • Guangzhou</div>
+</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Modifier profil">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors" title="Gérer permissions">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-md transition-colors text-outline" title="Options avancées">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="px-6 py-3 border-t border-outline-variant bg-surface-container-low/30 flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<div class="">
+            Affichage de <span class="font-semibold text-on-surface">1 à 6</span> sur <span class="font-semibold text-on-surface">18</span> administrateurs enregistrés
+          </div>
+<div class="flex items-center gap-1">
+<button class="px-3 py-1 rounded border border-outline-variant bg-surface-container-lowest text-outline text-label-sm font-label-sm cursor-not-allowed" disabled="">Précédent</button>
+<button class="px-3 py-1 rounded bg-secondary text-on-secondary text-label-sm font-label-sm font-semibold">1</button>
+<button class="px-3 py-1 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface text-label-sm font-label-sm">2</button>
+<button class="px-3 py-1 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface text-label-sm font-label-sm">3</button>
+<button class="px-3 py-1 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface text-label-sm font-label-sm">Suivant</button>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- 7. SECTION DOUBLE COLONNE : MATRICE & AUDIT TRAIL -->
+<!-- ========================================================= -->
+
+<!-- Quick Safety Notice / System Trust Bar -->
+<footer class="pt-4 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between text-body-sm font-body-sm text-outline gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">lock</span>
+<span class="">CoreLink Security Engine v2.4 • Chiffrement de bout en bout conforme réglementation douanière malgache et chinoise.</span>
+</div>
+<div class="flex items-center gap-4 text-label-sm font-label-sm">
+<span class="">Serveur Hub : TNR-NODE-01</span>
+<span class="">Latence : 42ms</span>
+<span class="text-emerald-700 font-semibold">Système 100% opérationnel</span>
+</div>
+</footer>
+</main>
+</div>
+
+
+</body></html>
